@@ -1,24 +1,25 @@
-import { integer, text, sqliteTable } from "drizzle-orm/sqlite-core"
+import { date, integer, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
-export const shoeModels = sqliteTable("shoe_models", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  modelName: text("model_name").notNull(),
-})
+export const shoeModels = pgTable("shoe_models", {
+  id: uuid().primaryKey().defaultRandom(),
+  modelName: varchar("model_name").notNull(),
+});
 
-export const shoes = sqliteTable("shoes", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  modelId: integer("model_id")
+export const shoes = pgTable("shoes", {
+  id: uuid().primaryKey().defaultRandom(),
+  modelId: uuid("model_id")
     .notNull()
     .references(() => shoeModels.id),
-  color: text("color").notNull(),
-  barcode: text("barcode").notNull().unique(),
-})
+  color: varchar("color").notNull(),
+  // barcode moved to inventory (size-specific)
+});
 
-export const shoeInventory = sqliteTable("shoe_inventory", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  shoeId: integer("shoe_id")
+export const shoeInventory = pgTable("shoe_inventory", {
+  id: uuid().primaryKey().defaultRandom(),
+  shoeId: uuid("shoe_id")
     .notNull()
     .references(() => shoes.id),
-  size: text("size").notNull(),
+  size: varchar("size").notNull(),
   quantity: integer("quantity").notNull().default(0),
-})
+  createdAt: date("created_at").notNull().defaultNow(),
+});

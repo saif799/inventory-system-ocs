@@ -1,25 +1,33 @@
-import { db } from "@/lib/db"
+import { db } from "@/lib/db";
+import { shoeModels } from "@/lib/schema";
 
 export async function GET() {
   try {
-    const models = db.shoeModels.getAll()
-    return Response.json(models)
+    const models = await db.select().from(shoeModels);
+    return Response.json(models);
   } catch (error) {
-    return Response.json({ error: "Failed to fetch models" }, { status: 500 })
+    return Response.json({ error: "Failed to fetch models" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const { modelName } = await request.json()
+    const { modelName } = await request.json();
 
     if (!modelName) {
-      return Response.json({ error: "Model name is required" }, { status: 400 })
+      return Response.json(
+        { error: "Model name is required" },
+        { status: 400 }
+      );
     }
 
-    const result = db.shoeModels.create(modelName)
-    return Response.json(result)
+    const [inserted] = await db
+      .insert(shoeModels)
+      .values({ modelName })
+      .returning();
+
+    return Response.json(inserted);
   } catch (error) {
-    return Response.json({ error: "Failed to create model" }, { status: 500 })
+    return Response.json({ error: "Failed to create model" }, { status: 500 });
   }
 }
