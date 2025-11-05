@@ -1,11 +1,9 @@
-
 "use client";
 
 import type React from "react";
 
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -14,12 +12,10 @@ import {
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,23 +25,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle, Plus } from "lucide-react";
+import { AlertCircle, ChevronsUpDown, Plus } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import AddedShoeCard, { AddedShoeCardProps } from "./addedShoeCard";
+import { generateShortId } from "@/lib/generateId";
+
+type ShoesResponseType = {
+  id: string;
+  modelName: string;
+  color: string;
+  modelId: string;
+};
 
 export default function AddShoeForm({
   onSuccess,
+  showAdded = true,
 }: {
   onSuccess?: () => void;
+  showAdded?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+  const [valueSelected, setValueSelected] = useState<ShoesResponseType | null>(
+    null
+  );
   const [models, setModels] = useState<any[]>([]);
   const [mode, setMode] = useState<"new" | "existing">("new");
-  const [shoesList, setShoesList] = useState<any[]>([]);
+  const [shoesList, setShoesList] = useState<ShoesResponseType[]>([]);
   const [newModel, setNewModel] = useState("");
   const [showNewModel, setShowNewModel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [shoeSearch, setShoeSearch] = useState("");
+  const [addedShoes, setAddedShoes] = useState<AddedShoeCardProps[]>();
 
   const [formData, setFormData] = useState({
     modelId: "",
@@ -62,7 +74,7 @@ export default function AddShoeForm({
   const fetchShoes = async () => {
     try {
       const res = await fetch("/api/shoes");
-      const data = await res.json();
+      const data: ShoesResponseType[] = await res.json();
       setShoesList(data);
     } catch (err) {
       console.error("Failed to fetch shoes:", err);
@@ -72,7 +84,7 @@ export default function AddShoeForm({
   const fetchModels = async () => {
     try {
       const res = await fetch("/api/models");
-    const data = await res.json();
+      const data = await res.json();
       setModels(data);
     } catch (err) {
       console.error("Failed to fetch models:", err);
@@ -101,8 +113,6 @@ export default function AddShoeForm({
     }
   };
 
-  
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -114,13 +124,18 @@ export default function AddShoeForm({
         return;
       }
     } else {
-      if (!formData.modelId || !formData.color || !formData.size || !formData.quantity) {
+      if (
+        !formData.modelId ||
+        !formData.color ||
+        !formData.size ||
+        !formData.quantity
+      ) {
         setError("Please fill in all fields");
         return;
       }
     }
     setLoading(true);
-const sizes = formData.size.split(",").map(size => size.trim());
+    const sizes = formData.size.split(",").map((size) => size.trim());
     try {
       if (mode === "existing") {
         const shoeId = formData.modelId;
@@ -136,12 +151,26 @@ const sizes = formData.size.split(",").map(size => size.trim());
         if (res.ok) {
           setSuccess("Size added successfully!");
           setFormData({ modelId: "", color: "", size: "", quantity: "" });
+          console.log("this is the value selected ", valueSelected);
+
+          setAddedShoes([
+            ...(addedShoes || []),
+            {
+              color: valueSelected?.color || "",
+              modelName: valueSelected?.modelName || "",
+              quantity: Number.parseInt(formData.quantity),
+              id: shoeId,
+              sizes: sizes,
+            },
+          ]);
           await fetchShoes();
           onSuccess?.();
         } else {
           setError("Failed to add size");
         }
       } else {
+        const id = generateShortId();
+
         const res = await fetch("/api/shoes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -150,11 +179,22 @@ const sizes = formData.size.split(",").map(size => size.trim());
             color: formData.color,
             sizes: sizes,
             quantity: Number.parseInt(formData.quantity),
+            id: id,
           }),
         });
         if (res.ok) {
           setSuccess("Shoe added successfully!");
           setFormData({ modelId: "", color: "", size: "", quantity: "" });
+          setAddedShoes([
+            ...(addedShoes || []),
+            {
+              color: valueSelected?.color || "",
+              modelName: valueSelected?.modelName || "",
+              quantity: Number.parseInt(formData.quantity),
+              id: id,
+              sizes: sizes,
+            },
+          ]);
           await fetchShoes();
           onSuccess?.();
         } else {
@@ -169,176 +209,217 @@ const sizes = formData.size.split(",").map(size => size.trim());
   };
 
   return (
-    <Card className="bg-slate-800 border-slate-700">
-      <CardHeader>
-        <CardTitle className="text-white">Add New Shoes</CardTitle>
-        <CardDescription className="text-slate-400">Add shoes to your inventory</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-2 mb-4">
-          <Button
-            type="button"
-            variant={mode === "new" ? "default" : "outline"}
-            className="bg-blue-600 hover:bg-blue-700"
-            onClick={() => setMode("new")}
-          >
-            Create New Shoe
-          </Button>
-          <Button
-            type="button"
-            variant={mode === "existing" ? "default" : "outline"}
-            className="bg-emerald-600 hover:bg-emerald-700"
-            onClick={() => setMode("existing")}
-          >
-            Add Size to Existing
-          </Button>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <Alert className="bg-red-900/20 border-red-700">
-              <AlertCircle className="h-4 w-4 text-red-500" />
-              <AlertDescription className="text-red-400">{error}</AlertDescription>
-            </Alert>
-          )}
+    <div className="w-full ">
+      <div className="flex gap-2 mb-4">
+        <Button
+          type="button"
+          variant={mode === "new" ? "default" : "outline"}
+          onClick={() => setMode("new")}
+        >
+          Create New Shoe
+        </Button>
+        <Button
+          type="button"
+          variant={mode === "existing" ? "default" : "outline"}
+          onClick={() => setMode("existing")}
+        >
+          Add Size to Existing
+        </Button>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <Alert className="bg-red-900/20 border-red-700">
+            <AlertCircle className="h-4 w-4 text-red-500" />
+            <AlertDescription className="text-red-400">
+              {error}
+            </AlertDescription>
+          </Alert>
+        )}
 
-          {success && (
-            <Alert className="bg-green-900/20 border-green-700">
-              <AlertCircle className="h-4 w-4 text-green-500" />
-              <AlertDescription className="text-green-400">{success}</AlertDescription>
-            </Alert>
-          )}
-          {mode === "existing" ? (
-            <div className="space-y-2">
-              <Label className="text-slate-200">Existing Shoe</Label>
-              <Command className="rounded-lg border shadow-md md:min-w-[450px]">
-                <CommandInput
-                  placeholder="Type a command or search..."
-                  value={shoeSearch}
-                  onValueChange={setShoeSearch}
-                />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup heading="shoes">
-                    {shoesList.map((s) => (
-                      <CommandItem
-                        key={s.id}
-                        value={s.id.toString()}
-                        onSelect={() =>
-                          setFormData({
-                            ...formData,
-                            modelId: s.id.toString(),
-                          })
-                        }
-                        className={
-                          formData.modelId === s.id.toString()
-                            ? "bg-slate-700 text-white"
-                            : ""
-                        }
-                      >
-                        {s.modelName} — {s.color}
-                        {formData.modelId === s.id.toString() && (
-                          <span className="ml-2 text-green-400">(selected)</span>
-                        )}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <Label htmlFor="model" className="text-slate-200">
-                Shoe Model
-              </Label>
-              <div className="flex gap-2">
-                <Select
-                  value={formData.modelId}
-                  onValueChange={(value) => setFormData({ ...formData, modelId: value })}
+        {success && (
+          <Alert className=" border-green-400">
+            <AlertCircle className="h-4 w-4 " />
+
+            <AlertDescription className="text-green-400">
+              {success}
+            </AlertDescription>
+          </Alert>
+        )}
+        {mode === "existing" ? (
+          <div className="space-y-2">
+            <Label>Existing Shoe</Label>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-[200px] justify-between"
                 >
-                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                    <SelectValue placeholder="Select a model" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-700 border-slate-600">
-                    {models.map((model) => (
-                      <SelectItem key={model.id} value={model.id.toString()} className="text-white">
-                        {model.modelName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {valueSelected
+                    ? `${valueSelected.modelName} - ${valueSelected.color}`
+                    : "Select a model..."}
+                  <ChevronsUpDown className="opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command className="rounded-lg border shadow-md md:min-w-[400px]">
+                  <CommandInput
+                    placeholder="Type a command or search..."
+                    value={shoeSearch}
+                    onValueChange={setShoeSearch}
+                  />
+                  <CommandList>
+                    <CommandGroup>
+                      {shoesList.map((s) => (
+                        <CommandItem
+                          key={s.id}
+                          value={s.modelName + s.color}
+                          onSelect={() => {
+                            setValueSelected(s);
+                            setOpen(false);
+                            setFormData({
+                              ...formData,
+                              modelId: s.id.toString(),
+                            });
+                          }}
+                          className={
+                            formData.modelId === s.id.toString() ? "" : ""
+                          }
+                        >
+                          {s.modelName} - {s.color}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Label htmlFor="model">Shoe Model</Label>
+            <div className="flex gap-2">
+              <Select
+                value={formData.modelId}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, modelId: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent className=" ">
+                  {models.map((model) => (
+                    <SelectItem key={model.id} value={model.id.toString()}>
+                      {model.modelName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                type="button"
+                onClick={() => setShowNewModel(!showNewModel)}
+                variant="outline"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {showNewModel && (
+              <div className="flex gap-2 mt-2">
+                <Input
+                  placeholder="New model name"
+                  value={newModel}
+                  onChange={(e) => setNewModel(e.target.value)}
+                  className="   placeholder:text-slate-500"
+                />
                 <Button
                   type="button"
-                  onClick={() => setShowNewModel(!showNewModel)}
-                  variant="outline"
-                  className="border-slate-600 text-slate-200 hover:bg-slate-700"
+                  onClick={handleAddModel}
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
-                  <Plus className="w-4 h-4" />
+                  Add
                 </Button>
               </div>
+            )}
+          </div>
+        )}
 
-              {showNewModel && (
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    placeholder="New model name"
-                    value={newModel}
-                    onChange={(e) => setNewModel(e.target.value)}
-                    className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
-                  />
-                  <Button type="button" onClick={handleAddModel} className="bg-blue-600 hover:bg-blue-700">
-                    Add
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {mode === "new" && (
-            <div className="space-y-2">
-              <Label htmlFor="color" className="text-slate-200">
-                Color
-              </Label>
-              <Input
-                id="color"
-                placeholder="e.g., Black, White, Red"
-                value={formData.color}
-                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
-              />
-            </div>
-          )}
-
+        {mode === "new" && (
           <div className="space-y-2">
-            <Label htmlFor="size" className="text-slate-200">
-              Size
-            </Label>
+            <Label htmlFor="color">Color</Label>
             <Input
-              id="size"
-              placeholder="e.g., 10, 10.5, 11"
-              value={formData.size}
-              onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
+              id="color"
+              placeholder="e.g., Black, White, Red"
+              value={formData.color}
+              onChange={(e) =>
+                setFormData({ ...formData, color: e.target.value })
+              }
+              className="   placeholder:text-slate-500"
             />
           </div>
+        )}
 
-          <div className="space-y-2">
-            <Label htmlFor="quantity" className="text-slate-200">
-              Quantity
-            </Label>
-            <Input
-              id="quantity"
-              type="number"
-              placeholder="0"
-              value={formData.quantity}
-              onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-              className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-500"
-            />
+        <div className="space-y-2">
+          <Label htmlFor="size">Size</Label>
+          <Input
+            id="size"
+            placeholder="e.g., 10, 10.5, 11"
+            value={formData.size}
+            onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+            className="   placeholder:text-slate-500"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="quantity">Quantity</Label>
+          <Input
+            id="quantity"
+            type="number"
+            placeholder="0"
+            min={0}
+            value={formData.quantity}
+            onChange={(e) =>
+              setFormData({ ...formData, quantity: e.target.value })
+            }
+          />
+        </div>
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700"
+        >
+          {loading ? "Adding..." : "Add Shoes"}
+        </Button>
+      </form>
+
+      <div>
+        {showAdded && (
+          <div className="mt-4 space-y-2">
+            <div className="flex justify-between">
+              <h3 className="text-lg font-semibold">Recently Added Shoes</h3>
+              {/* TODO complete the print functionality */}
+              {addedShoes?.length && <Button>print</Button>}
+            </div>
+            {addedShoes ? (
+              addedShoes.map((shoe, index) => (
+                <AddedShoeCard
+                  key={`${shoe.modelName}-${shoe.color}-${index}`}
+                  color={shoe.color}
+                  id={shoe.modelName}
+                  modelName={shoe.modelName}
+                  quantity={shoe.quantity}
+                  sizes={shoe.sizes}
+                />
+              ))
+            ) : (
+              <div>No shoes added yet.</div>
+            )}
           </div>
-
-          <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700">
-            {loading ? "Adding..." : "Add Shoes"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        )}
+      </div>
+    </div>
   );
 }

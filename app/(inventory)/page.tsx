@@ -2,12 +2,14 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { shoeInventory, shoes, shoeModels } from "@/lib/schema";
 import { eq } from "drizzle-orm";
-import InventoryTable from "./table";
-import {
-  decreaseQuantityAction,
-  deleteItemAction,
-  scanBarcodeAction,
-} from "./actions";
+// import InventoryTable from "./table";
+// import {
+//   decreaseQuantityAction,
+//   deleteItemAction,
+//   scanBarcodeAction,
+// } from "./actions";
+import Listings from "@/components/Listings";
+// import Search from "@/components/Search";
 
 type InventoryRow = {
   id: string;
@@ -45,41 +47,35 @@ function filterOnly(items: InventoryRow[], q: string) {
   return filtered;
 }
 
-export default async function InventoryPage({
-  searchParams,
-}: {
-  searchParams: { q?: string };
-}) {
-  const q = (searchParams?.q || "").trim();
+export default async function InventoryPage() {
+  const models = await db.select().from(shoeModels);
+  const products = await db
+    .select({
+      id: shoeInventory.id,
+      modelId: shoes.modelId,
+      color: shoes.color,
+      quantity: shoeInventory.quantity,
+      size: shoeInventory.size,
+      modelName: shoeModels.modelName,
+    })
+    .from(shoes)
+    .innerJoin(shoeInventory, eq(shoes.id, shoeInventory.shoeId))
+    .innerJoin(shoeModels, eq(shoes.modelId, shoeModels.id));
   const inventory = await fetchInventory();
-  const filteredInventory = filterOnly(inventory, q);
-  const total = filteredInventory.length;
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-900 to-slate-800 py-8">
-      <div className="container mx-auto px-4">
-        <Link
-          href="/"
-          className="text-blue-400 hover:text-blue-300 mb-6 inline-block"
-        >
-          ← Back to Home
-        </Link>
+    <div className="flex flex-col items-center justify-center gap-8 pb-8">
+      {/* <div className="h-80"></div> */}
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Inventory Management
-          </h1>
-          <p className="text-slate-400">Total items: {total}</p>
-        </div>
-
-        <InventoryTable
-          q={q}
-          filteredInventory={filteredInventory}
-          scanBarcodeAction={scanBarcodeAction}
-          decreaseQuantityAction={decreaseQuantityAction}
-          deleteItemAction={deleteItemAction}
-        />
-      </div>
-    </main>
+      {/* <Search /> */}
+      {/* <InventoryTable
+        q={q}
+        filteredInventory={filteredInventory}
+        scanBarcodeAction={scanBarcodeAction}
+        decreaseQuantityAction={decreaseQuantityAction}
+        deleteItemAction={deleteItemAction}
+      /> */}
+      <Listings models={models} products={products} />
+    </div>
   );
 }

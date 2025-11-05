@@ -6,7 +6,7 @@ export const shoeModels = pgTable("shoe_models", {
 });
 
 export const shoes = pgTable("shoes", {
-  id: uuid().primaryKey().defaultRandom(),
+  id: varchar().primaryKey(),
   modelId: uuid("model_id")
     .notNull()
     .references(() => shoeModels.id),
@@ -16,7 +16,7 @@ export const shoes = pgTable("shoes", {
 
 export const shoeInventory = pgTable("shoe_inventory", {
   id: uuid().primaryKey().defaultRandom(),
-  shoeId: uuid("shoe_id")
+  shoeId: varchar("shoe_id")
     .notNull()
     .references(() => shoes.id),
   size: varchar("size").notNull(),
