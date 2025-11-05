@@ -17,7 +17,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { shoeId, sizes, quantity } = await request.json();
+    const { shoeId, sizes, quantity, } = await request.json();
 
     if (!shoeId || !sizes || !quantity) {
       return Response.json(

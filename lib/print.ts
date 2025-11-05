@@ -37,35 +37,19 @@ function generateBarcodePNG(
     img.src = svgImageSrc;
   });
 }
-
-export default function PrintDemoPage({
-  items,
-}: {
-  items: Array<{ id: string; name: string }>;
-}) {
-  // Only 2 barcodes now
-
-  // 2x3 inches per PDF page = 144 x 216 points
-  // We'll put 2 barcodes, vertically stacked with their text underneath in small font
+export default function PrintPdf(items: Array<{ id: string; name: string }>) {
   const handleGenerate = async () => {
     const labelWidth = 2 * 72; // 144pt
     const labelHeight = 3 * 72; // 216pt
-
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([labelWidth, labelHeight]);
+    let page = pdfDoc.addPage([labelWidth, labelHeight]);
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
     const barcodeWidth = 120;
     const barcodeHeight = 44;
     const textFontSize = 8;
     const gapBarcodeText = 5;
-    const gap = 28; // vertical gap between barcode blocks
 
-    // Calculate total content height and vert center
-    const blockHeight = barcodeHeight + gapBarcodeText + textFontSize + 2;
-    const totalBlocksHeight =
-      items.length * blockHeight + (items.length - 1) * gap;
-    let y = (labelHeight - totalBlocksHeight) / 2;
+    let itemsPerPage = 0; // Counter for items on the current page
 
     for (const item of items) {
       // barcode image centered
@@ -76,24 +60,36 @@ export default function PrintDemoPage({
       );
       const pngImage = await pdfDoc.embedPng(barcodePngUrl);
 
+      // Check if we need to create a new page
+      if (itemsPerPage === 2) {
+        page = pdfDoc.addPage([labelWidth, labelHeight]);
+        itemsPerPage = 0; // Reset item counter
+      }
+
+      // Position: first item in top half, second item in bottom half
+      const y =
+        itemsPerPage === 0
+          ? labelHeight * 0.75 - barcodeHeight / 2 // Top half
+          : labelHeight * 0.25 - barcodeHeight / 2; // Bottom half
+
       page.drawImage(pngImage, {
         x: (labelWidth - barcodeWidth) / 2,
-        y: y + textFontSize + gapBarcodeText, // y from bottom
+        y: y,
         width: barcodeWidth,
         height: barcodeHeight,
       });
 
-      // text under barcode in small font, centered using font.widthOfTextAtSize()
-      const textWidth = font.widthOfTextAtSize(item.id, textFontSize);
-      page.drawText(item.id, {
+      // text under barcode in small font, centered
+      const textWidth = font.widthOfTextAtSize(item.name, textFontSize);
+      page.drawText(item.name, {
         x: (labelWidth - textWidth) / 2,
-        y: y,
+        y: y - gapBarcodeText - textFontSize,
         size: textFontSize,
         font: font,
         color: rgb(0, 0, 0),
       });
 
-      y += blockHeight + gap;
+      itemsPerPage++; // Increment the item counter
     }
 
     const pdfBytes = await pdfDoc.save();
@@ -112,6 +108,4 @@ export default function PrintDemoPage({
   if (typeof window !== "undefined") {
     handleGenerate();
   }
-
-  return null;
 }
