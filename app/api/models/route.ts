@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { shoeModels } from "@/lib/schema";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -25,6 +26,8 @@ export async function POST(request: Request) {
       .insert(shoeModels)
       .values({ modelName })
       .returning();
+
+    revalidatePath("/");
 
     return Response.json(inserted);
   } catch (error) {

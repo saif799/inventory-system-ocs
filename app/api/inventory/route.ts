@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { shoeInventory } from "@/lib/schema";
 import { and, eq, inArray, InferSelectModel } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -17,7 +18,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { shoeId, sizes, quantity, } = await request.json();
+    const { shoeId, sizes, quantity } = await request.json();
 
     if (!shoeId || !sizes || !quantity) {
       return Response.json(
@@ -67,6 +68,9 @@ export async function POST(request: Request) {
         .values(newsizes.map((size: string) => ({ shoeId, size, quantity })))
         .returning();
     }
+
+    revalidatePath("/");
+    revalidatePath("/add-shoes");
     return Response.json([existingInserted, newInserted]);
   } catch (error) {
     return Response.json(

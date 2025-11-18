@@ -39,19 +39,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import AddShoeForm from "./AddShoeForm";
 import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
+import SendOrderForm from "./sendShoeOrder";
 
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
-type shoesType = Array<{
+export type shoesType = {
   id: string;
   modelId: string;
   modelName: string;
   color: string;
   quantity: number;
   size: string;
-}>;
+};
 
 const sizes = [
   36, 36.5, 37, 37.5, 38, 38.5, 39, 40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45,
@@ -61,11 +61,11 @@ export default function Listings({
   products,
   models,
 }: {
-  products: shoesType;
+  products: Array<shoesType>;
   models: shoe_modelsType;
 }) {
   const searchParams = useSearchParams();
-  const [listings, setListings] = useState<shoesType>(products);
+  const [listings, setListings] = useState<Array<shoesType>>(products);
   const [selectedShoes, setSelectedShoes] =
     useState<Array<{ id: string; name: string }>>();
   const [selectIsOn, setSelectIsOn] = useState<boolean>(false);
@@ -159,17 +159,22 @@ export default function Listings({
         <Dialog>
           <DialogTrigger className="rounded-md bg-purple-500 p-2 text-primary-foreground hover:bg-purple-600 flex items-center gap-2">
             {" "}
-            Add a shoe
+            Add an Order
           </DialogTrigger>
-          <DialogContent className=" max-w-xl w-full transition-all duration-300">
+          <DialogContent
+            className="w-full transition-all duration-300 max-h-4/5  sm:max-w-8 max-w-12 overflow-auto"
+            style={{
+              maxWidth: "32rem", // ~max-w-xl
+              maxHeight: "80vh",
+              overflowY: "auto",
+            }}
+          >
             <DialogHeader>
-              <DialogTitle>add shoe</DialogTitle>
-              <DialogDescription>
-                here u can add new shoe to inventory
-              </DialogDescription>
+              <DialogTitle>add an Order</DialogTitle>
+              <DialogDescription>enter the client info</DialogDescription>
             </DialogHeader>
             <div className="w-full p-6">
-              <AddShoeForm />
+              <SendOrderForm shoe={listings[0]} />
             </div>
           </DialogContent>
         </Dialog>
@@ -199,29 +204,56 @@ export default function Listings({
                 </span>
               )}
 
-              {selectIsOn && selectedShoes && selectedShoes.length > 0 && (
-                <Button
-                  variant="outline"
-                  className="ml-2 bg-purple-100 text-purple-800 hover:bg-purple-200"
-                  onClick={() => {
-                    const shoesToPrint = listings
-                      .filter((shoe) =>
-                        selectedShoes.some(
-                          (selected) => selected.id === shoe.id
-                        )
-                      )
-                      .map((shoe) => ({
-                        id: shoe.id,
-                        name: shoe.modelName + shoe.color + shoe.size,
-                      }));
+              {selectIsOn && (
+                <>
+                  <Button
+                    variant="outline"
+                    className="ml-2 bg-purple-100 text-purple-800 hover:bg-purple-200"
+                    onClick={() => {
+                      const allSelected =
+                        (selectedShoes?.length ?? 0) === listings.length;
+                      if (allSelected) {
+                        setSelectedShoes([]);
+                      } else {
+                        setSelectedShoes(
+                          listings.map((shoe) => ({
+                            id: shoe.id,
+                            name: shoe.modelName + shoe.color + shoe.size,
+                          }))
+                        );
+                      }
+                    }}
+                  >
+                    {(selectedShoes?.length ?? 0) === listings.length
+                      ? "Deselect All"
+                      : "Select All"}
+                  </Button>
 
-                    console.log(shoesToPrint);
+                  {selectedShoes && selectedShoes.length > 0 && (
+                    <Button
+                      variant="outline"
+                      className="ml-2 bg-purple-100 text-purple-800 hover:bg-purple-200"
+                      onClick={() => {
+                        const shoesToPrint = listings
+                          .filter((shoe) =>
+                            selectedShoes.some(
+                              (selected) => selected.id === shoe.id
+                            )
+                          )
+                          .map((shoe) => ({
+                            id: shoe.id,
+                            name: shoe.modelName + shoe.color + shoe.size,
+                          }));
 
-                    PrintPdf(shoesToPrint);
-                  }}
-                >
-                  Print Selected
-                </Button>
+                        console.log(shoesToPrint);
+
+                        PrintPdf(shoesToPrint);
+                      }}
+                    >
+                      Print Selected
+                    </Button>
+                  )}
+                </>
               )}
             </label>
             <h3 className="text-left text-xl font-medium">
@@ -331,7 +363,7 @@ export default function Listings({
             </Drawer>
           </div>
           <div className="grid w-full grid-cols-2 gap-3 py-2 px-3 pb-10 md:grid-cols-3 md:gap-4 lg:gap-4 lg:pr-8">
-            {[...listings]
+            {listings
               .sort((pa, pb) => {
                 if (sortOption === "asc") {
                   return pa.quantity - pb.quantity;

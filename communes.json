@@ -1,0 +1,6286 @@
+{
+  "1": [
+    {
+      "nom": "Adrar",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Akabli",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aoulef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fenoughil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "In Zghmir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Ahmed Timmi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Reggane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamantit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamest",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timekten",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tsabit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zaouiet Kounta",
+      "has_stop_desk": 0
+    }
+  ],
+  "2": [
+    {
+      "nom": "Abou El Hassan",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Merane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benairia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Bouattab",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Haoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Rached",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boukadir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouzeghaia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Breira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chettia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chlef",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Dahra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hadjadj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Karimia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Marsa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Harchoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Herenfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Labiod Medjadja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Moussadek",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Fodda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Goussine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Sly",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Abbes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Ben Abdelkader",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Fares",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum Drou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sendjas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Abderrahmane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Akkacha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sobha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tadjena",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Talassa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taougrite",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tenes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zeboudja",
+      "has_stop_desk": 0
+    }
+  ],
+  "3": [
+    {
+      "nom": "Aflou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Madhi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Sidi Ali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beidha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benacer Benchohra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Brida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Assafia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ghicha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Haouaita",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Gueltat Sidi Saad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hadj Mechri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Delaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi R'mel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kheneg",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar El Hirane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Laghouat",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Oued M'zi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Morra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebgag",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Bouzid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Makhlouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tadjemout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tadjrouna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taouiala",
+      "has_stop_desk": 0
+    }
+  ],
+  "4": [
+    {
+      "nom": "Ain Babouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Beida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Diss",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Fekroune",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Ain Kercha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain M'lila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Zitoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Behir Chergui",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Berriche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Chouhada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dhala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Amiria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Belala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Djazia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Fedjoudj Boughrara Sa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Harmilia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fkirina",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hanchir Toumghani",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar Sbahi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Meskiana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Nini",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Gacem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Hamla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Zouai",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum El Bouaghi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rahia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sigus",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk Naamane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zorg",
+      "has_stop_desk": 0
+    }
+  ],
+  "5": [
+    {
+      "nom": "Ain Djasser",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Touta",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Yagout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Arris",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Azil Abedelkader",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Barika",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Batna",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Beni Foudhala El Hakania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bitam",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boulhilat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boumagueur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boumia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouzina",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chemora",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djerma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djezzar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hassi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Madher",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fesdis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Foum Toub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghassira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Gosbat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guigba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hidoussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ichmoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Inoughissen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kimmel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar Bellezma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Larbaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lazrou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lemsane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M Doukal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maafa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Menaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Merouana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "N Gaous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Chaaba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Ma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Taga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Ammar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Aouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Fadel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Sellem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Si Slimane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouyoun El Assafir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rahbat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ras El Aioun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sefiane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Seggana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Seriana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "T Kout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Talkhamt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taxlent",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tazoult",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Teniet El Abed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tighanimine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tigharghar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tilatou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timgad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zanet El Beida",
+      "has_stop_desk": 0
+    }
+  ],
+  "6": [
+    {
+      "nom": "Adekar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait R'zine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Smail",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Akbou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Akfadou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Amalou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Amizour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aokas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Barbacha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bejaia",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Beni Dejllil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni K'sila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Mallikeche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benimaouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boudjellil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhamza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boukhelifa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chellata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chemini",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Darghina",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dra El Caid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kseur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fenaia Il Maten",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Feraoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ighil Ali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ighram",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kendira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kherrata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Leflaye",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'cisna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Melbou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Ghir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouzellaguene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Seddouk",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Aich",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ayad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Smaoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk El Tenine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk Oufella",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tala Hamza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamokra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamridjet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taourit Ighil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taskriout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tazmalt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tibane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tichy",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tifra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timezrit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tinebdar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tizi N'berber",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Toudja",
+      "has_stop_desk": 0
+    }
+  ],
+  "7": [
+    {
+      "nom": "Ain Naga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Zaatout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Biskra",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Bordj Ben Azzouz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouchagroun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Branis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chetma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djemorah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Feidh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ghrous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hadjab",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Haouch",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kantara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Outaya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Foughala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khenguet Sidi Nadji",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lichana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lioua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'chouneche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'lili",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mekhadma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Meziraa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oumache",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ourlal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Okba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tolga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zeribet El Oued",
+      "has_stop_desk": 0
+    }
+  ],
+  "8": [
+    {
+      "nom": "Abadla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bechar",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Beni Ounif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boukais",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Erg Ferradj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kenadsa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lahmar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mechraa H.boumediene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Meridja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mogheul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taghit",
+      "has_stop_desk": 0
+    }
+  ],
+  "9": [
+    {
+      "nom": "Ain Romana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Mered",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Beni Tamou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benkhelil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Blida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouarfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boufarik",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Bougara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouinan",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chebli",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chiffa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chrea",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djebabra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Affroun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guerrouaou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam Melouane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Larbaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Meftah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mouzaia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Djer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Alleug",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Slama",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Yaich",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Souhane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souma",
+      "has_stop_desk": 0
+    }
+  ],
+  "10": [
+    {
+      "nom": "Aghbalou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ahl El Ksar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Bessem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Hadjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Laloui",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Turk",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Laaziz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aomar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bechloul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Ghbalou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Okhriss",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouderbala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouira",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Boukram",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chorfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dechmia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dirah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djebahia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Adjiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Asnam",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hachimia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hakimia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Khabouzia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mokrani",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guerrouma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hadjera Zerga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Haizer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hanif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kadiria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lakhdaria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M Chedallah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mamora",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mezdour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Berdi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Rached",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Raouraoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ridane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Saharidj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk El Khemis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sour El Ghozlane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taghzout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taguedite",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taourirt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Z'barbar",
+      "has_stop_desk": 0
+    }
+  ],
+  "11": [
+    {
+      "nom": "Abalessa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Amguel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Idles",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamanrasset",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tazrouk",
+      "has_stop_desk": 0
+    }
+  ],
+  "12": [
+    {
+      "nom": "Ain Zerga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bedjene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bekkaria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Dheheb",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir El Ater",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Mokkadem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boukhadra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boulhaf Dyr",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cheria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Aouinet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Houidjbet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kouif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Malabiod",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Meridj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mezeraa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ogla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ogla El Malha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ferkane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guorriguer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammamet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Morssot",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Negrine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouenza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum Ali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Saf Saf El Ouesra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Stah Guentis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tebessa",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Telidjen",
+      "has_stop_desk": 0
+    }
+  ],
+  "13": [
+    {
+      "nom": "Ain Fettah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Fezza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Ghoraba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kebira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Nehala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tallout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Youcef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Amieur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Azails",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bab El Assa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Bahdel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Boussaid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Khaled",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Mester",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Ouarsous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Smiel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Snous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bensekrane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhlou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouihi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chetouane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dar Yaghmouracene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djebala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Aricha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Fehoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Gor",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fellaoucene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghazaouet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam Boughrara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hennaya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Honaine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maghnia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mansourah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Marsa Ben M'hidi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Msirda Fouaga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nedroma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Chouly",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Mimoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Riyah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Remchi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sabra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebbaa Chioukh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebdou",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Sidi Abdelli",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Djilali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Medjahed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souahlia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souani",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk Tleta",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Terny Beni Hediel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tianet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tlemcen",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Zenata",
+      "has_stop_desk": 0
+    }
+  ],
+  "14": [
+    {
+      "nom": "Ain Bouchekif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Deheb",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Hadid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kermes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Zarit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bougara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chehaima",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dahmouni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djebilet Rosfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djillali Ben Amar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Faidja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Frenda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guertoufa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamadia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar Chellala",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Madna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mahdia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mechraa Safa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medrissa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medroussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Meghila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mellakou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nadorah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Naima",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Lilli",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rahouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rechaiga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebaine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Serghine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Si Abdelghani",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Abderrahmane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ali Mellal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Bakhti",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Hosni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sougueur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tagdemt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Takhemaret",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tiaret",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tidda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tousnina",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zmalet El Emir Abdelkade",
+      "has_stop_desk": 0
+    }
+  ],
+  "15": [
+    {
+      "nom": "Abi Youcef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aghribs",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Agouni Gueghrane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Hammam",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Zaouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Aggouacha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Bouaddou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Boumehdi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Chafaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Khellili",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Mahmoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Oumalou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Toudert",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Yahia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Yahia Moussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Akbil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Akerrou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Assi Youcef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Azazga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Azeffoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Aissi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Douala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Yenni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Zikki",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Zmenzer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boghni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boudjima",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bounouh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouzeguene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djebel Aissa Mimoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Draa Ben Khedda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Draa El Mizan",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Freha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Frikat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Iboudrarene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Idjeur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Iferhounene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ifigha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Iflissen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Illilten",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Illoula Oumalou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Imsouhal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Irdjen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Larba Nath Irathen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Larbaa Nath Irathen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'kira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maatkas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Makouda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mechtras",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mekla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mizrana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouacif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouadhias",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouaguenoune",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Naamane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souamaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk El Thenine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tadmait",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tigzirt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timizart",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tirmitine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tizi Ghenif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tizi N'tleta",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tizi Ouzou",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tizi Rached",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Yakourene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Yatafene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zekri",
+      "has_stop_desk": 0
+    }
+  ],
+  "16": [
+    {
+      "nom": "Ain Benian",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Taya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Alger Centre",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bab El Oued",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Bab Ezzouar",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Baba Hesen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bachedjerah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bains Romains",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Baraki",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Aknoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Messous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Mourad Rais",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Touta",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Birkhadem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bologhine Ibnou Ziri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj El Bahri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj El Kiffan",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bourouba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouzareah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Casbah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cheraga",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Dar El Beida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dely Ibrahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djasr Kasentina",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Douira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Draria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Achour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Biar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Harrach",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Madania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Magharia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Merssa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mouradia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Herraoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hussein Dey",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hydra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kheraisia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kouba",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Les Eucalyptus",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maalma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mohamed Belouzdad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mohammadia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Koriche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Smar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Chebel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Fayet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rahmania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rais Hamidou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Reghaia",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Rouiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sehaoula",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Setaouali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi M'hamed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Moussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souidania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tessala El Merdja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zeralda",
+      "has_stop_desk": 0
+    }
+  ],
+  "17": [
+    {
+      "nom": "Ain Chouhada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Ibel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Fekka",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Maabed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Oussera",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Amourah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benhar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benyagoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Birine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouira Lahdab",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Charef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dar Chioukh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Deldoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djelfa",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Douis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Guedid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Idrissia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Khemis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Faidh El Botma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guernini",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guettara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Had Sahary",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Bahbah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi El Euch",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Fedoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M Liliha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Messaad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Moudjebara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum Laadham",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sed Rahal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Selmana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Baizid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ladjel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tadmit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zaafrane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zaccar",
+      "has_stop_desk": 0
+    }
+  ],
+  "18": [
+    {
+      "nom": "Bordj Tahar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boudria Beniyadjis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouraoui Belhadef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boussif Ouled Askeur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chahna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chekfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djemaa Beni Habibi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djimla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ancer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Aouana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kennar Nouchfi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Milia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Emir Abdelkader",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Erraguene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghebala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Jijel",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Khiri Oued Adjoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kouas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oudjana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Rabah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Yahia Khadrouch",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Selma Benziada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Settara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Abdelaziz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Marouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taher",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Texena",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ziama Mansouria",
+      "has_stop_desk": 0
+    }
+  ],
+  "19": [
+    {
+      "nom": "Ain Abessa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Arnat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Azel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Kebira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Lahdjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Legradj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Oulmane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Roua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Sebt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Naoual Mezada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ait Tizi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Amoucha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Babor",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bazer Sakra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beidha Bordj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bellaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Aziz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Chebana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Fouda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Mouhli",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Ouartilane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Oussine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir El Arch",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Haddada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouandas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bougaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bousselam",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boutaleb",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dehamcha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djemila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Draa Kebila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Eulma",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "El Ouldja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ouricia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guellal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guelta Zerka",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guenzet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guidjel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamam Soukhna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam Guergour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Harbil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar El Abtal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maaouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maouaklane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mezloug",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Barad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Addouane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Sabor",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Si Ahmed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Tebben",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rosfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Salah Bey",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Serdj El Ghoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Setif",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tachouda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tala Ifacene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tella",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tizi N'bechar",
+      "has_stop_desk": 0
+    }
+  ],
+  "20": [
+    {
+      "nom": "Ain El Hadjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Sekhouna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Soltane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Doui Thabet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hassasna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hounet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maamora",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Moulay Larbi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Brahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Khaled",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Saida",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Sidi Ahmed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Amar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Boubekeur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tircine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Youb",
+      "has_stop_desk": 0
+    }
+  ],
+  "21": [
+    {
+      "nom": "Ain Bouziane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Charchar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kechera",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Zouit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Azzaba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bekkouche Lakhdar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Azzouz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Bechir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Oulbane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Zid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bin El Ouiden",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouchetata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cheraia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Collo",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djendel Saadi Mohamed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Arrouch",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "El Ghedir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hadaiek",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Marsa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Emjez Edchich",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Es Sebt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Filfila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamadi Krouma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kanoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kerkera",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khenag Mayoum",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Zhour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouldja Boulbalout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Attia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Habbeba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum Toub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ramdane Djamel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Salah Bouchaour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Mezghiche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Skikda",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tamalous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zerdezas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zitouna",
+      "has_stop_desk": 0
+    }
+  ],
+  "22": [
+    {
+      "nom": "Ain Adden",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Berd",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Thrid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tindamine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Amarnas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Badredine El Mokrani",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Belarbi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Badis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benachiba Chelia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir El Hammam",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boudjebaa El Bordj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boukhanafis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chetouane Belaila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dhaya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hacaiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Dahou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Zahana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lamtar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'cid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Makedra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Marhoum",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Merine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mezaourou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mostefa Ben Brahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Moulay Slissen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Sebaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Sefioun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Taourira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ras El Ma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Redjem Demouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sehala Thaoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sfissef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ali Benyoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ali Boussidi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Bel Abbes",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Sidi Brahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Chaib",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Dahou Zairs",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Hamadouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Khaled",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Lahcene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Yacoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tabia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tafissour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taoudmout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Teghalimet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Telagh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tenira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tessala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tilmouni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zerouala",
+      "has_stop_desk": 0
+    }
+  ],
+  "23": [
+    {
+      "nom": "Ain Berda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Annaba",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Berrahel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chetaibi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cheurfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Bouni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hadjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Eulma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Aneb",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Seraidi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Amar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Treat",
+      "has_stop_desk": 0
+    }
+  ],
+  "24": [
+    {
+      "nom": "Ain Ben Beida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Hessania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Larbi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Makhlouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Reggada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Belkheir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Djarah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Mezline",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Sabat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Hachana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Hamdane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouati Mahmoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouchegouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhamra Ahmed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dahouara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djeballah Khemissi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Fedjoudj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guelaat Bou Sbaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guelma",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Hamam Debagh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam N'bail",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Heliopolis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khezara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medjez Amar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medjez Sfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nechmaya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Cheham",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Fragha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Zenati",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ras El Agba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Roknia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sellaoua Announa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Sandel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamlouka",
+      "has_stop_desk": 0
+    }
+  ],
+  "25": [
+    {
+      "nom": "Ain Abid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Smara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Badis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Hamidene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Constantine",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Didouche Mourad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Khroub",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Hamma Bouziane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ibn Ziad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Messaoud Boujeriou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Rahmouni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zighoud Youcef",
+      "has_stop_desk": 0
+    }
+  ],
+  "26": [
+    {
+      "nom": "Ain Boucif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Ouksir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aissaouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aziz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Baata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Chicao",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Slimane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Berrouaghia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Ben Laabed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boghar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouaiche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouaichoune",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouchrahil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boughzoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouskene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chabounia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chelalet El Adhaoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cheniguel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Damiat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Derrag",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Deux Bassins",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djouab",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Draa Essamar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Azizia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Guelbelkebir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hamdania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Omaria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ouinet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hannacha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kef Lakhdar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khams Djouamaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar El Boukhari",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maghraoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medea",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Medjebar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Meftaha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mezerana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mihoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouamri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Harbil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Antar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Bouachra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Brahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Deid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Hellal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Maaref",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum El Djellil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouzera",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rebaia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Saneg",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sedraya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Seghouane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Si Mahdjoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Demed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Naamane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Rabie",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Zahar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ziane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souagui",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tablat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tafraout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamesguida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tletat Ed Douair",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zoubiria",
+      "has_stop_desk": 0
+    }
+  ],
+  "27": [
+    {
+      "nom": "Achaacha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Boudinar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Nouissy",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Sidi Cherif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tedles",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benabdelmalek Ramdane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouguirat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fornaka",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hadjadj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Mameche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassiane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khadra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kheir Eddine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mansourah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mazagran",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mesra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mostaganem",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Nekmaria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Kheir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Boughalem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Maalah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Safsaf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sayada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Belaattar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Lakhdar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sirat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souaflia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Stidia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tazgait",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Touahria",
+      "has_stop_desk": 0
+    }
+  ],
+  "28": [
+    {
+      "nom": "Ain El Hadjel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Melh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Fares",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Khadra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Rich",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Belaiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Srour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Ilmane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benzouh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Berhoum",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Foda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Saada",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Bouti Sayeh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chellal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dehahna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djebel Messaad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hamel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Houamed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam Dalaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khettouti Sed El Jir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khoubana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'cif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'sila",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "M'tarfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maadid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maarif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Magra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medjedel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Menaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mohamed Boudiaf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouanougha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Addi Guebala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Derradj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Madhi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Mansour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Sidi Brahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Slimane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oulteme",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Aissa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ameur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Hadjeres",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi M'hamed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Slim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souamaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamsa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tarmount",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zarzour",
+      "has_stop_desk": 1
+    }
+  ],
+  "29": [
+    {
+      "nom": "Ain Fares",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Fekan",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Ferah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Frass",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Alaimia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benian",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Henni",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhanifia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chorfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Bordj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Gaada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ghomri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Gueitena",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hachem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Keurt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mamounia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Menaouer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ferraguig",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Froha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Gharrous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghriss",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Guerdjoum",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hacine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khalouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Makhda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maoussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mascara",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Matemore",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mocta Douz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mohammadia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nesmot",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oggaz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Abtal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Taria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ras El Ain Amirouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sedjerara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sehailia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Abdeldjebar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Abdelmoumene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Boussaid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Kada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sig",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tighennif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tizi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zahana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zelamta",
+      "has_stop_desk": 0
+    }
+  ],
+  "30": [
+    {
+      "nom": "Ain Beida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Borma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Ben Abdellah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Messaoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "N'goussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouargla",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Rouissat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Khouiled",
+      "has_stop_desk": 0
+    }
+  ],
+  "31": [
+    {
+      "nom": "Ain Biya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kerma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Turk",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Arzew",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Freha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bethioua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir El Djir",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Boufatis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bousfer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boutlelis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ancar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Braya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kerma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Es Senia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Gdyel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Ben Okba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Bounif",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Mefsoukh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Marsat El Hadjadj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mers El Kebir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Messerghin",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oran",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Oued Tlelat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ben Yebka",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Chami",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tafraoui",
+      "has_stop_desk": 0
+    }
+  ],
+  "32": [
+    {
+      "nom": "Ain El Orak",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Arbaouat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boualem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bougtoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boussemghoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Brezina",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cheguig",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chellala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Bayadh",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "El Biodh Sidi Cheikh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Bnoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kheither",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mehara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghassoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kef El Ahmar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Krakda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rogassa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ameur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Slimane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Tifour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Stitten",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tousmouline",
+      "has_stop_desk": 0
+    }
+  ],
+  "33": [
+    {
+      "nom": "Bordj Omar Driss",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Debdeb",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Illizi",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "In Amenas",
+      "has_stop_desk": 0
+    }
+  ],
+  "34": [
+    {
+      "nom": "Ain Taghrout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tesra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Belimour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Daoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Kasdali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Bou Arreridj",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Bordj Ghdir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Zemora",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Colla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djaafra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ach",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Achir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Anseur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hamadia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El M'hir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Main",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghilassa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Haraza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hasnaoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khelil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mansoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Medjana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Brahem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Dahmane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Sidi Brahim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rabta",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ras El Oued",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Embarek",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tafreg",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taglait",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Teniet En Nasr",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tesmart",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tixter",
+      "has_stop_desk": 0
+    }
+  ],
+  "35": [
+    {
+      "nom": "Afir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ammal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Baghlia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Choud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Amrane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Menaiel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boudouaou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boudouaou El Bahri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boumerdes",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Bouzegza Keddara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chabet El Ameur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Corso",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dellys",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djinet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kharrouba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammedi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Isser",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khemis El Khechna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Larbatache",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Leghata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Naciria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Aissa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Hedadj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Moussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Si Mustapha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Daoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk El Haad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taourga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Thenia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tidjelabine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timezrit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zemmouri",
+      "has_stop_desk": 0
+    }
+  ],
+  "36": [
+    {
+      "nom": "Ain El Assel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kerma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Asfour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben M Hidi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Berrihane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Besbes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bougous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhadjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouteldja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chebaita Mokhtar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chefia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chihani",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Drean",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Echatt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Aioun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Kala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Tarf",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Hammam Beni Salah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lac Des Oiseaux",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Zitoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Raml Souk",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souarekh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zerizer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zitouna",
+      "has_stop_desk": 0
+    }
+  ],
+  "37": [
+    {
+      "nom": "Oum El Assel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tindouf",
+      "has_stop_desk": 1
+    }
+  ],
+  "38": [
+    {
+      "nom": "Ammari",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Chaib",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Lahcene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Bounaama",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj El Emir Abdelkader",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Caid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khemisti",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Larbaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lardjem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Layoune",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lazharia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Maacem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Melaab",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Bessem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Abed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Boutouchent",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Lantri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Slimane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamellalet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Theniet El Had",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tissemsilt",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Youssoufia",
+      "has_stop_desk": 0
+    }
+  ],
+  "39": [
+    {
+      "nom": "Bayadha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Guecha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Debila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Douar El Maa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ogla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Oued",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Guemar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamraia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassani Abdelkrim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Khalifa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kouinine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Magrane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mih Ouansa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nakhla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Alenda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ourmes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Reguiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Robbah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Aoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taghzout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taleb Larbi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Trifaoui",
+      "has_stop_desk": 0
+    }
+  ],
+  "40": [
+    {
+      "nom": "Ain Touila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Babar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Baghai",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhmama",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chelia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cherchar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djellal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hamma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mahmal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Oueldja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ensigha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kais",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khenchela",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Khirane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'sara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'toussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Rechache",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Remila",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taouzianat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Yabous",
+      "has_stop_desk": 0
+    }
+  ],
+  "41": [
+    {
+      "nom": "Ain Soltane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Zana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Bouhouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Drea",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Haddada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hanencha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khedara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khemissa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "M'daourouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Machroha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Merahna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Kebrit",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Driss",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Moumen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum El Adhaim",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Quillen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ragouba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Safel El Ouiden",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sedrata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Fredj",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk Ahras",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Taoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Terraguelt",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tiffech",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zaarouria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zouabi",
+      "has_stop_desk": 0
+    }
+  ],
+  "42": [
+    {
+      "nom": "Aghbal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ahmer El Ain",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tagourait",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Attatba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Mileuk",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Haroun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bou Ismail",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bourkika",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chaiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Cherchell",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Damous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Douaouda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Fouka",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Gouraya",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hadjout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hadjret Ennous",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khemisti",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kolea",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Larhat",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Menaceur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Merad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Messelmoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nador",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Amar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ghiles",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Rached",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Semiane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tipaza",
+      "has_stop_desk": 1
+    }
+  ],
+  "43": [
+    {
+      "nom": "Ahmed Rachedi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Beida Harriche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Mellouk",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Amira Arres",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Benyahia Abderrahmane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouhatem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chelghoum Laid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chigara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Derrahi Bousselah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Mechira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Elayadi Barbes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ferdjioua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Grarem Gouga",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mila",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Minar Zarza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Athmenia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Endja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Seguen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Khalouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rouached",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Khelifa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Merouane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tadjenanet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tassadane Haddada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Teleghma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Terrai Bainem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tessala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tiberguent",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Yahia Beniguecha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zeghaia",
+      "has_stop_desk": 0
+    }
+  ],
+  "44": [
+    {
+      "nom": "Ain Benian",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Bouyahia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Defla",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Ain Lechiakh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Soltane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tork",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Arib",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Barbouche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bathia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Belaas",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ben Allal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bir Ould Khelifa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bordj Emir Khaled",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Boumedfaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bourached",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djelida",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djemaa Ouled Cheikh",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djendel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Abadia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Amra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Attaf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Maine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam Righa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassania",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hoceinia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Khemis Miliana",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Mekhatria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Miliana",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Chorfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Djemaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Rouina",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Lakhdar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tacheta Zegagha",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tarik Ibn Ziad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tiberkanine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zeddine",
+      "has_stop_desk": 0
+    }
+  ],
+  "45": [
+    {
+      "nom": "Ain Ben Khelil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Safra",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Assela",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djeniane Bourzeg",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Biod",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kasdir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Makman Ben Amer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mecheria",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Moghrar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Naama",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sfissifa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tiout",
+      "has_stop_desk": 0
+    }
+  ],
+  "46": [
+    {
+      "nom": "Aghlal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain El Arbaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Kihal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Temouchent",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Ain Tolba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Aoubellil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Saf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bouzedjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chaabat El Ham",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chentouf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Amria",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Malah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Messaid",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Emir Abdelkader",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hammam Bouhadjar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassasna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi El Ghella",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Berkeche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Sebbah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Boudjemaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Kihal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oulhaca El Gheraba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ben Adda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Boumediene",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Ouriache",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Safi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamzoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Terga",
+      "has_stop_desk": 0
+    }
+  ],
+  "47": [
+    {
+      "nom": "Berriane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bounoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dhayet Bendhahoua",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Atteuf",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Guerrara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ghardaia",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Mansoura",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Metlili",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sebseb",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zelfana",
+      "has_stop_desk": 0
+    }
+  ],
+  "48": [
+    {
+      "nom": "Ain Rahma",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ain Tarek",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ammi Moussa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Belaassel Bouzagza",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Bendaoud",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Dergoun",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Zentis",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Dar Ben Abdelah",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djidiouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Guettar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El H'madna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hassi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Matmar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ouldja",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Had Echkalla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hamri",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kalaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Lahlef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mazouna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mediouna",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mendes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Merdja Sidi Abed",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouarizane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued El Djemaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Essalem",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oued Rhiou",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Aiche",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Sidi Mihoub",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ramka",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Relizane",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Sidi Khettab",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Lazreg",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi M'hamed Benali",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi M'hamed Benaouda",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Saada",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Souk El Had",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Yellel",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Zemmoura",
+      "has_stop_desk": 0
+    }
+  ],
+  "49": [
+    {
+      "nom": "Aougrout",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Charouine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Deldoul",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksar Kaddour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Metarfa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Aissa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Said",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Talmine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timimoun",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Tinerkouk",
+      "has_stop_desk": 0
+    }
+  ],
+  "50": [
+    {
+      "nom": "Bordj Badji Mokhtar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timiaouine",
+      "has_stop_desk": 0
+    }
+  ],
+  "51": [
+    {
+      "nom": "Besbes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Chaiba",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Doucen",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Djellal",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Ras El Miad",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Khaled",
+      "has_stop_desk": 0
+    }
+  ],
+  "52": [
+    {
+      "nom": "Beni Abbes",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Beni Ikhlef",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Ouata",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Igli",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Kerzaz",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ksabi",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Ouled Khoudir",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tabelbala",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tamtert",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Timoudi",
+      "has_stop_desk": 0
+    }
+  ],
+  "53": [
+    {
+      "nom": "Foggaret Azzaouia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "In Ghar",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "In Salah",
+      "has_stop_desk": 1
+    }
+  ],
+  "54": [
+    {
+      "nom": "In Guezzam",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tin Zouatine",
+      "has_stop_desk": 0
+    }
+  ],
+  "55": [
+    {
+      "nom": "Benaceur",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Blidet Amor",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Alia",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El Hadjira",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Megarine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mnaguer",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Nezla",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Slimane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Taibet",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tebesbest",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Temacine",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Touggourt",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Zaouia El Abidia",
+      "has_stop_desk": 0
+    }
+  ],
+  "56": [
+    {
+      "nom": "Bordj El Haouasse",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Djanet",
+      "has_stop_desk": 0
+    }
+  ],
+  "57": [
+    {
+      "nom": "Djamaa",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "El M'ghair",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Mrara",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Oum Touyour",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Amrane",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Sidi Khelil",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Still",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Tenedla",
+      "has_stop_desk": 0
+    }
+  ],
+  "58": [
+    {
+      "nom": "El Meniaa",
+      "has_stop_desk": 1
+    },
+    {
+      "nom": "Hassi Fehal",
+      "has_stop_desk": 0
+    },
+    {
+      "nom": "Hassi Gara",
+      "has_stop_desk": 0
+    }
+  ]
+}
