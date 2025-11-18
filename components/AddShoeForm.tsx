@@ -150,19 +150,19 @@ export default function AddShoeForm({
         });
         if (res.ok) {
           setSuccess("Size added successfully!");
-          setFormData({ modelId: "", color: "", size: "", quantity: "" });
-          console.log("this is the value selected ", valueSelected);
-
           setAddedShoes([
             ...(addedShoes || []),
             {
-              color: valueSelected?.color || "",
+              color: formData.color,
               modelName: valueSelected?.modelName || "",
               quantity: Number.parseInt(formData.quantity),
-              id: shoeId,
-              sizes: sizes,
+              id: formData.modelId,
+              sizes: formData.size.split(",").map((size) => size.trim()),
             },
           ]);
+          setFormData({ modelId: "", color: "", size: "", quantity: "" });
+          console.log("this is the value selected ", valueSelected);
+
           await fetchShoes();
           onSuccess?.();
         } else {
@@ -184,17 +184,18 @@ export default function AddShoeForm({
         });
         if (res.ok) {
           setSuccess("Shoe added successfully!");
-          setFormData({ modelId: "", color: "", size: "", quantity: "" });
           setAddedShoes([
             ...(addedShoes || []),
             {
-              color: valueSelected?.color || "",
+              color: formData.color,
               modelName: valueSelected?.modelName || "",
               quantity: Number.parseInt(formData.quantity),
-              id: id,
-              sizes: sizes,
+              id: formData.modelId,
+              sizes: formData.size.split(",").map((size) => size.trim()),
             },
           ]);
+          setFormData({ modelId: "", color: "", size: "", quantity: "" });
+
           await fetchShoes();
           onSuccess?.();
         } else {

@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { shoes, shoeInventory, shoeModels } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -43,6 +44,8 @@ export async function POST(request: Request) {
       }))
     );
 
+    revalidatePath("/");
+    revalidatePath("/add-shoes");
     return Response.json(insertedShoe);
   } catch (error) {
     console.error("Error:", error);
