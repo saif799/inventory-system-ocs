@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,6 @@ import { SelectGroup } from "./ui/customSelect";
 
 // Types for the new order API
 type OrderFormData = {
-  reference: string | null;
   nom_client: string;
   telephone: string;
   telephone_2: string | null;
@@ -36,6 +35,7 @@ type OrderFormData = {
   produit: string | null;
   type: number;
   stop_desk: number;
+  modelId: string;
 };
 
 export default function SendOrderForm({
@@ -63,7 +63,7 @@ export default function SendOrderForm({
 
   // New order form data state with all required fields for the API
   const [formData, setFormData] = useState<OrderFormData>({
-    reference: `${shoe.modelName} ${shoe.color} ${shoe.size}`,
+    modelId: shoe.id,
     nom_client: "",
     telephone: "",
     telephone_2: null,
@@ -72,72 +72,25 @@ export default function SendOrderForm({
     code_wilaya: "",
     montant: "",
     remarque: null,
-    produit: `${shoe.modelName} ${shoe.color} ${shoe.size}`,
+    produit: `${shoe.modelName} ${shoe.color} ${shoe.size} ${source}`,
     type: 1,
     stop_desk: 1,
   });
 
-  console.log(
-    " thos hsould be logged every time fuck this shit ",
-    formData.code_wilaya
-  );
-
-  // New submit handler for the order API
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmitToApi = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
-    // Validate required fields
-    const requiredFields = [
-      "nom_client",
-      "telephone",
-      "adresse",
-      "commune",
-      "code_wilaya",
-      "montant",
-      "type",
-    ];
-    const missingFields = requiredFields.filter(
-      (field) => !formData[field as keyof OrderFormData]
-    );
-
-    if (missingFields.length > 0) {
-      setError(
-        `Please fill in all required fields: ${missingFields.join(", ")}`
-      );
-      return;
-    }
-
     setLoading(true);
-
     try {
-      // Construct URL with query parameters
-      const baseUrl = "https://platform.dhd-dz.com/api/v1/create/order";
-      const queryParams = new URLSearchParams();
-
-      // Add all form data as query parameters
-
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null) {
-          queryParams.append(key, value.toString());
-        }
-      });
-
-      //todo start wrting the logic in here make sure to handle removing stuff that is sold from the db
-      const res = await fetch(`${baseUrl}?${queryParams.toString()}`, {
+      const res = await fetch("/api/order", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${process.env.NEXT_PUBLIC_DHD_API_KEY}`,
-        },
+        body: JSON.stringify(formData),
       });
-
       if (res.ok) {
         setSuccess("Order created successfully!");
-        // Reset form to initial state
         setFormData({
-          reference: null,
+          modelId: shoe.id,
           nom_client: "",
           telephone: "",
           telephone_2: null,
@@ -153,41 +106,23 @@ export default function SendOrderForm({
         onSuccess?.();
       } else {
         const errorData = await res.json();
-        setError(errorData || "Failed to create order");
-        let errorText = `Failed to create order (HTTP ${res.status})`;
-
-        const contentType = res.headers.get("content-type") || "";
-        if (contentType.includes("application/json")) {
-          const errorData = await res.json();
-          // Prefer a 'message' field if present, otherwise stringify the body
-          errorText = errorData?.message || JSON.stringify(errorData);
-        } else {
-          // Fallback to raw text for plain responses or HTML
-          const text = await res.text();
-          errorText = text || errorText;
-        }
-
-        // If parsing fails, keep a useful fallback message and log the parse error
-
-        setError(errorText);
-        console.error("Order creation failed:", res.status, res.statusText);
+        setError("Failed to create order");
       }
-    } catch (err) {
-      setError(`An error occurred while creating the order ${err}`);
-      console.error("Order creation error:", err);
+    } catch (error) {
+      console.error("Error submitting order to API:", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full ">
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full">
+      <form onSubmit={handleSubmitToApi} className="space-y-6">
         {error && (
           <Alert className="bg-red-900/20 border-red-700">
             <AlertCircle className="h-4 w-4 text-red-500" />
             <AlertDescription className="text-red-400">
-              {error}
+              {error || "failed"}
             </AlertDescription>
           </Alert>
         )}
@@ -424,7 +359,7 @@ export default function SendOrderForm({
               id="product"
               value={formData.produit + " " + source || ""}
               onChange={(e) =>
-                setFormData({ ...formData, remarque: e.target.value })
+                setFormData({ ...formData, produit: e.target.value })
               }
               placeholder="Additional notes or remarks"
               className="placeholder:text-slate-500"
@@ -437,9 +372,13 @@ export default function SendOrderForm({
             <Select
               name="type of service"
               value={source}
-              onValueChange={(value) =>
-                setSource(value)
-              }
+              onValueChange={(value) => {
+                setSource(value);
+                setFormData({
+                  ...formData,
+                  produit: `${shoe.modelName} ${shoe.color} ${shoe.size} ${value}`,
+                });
+              }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Source " />

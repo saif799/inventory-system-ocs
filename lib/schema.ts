@@ -1,4 +1,12 @@
-import { date, integer, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import {
+  check,
+  date,
+  integer,
+  pgTable,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const shoeModels = pgTable("shoe_models", {
   id: uuid().primaryKey().defaultRandom(),
@@ -13,6 +21,35 @@ export const shoes = pgTable("shoes", {
   color: varchar("color").notNull(),
   // barcode moved to inventory (size-specific)
 });
+export const ordersTable = pgTable(
+  "orders",
+  {
+    id: varchar("id").primaryKey(),
+    reference: varchar("reference"),
+    nom_client: varchar("nom_client").notNull(),
+    telephone: varchar("telephone").notNull(),
+    telephone_2: varchar("telephone_2"),
+    adresse: varchar("adresse").notNull(),
+    commune: varchar("commune").notNull(),
+    code_wilaya: varchar("code_wilaya").notNull(),
+    montant: varchar("montant").notNull(),
+    remarque: varchar("remarque"),
+    shoeInventoryId: uuid("shoe_inventory_id")
+      .notNull()
+      .references(() => shoeInventory.id),
+    type: integer("type").notNull(),
+    stop_desk: integer("stop_desk").notNull(),
+    status: varchar("status").notNull().default("en livraison"),
+    createdAt: date("created_at").notNull().defaultNow(),
+    updatedAt: date("updated_at").notNull().defaultNow(),
+  }
+  // (table) => ({
+  //   statusCheck: check(
+  //     "status_valid",
+  //     sql`status IN ('pending', 'done', 'failed', 'cancelled')`
+  //   ),
+  // })
+);
 
 export const shoeInventory = pgTable("shoe_inventory", {
   id: uuid().primaryKey().defaultRandom(),

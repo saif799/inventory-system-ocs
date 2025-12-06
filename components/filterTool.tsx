@@ -98,7 +98,7 @@ export default function FilterTool({
   }
 
   return (
-    <div className="px-5 lg:sticky lg:top-[73px] lg:px-0">
+    <div className="px-5 lg:sticky lg:top-[73px] lg:px-0 overflow-y-scroll">
       <div className="hidden w-full items-center justify-between pb-4 lg:flex">
         <h3 className="w-full text-left text-xl font-medium">Filters</h3>
         <div className="flex items-center space-x-2">
@@ -130,7 +130,7 @@ export default function FilterTool({
         </div>
       </div>
 
-      <Accordion type="single" className="w-full" collapsible>
+      <Accordion type="single" className="w-full overflow-y-scroll" >
         <AccordionItem value="model">
           <AccordionTrigger
             className={cn(
@@ -140,10 +140,10 @@ export default function FilterTool({
           >
             <p>Model</p>
           </AccordionTrigger>
-          <AccordionContent className="space-y-4">
-            <ScrollArea
-              className="relative h-[50vh] w-full pr-3"
-              scrollHideDelay={1000}
+          <AccordionContent className="space-y-4 overflow-y-scroll">
+            <div
+              className="relative h-[50vh] w-full overflow-y-auto pr-3"
+              // scrollHideDelay={1000}
             >
               {models
                 .sort((a, b) => a.localeCompare(b))
@@ -162,7 +162,7 @@ export default function FilterTool({
                     </label>
                   </div>
                 ))}
-            </ScrollArea>
+            </div>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="size">
