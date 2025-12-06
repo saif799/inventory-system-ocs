@@ -357,7 +357,7 @@ export default function SendOrderForm({
             <Input
               disabled
               id="product"
-              value={formData.produit + " " + source || ""}
+              value={formData.produit  || ""}
               onChange={(e) =>
                 setFormData({ ...formData, produit: e.target.value })
               }
