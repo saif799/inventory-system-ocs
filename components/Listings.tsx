@@ -83,7 +83,6 @@ export default function Listings({
   const maxQuantity = searchParams.get("maxPrice");
 
   const strModels = models.map((m) => m.modelName);
-  console.log(strModels);
 
   useEffect(() => {
     let filteredshoes = products;
@@ -134,13 +133,13 @@ export default function Listings({
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between bg-white px-4 pb-2 pt-2 lg:pb-4">
+      <div className="flex w-full items-center justify-between bg-white px-4 pb-2 pt-2 gap-2 lg:pb-4">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <input
               type="text"
               placeholder="Scan barcode..."
-              className="w-full px-4 py-2 text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2  text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               onChange={(e) => {
                 const barcode = e.target.value;
                 if (barcode) {
@@ -157,23 +156,18 @@ export default function Listings({
           </div>
         </div>
         <Dialog>
-          <DialogTrigger className="rounded-md bg-purple-500 p-2 text-primary-foreground hover:bg-purple-600 flex items-center gap-2">
-            {" "}
+          <DialogTrigger className="rounded-md bg-purple-500  p-1 text-primary-foreground hover:bg-purple-600 md:p-2">
             Add an Order
           </DialogTrigger>
           <DialogContent
-            className="w-full transition-all duration-300 max-h-4/5  sm:max-w-8 max-w-12 overflow-auto"
-            style={{
-              maxWidth: "32rem", // ~max-w-xl
-              maxHeight: "80vh",
-              overflowY: "auto",
-            }}
+            className="w-full max-w-full sm:max-w-xl transition-all duration-300 max-h-[80vh] overflow-y-auto overflow-x-hidden px-2 md:p-6"
+            style={{ boxSizing: "border-box" }}
           >
             <DialogHeader>
               <DialogTitle>add an Order</DialogTitle>
               <DialogDescription>enter the client info</DialogDescription>
             </DialogHeader>
-            <div className="w-full p-6">
+            <div className="w-full">
               <SendOrderForm shoe={listings[0]} />
             </div>
           </DialogContent>
@@ -245,7 +239,6 @@ export default function Listings({
                             name: shoe.modelName + shoe.color + shoe.size,
                           }));
 
-                        console.log(shoesToPrint);
 
                         PrintPdf(shoesToPrint);
                       }}

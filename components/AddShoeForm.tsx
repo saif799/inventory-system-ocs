@@ -18,13 +18,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { AlertCircle, ChevronsUpDown, Plus } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AddedShoeCard, { AddedShoeCardProps } from "./addedShoeCard";
@@ -37,6 +31,11 @@ type ShoesResponseType = {
   modelId: string;
 };
 
+type modelType = {
+  id: string;
+  modelName: string;
+};
+
 export default function AddShoeForm({
   onSuccess,
   showAdded = true,
@@ -44,11 +43,14 @@ export default function AddShoeForm({
   onSuccess?: () => void;
   showAdded?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [openexistingPopover, setOpenexistingPopover] = useState(false);
+  const [opennewPopover, setOpennewPopover] = useState(false);
   const [valueSelected, setValueSelected] = useState<ShoesResponseType | null>(
     null
   );
-  const [models, setModels] = useState<any[]>([]);
+  const [modelValueSelected, setModelValueSelected] =
+    useState<modelType | null>(null);
+  const [models, setModels] = useState<modelType[]>([]);
   const [mode, setMode] = useState<"new" | "existing">("new");
   const [shoesList, setShoesList] = useState<ShoesResponseType[]>([]);
   const [newModel, setNewModel] = useState("");
@@ -57,6 +59,7 @@ export default function AddShoeForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [shoeSearch, setShoeSearch] = useState("");
+  const [modelSearch, setModelSearch] = useState("");
   const [addedShoes, setAddedShoes] = useState<AddedShoeCardProps[]>();
 
   const [formData, setFormData] = useState({
@@ -161,7 +164,6 @@ export default function AddShoeForm({
             },
           ]);
           setFormData({ modelId: "", color: "", size: "", quantity: "" });
-          console.log("this is the value selected ", valueSelected);
 
           await fetchShoes();
           onSuccess?.();
@@ -249,12 +251,15 @@ export default function AddShoeForm({
         {mode === "existing" ? (
           <div className="space-y-2">
             <Label>Existing Shoe</Label>
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover
+              open={openexistingPopover}
+              onOpenChange={setOpenexistingPopover}
+            >
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   role="combobox"
-                  aria-expanded={open}
+                  aria-expanded={openexistingPopover}
                   className="w-[200px] justify-between"
                 >
                   {valueSelected
@@ -269,6 +274,7 @@ export default function AddShoeForm({
                     placeholder="Type a command or search..."
                     value={shoeSearch}
                     onValueChange={setShoeSearch}
+                    
                   />
                   <CommandList>
                     <CommandGroup>
@@ -278,7 +284,7 @@ export default function AddShoeForm({
                           value={s.modelName + s.color}
                           onSelect={() => {
                             setValueSelected(s);
-                            setOpen(false);
+                            setOpenexistingPopover(false);
                             setFormData({
                               ...formData,
                               modelId: s.id.toString(),
@@ -301,23 +307,51 @@ export default function AddShoeForm({
           <div className="space-y-2">
             <Label htmlFor="model">Shoe Model</Label>
             <div className="flex gap-2">
-              <Select
-                value={formData.modelId}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, modelId: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a model" />
-                </SelectTrigger>
-                <SelectContent className=" ">
-                  {models.map((model) => (
-                    <SelectItem key={model.id} value={model.id.toString()}>
-                      {model.modelName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={opennewPopover} onOpenChange={setOpennewPopover}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={opennewPopover}
+                    className="w-[200px] justify-between"
+                  >
+                    {modelValueSelected
+                      ? `${modelValueSelected.modelName}`
+                      : "Select a model..."}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command className="rounded-lg border shadow-md md:min-w-[400px]">
+                    <CommandInput
+                      placeholder="Type a command or search..."
+                      value={modelSearch}
+                      onValueChange={setModelSearch}
+                    />
+                    <CommandList>
+                      <CommandGroup>
+                        {models.map((model) => (
+                          <CommandItem
+                            key={model.id}
+                            value={model.modelName}
+                            onSelect={() => {
+                              setModelValueSelected(model);
+                              setOpennewPopover(false);
+                              setFormData({
+                                ...formData,
+                                modelId: model.id,
+                              });
+                            }}
+                          >
+                            {model.modelName}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
               <Button
                 type="button"
                 onClick={() => setShowNewModel(!showNewModel)}

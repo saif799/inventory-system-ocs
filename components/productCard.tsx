@@ -1,4 +1,13 @@
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import SendOrderForm from "./sendShoeOrder";
 
 interface ProductCardProps {
   id: string;
@@ -20,7 +29,7 @@ export default function ProductCard({
   selectshoe,
 }: ProductCardProps) {
   return (
-    <button
+    <div
       onClick={() => selectshoe(id, modelName + color + size)}
       aria-pressed={
         selectedShoes?.some((shoe) => shoe.id === id) ? "true" : "false"
@@ -56,10 +65,30 @@ export default function ProductCard({
           </div>
         </div>
 
-        <span className="rounded-md bg-purple-600 px-3 py-1 text-xs font-medium text-white group-hover:bg-purple-700">
+        <Dialog>
+          <DialogTrigger className="rounded-md bg-purple-600 px-3 py-1 text-xs font-medium text-white group-hover:bg-purple-700">
+            Add an Order
+          </DialogTrigger>
+          <DialogContent
+            className="w-full max-w-full sm:max-w-xl transition-all duration-300 max-h-[80vh] overflow-y-auto overflow-x-hidden px-2 md:p-6"
+            style={{ boxSizing: "border-box" }}
+          >
+            <DialogHeader>
+              <DialogTitle>add an Order</DialogTitle>
+              <DialogDescription>enter the client info</DialogDescription>
+            </DialogHeader>
+            <div className="w-full">
+              <SendOrderForm
+                shoe={{ id, modelId: id, modelName, color, size, quantity }}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* <span className="rounded-md bg-purple-600 px-3 py-1 text-xs font-medium text-white group-hover:bg-purple-700">
           View
-        </span>
+        </span> */}
       </div>
-    </button>
+    </div>
   );
 }
