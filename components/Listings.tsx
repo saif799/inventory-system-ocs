@@ -20,7 +20,7 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -42,6 +42,7 @@ import {
 import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
 import SendOrderForm from "./sendShoeOrder";
+import { Input } from "./ui/input";
 
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
 export type shoesType = {
@@ -65,18 +66,24 @@ export default function Listings({
   models: shoe_modelsType;
 }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [listings, setListings] = useState<Array<shoesType>>(products);
   const [selectedShoes, setSelectedShoes] =
     useState<Array<{ id: string; name: string }>>();
   const [selectIsOn, setSelectIsOn] = useState<boolean>(false);
-  const selectedModels = searchParams.get("models")?.split(",") ?? [];
   const [sortOption, setSortOption] = useState<"asc" | "desc">();
+
+  const selectedModels = searchParams.get("models")?.split(",") ?? [];
 
   const selectedSizes =
     searchParams
       .get("sizes")
       ?.split(",")
       .map((size) => parseFloat(size)) ?? [];
+
+  const searchQuery = searchParams.get("ProductName")?.toLowerCase();
   // const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
 
   const minQuantity = searchParams.get("minPrice");
@@ -89,6 +96,12 @@ export default function Listings({
     if (selectedModels.length > 0) {
       filteredshoes = products.filter((l) =>
         selectedModels.includes(l.modelName)
+      );
+    }
+
+    if (searchQuery && searchQuery.length > 0) {
+      filteredshoes = products.filter((l) =>
+        l.modelName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -119,6 +132,24 @@ export default function Listings({
       }
     }
   }
+
+  function createQueryString(name: string, value: string) {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    return params.toString();
+  }
+
+  function SearchProduct(value: string) {
+    router.push(`${pathname}?${createQueryString("ProductName", value)}`, {
+      // Use encodeURIComponent here
+      scroll: false,
+    });
+  }
+
   function scrollToListings() {
     const element = document.getElementById("listings");
     if (element) {
@@ -133,29 +164,15 @@ export default function Listings({
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-center justify-between bg-white px-4 pb-2 pt-2 gap-2 lg:pb-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Scan barcode..."
-              className="w-full px-4 py-2  text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              onChange={(e) => {
-                const barcode = e.target.value;
-                if (barcode) {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set("barcode", barcode);
-                  window.history.pushState({}, "", url.toString());
-                } else {
-                  const url = new URL(window.location.href);
-                  url.searchParams.delete("barcode");
-                  window.history.pushState({}, "", url.toString());
-                }
-              }}
-            />
-          </div>
-        </div>
-        <Dialog>
+      <div className=" flex w-full items-center justify-center bg-white px-4 pb-2 pt-2 gap-2 lg:pb-4">
+        <Input
+          placeholder="Search Product..."
+          className="w-full lg:max-w-3xl px-4 py-2  text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          onChange={(e) => {
+            SearchProduct(e.target.value);
+          }}
+        />
+        {/* <Dialog>
           <DialogTrigger className="rounded-md bg-purple-500  p-1 text-primary-foreground hover:bg-purple-600 md:p-2">
             Add an Order
           </DialogTrigger>
@@ -171,7 +188,7 @@ export default function Listings({
               <SendOrderForm shoe={listings[0]} />
             </div>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </div>
       <div id="listings" className="grid w-full lg:grid-cols-4">
         <div className="hidden flex-col lg:col-span-1 lg:ml-4 lg:mr-14 lg:inline-flex">
@@ -179,7 +196,7 @@ export default function Listings({
         </div>
         <div className="col-span-3 w-full">
           <div className="top-[62px] z-50 flex w-full items-center justify-between bg-white px-4 pb-2 pt-2 lg:sticky lg:pb-4">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="items-center gap-2 cursor-pointer hidden lg:flex">
               <input
                 type="checkbox"
                 checked={selectIsOn}
@@ -238,7 +255,6 @@ export default function Listings({
                             id: shoe.id,
                             name: shoe.modelName + shoe.color + shoe.size,
                           }));
-
 
                         PrintPdf(shoesToPrint);
                       }}
@@ -299,15 +315,17 @@ export default function Listings({
               </DrawerTrigger>
               <DrawerContent className="max-h-[90vh]">
                 <DrawerHeader>
-                  <DrawerTitle>filter tools</DrawerTitle>
-                  <div className="flex w-full items-center justify-between pb-4">
-                    <h3 className="w-full text-left text-xl font-medium">
+                  <DrawerTitle className="text-xl font-medium">
+                    Filter tools
+                  </DrawerTitle>
+                  <div className="flex w-full items-center justify-between pb-">
+                    <h3 className="w-full text-left text-lg font-medium">
                       Filters
                     </h3>
                     <Filter className="size-6" color="#000" strokeWidth={2} />
                   </div>{" "}
                 </DrawerHeader>
-                <div className="flex w-full flex-col pb-2 pl-6 lg:hidden">
+                {/* <div className="flex w-full flex-col pb-2 pl-6 lg:hidden">
                   <h5 className="pb-4 text-lg text-black">Sort by</h5>
                   <div className="flex items-center space-x-2 pl-3 hover:font-medium">
                     <RadioGroup
@@ -350,7 +368,7 @@ export default function Listings({
                       </div>
                     </RadioGroup>
                   </div>
-                </div>
+                </div> */}
                 <FilterTool models={strModels} sizes={sizes} />
               </DrawerContent>
             </Drawer>

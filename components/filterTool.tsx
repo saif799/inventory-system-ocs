@@ -45,6 +45,7 @@ export default function FilterTool({
     }
     return params.toString();
   }
+
   function clearQueryString() {
     const params = new URLSearchParams(searchParams);
     const paramNames = ["models", "sizes", "minPrice", "maxPrice"];
@@ -56,6 +57,7 @@ export default function FilterTool({
     });
     return params.toString();
   }
+
   function selectModelFilterS(newModel: string) {
     const Check = modelParam.includes(newModel)
       ? modelParam.filter((m) => m !== newModel)
@@ -130,7 +132,7 @@ export default function FilterTool({
         </div>
       </div>
 
-      <Accordion type="single" className="w-full overflow-y-scroll" >
+      <Accordion type="single" className="w-full overflow-y-scroll" collapsible>
         <AccordionItem value="model">
           <AccordionTrigger
             className={cn(

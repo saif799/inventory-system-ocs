@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   date,
   integer,
@@ -38,17 +39,14 @@ export const ordersTable = pgTable(
       .notNull()
       .references(() => shoeInventory.id),
     type: integer("type").notNull(),
+    source : varchar("source").notNull().default("i"),
     stop_desk: integer("stop_desk").notNull(),
     status: varchar("status").notNull().default("en livraison"),
+    saif_paid:boolean("saif_paid").notNull().default(false),
     createdAt: date("created_at").notNull().defaultNow(),
     updatedAt: date("updated_at").notNull().defaultNow(),
   }
-  // (table) => ({
-  //   statusCheck: check(
-  //     "status_valid",
-  //     sql`status IN ('pending', 'done', 'failed', 'cancelled')`
-  //   ),
-  // })
+ 
 );
 
 export const shoeInventory = pgTable("shoe_inventory", {

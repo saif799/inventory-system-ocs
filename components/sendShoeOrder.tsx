@@ -57,7 +57,6 @@ export default function SendOrderForm({
     { code: "t", value: "tiktok" },
     { code: "w", value: "whatsapp" },
     { code: "k", value: "Ignore" },
-    { code: "b", value: "batna" },
     { code: "m", value: "mossab" },
   ];
 
@@ -85,7 +84,7 @@ export default function SendOrderForm({
     try {
       const res = await fetch("/api/order", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ formData, source }),
       });
       if (res.ok) {
         setSuccess("Order created successfully!");
@@ -357,7 +356,7 @@ export default function SendOrderForm({
             <Input
               disabled
               id="product"
-              value={formData.produit  || ""}
+              value={formData.produit || ""}
               onChange={(e) =>
                 setFormData({ ...formData, produit: e.target.value })
               }
