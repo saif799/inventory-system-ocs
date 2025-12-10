@@ -27,6 +27,7 @@ export async function POST(request: Request) {
       produit,
       type,
       stop_desk,
+      source,
     } = await request.json();
 
     if (
@@ -96,6 +97,7 @@ export async function POST(request: Request) {
         shoeInventoryId: modelId,
         type,
         stop_desk,
+        source,
       });
 
       // Decrement shoe inventory by 1
