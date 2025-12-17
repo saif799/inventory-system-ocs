@@ -8,6 +8,9 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import SendOrderForm from "./sendShoeOrder";
+import { Button } from "./ui/button";
+import { Minus } from "lucide-react";
+import { decreaseQuantity } from "@/lib/decreaseQuantity";
 
 interface ProductCardProps {
   id: string;
@@ -45,8 +48,8 @@ export default function ProductCard({
       <div className="flex items-start justify-between">
         <div>
           <h4 className="text-sm font-semibold text-gray-900">{modelName}</h4>
-          <p className="mt-1 text-xs text-gray-600">
-            Color: <span className="font-medium text-gray-800">{color}</span>
+          <p className="mt-1 text-sm text-gray-600">
+            <span className="font-medium text-gray-800">{color}</span>
           </p>
         </div>
         <div className="text-right">
@@ -84,6 +87,15 @@ export default function ProductCard({
             </div>
           </DialogContent>
         </Dialog>
+
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => decreaseQuantity(id)}
+        >
+          {" "}
+          <Minus />{" "}
+        </Button>
 
         {/* <span className="rounded-md bg-purple-600 px-3 py-1 text-xs font-medium text-white group-hover:bg-purple-700">
           View
