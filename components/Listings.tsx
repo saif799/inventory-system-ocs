@@ -9,7 +9,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "./ui/button";
 import {
   ArrowDown,
@@ -17,7 +16,6 @@ import {
   ArrowUp,
   Filter,
   FilterIcon,
-  PlusCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -28,20 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/customSelect";
-import { Label } from "./ui/label";
 import { shoeModels } from "@/lib/schema";
 import { InferSelectModel } from "drizzle-orm";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
-import SendOrderForm from "./sendShoeOrder";
 import { Input } from "./ui/input";
 
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
@@ -172,23 +161,6 @@ export default function Listings({
             SearchProduct(e.target.value);
           }}
         />
-        {/* <Dialog>
-          <DialogTrigger className="rounded-md bg-purple-500  p-1 text-primary-foreground hover:bg-purple-600 md:p-2">
-            Add an Order
-          </DialogTrigger>
-          <DialogContent
-            className="w-full max-w-full sm:max-w-xl transition-all duration-300 max-h-[80vh] overflow-y-auto overflow-x-hidden px-2 md:p-6"
-            style={{ boxSizing: "border-box" }}
-          >
-            <DialogHeader>
-              <DialogTitle>add an Order</DialogTitle>
-              <DialogDescription>enter the client info</DialogDescription>
-            </DialogHeader>
-            <div className="w-full">
-              <SendOrderForm shoe={listings[0]} />
-            </div>
-          </DialogContent>
-        </Dialog> */}
       </div>
       <div id="listings" className="grid w-full lg:grid-cols-4">
         <div className="hidden flex-col lg:col-span-1 lg:ml-4 lg:mr-14 lg:inline-flex">
@@ -394,12 +366,6 @@ export default function Listings({
                   quantity={p.quantity}
                   selectshoe={selectshoe}
                   selectedShoes={selectedShoes}
-                  // Inform the card whether selection mode is active and whether this item is selected
-                  // selectable={selectIsOn}
-
-                  // selected={selectedShoes?.some((s) => s.id === p.id) ?? false}
-                  // Handler used when the card is clicked/tapped to toggle selection
-                  // onSelect={() => selectshoe(p.id, p.modelName)}
                 />
               ))}
           </div>
