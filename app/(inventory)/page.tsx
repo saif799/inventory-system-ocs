@@ -6,7 +6,11 @@ import { InferSelectModel } from "drizzle-orm";
 type modelsType = InferSelectModel<typeof shoeModels>;
 
 export default async function InventoryPage() {
-  const productsResponse = await fetch("http://localhost:3000//api/products");
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_APP_URL
+      : "http://localhost:3000";
+  const productsResponse = await fetch(`${baseUrl}/api/products`);
   const modelsResponse = await fetch("http://localhost:3000//api/models");
 
   const products: AllShoesResponseType = await productsResponse.json();
