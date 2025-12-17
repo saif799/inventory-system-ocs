@@ -10,8 +10,10 @@ export default async function InventoryPage() {
     process.env.NODE_ENV === "production"
       ? process.env.NEXT_PUBLIC_APP_URL
       : "http://localhost:3000";
+
   const productsResponse = await fetch(`${baseUrl}/api/products`);
-  const modelsResponse = await fetch("http://localhost:3000//api/models");
+
+  const modelsResponse = await fetch(`${baseUrl}/api/models`);
 
   const products: AllShoesResponseType = await productsResponse.json();
   const models: modelsType[] = await modelsResponse.json();
