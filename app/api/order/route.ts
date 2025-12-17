@@ -30,19 +30,51 @@ export async function POST(request: Request) {
       source,
     } = await request.json();
 
-    if (
-      !nom_client ||
-      !telephone ||
-      !adresse ||
-      !commune ||
-      !code_wilaya ||
-      !montant ||
-      !produit ||
-      !type ||
-      !stop_desk
-    ) {
+    if (!nom_client) {
       return Response.json(
-        { error: "All fields are required" },
+        { error: "Nom client (Customer name) is required." },
+        { status: 400 }
+      );
+    }
+    if (!telephone) {
+      return Response.json(
+        { error: "Telephone is required." },
+        { status: 400 }
+      );
+    }
+    if (!adresse) {
+      return Response.json(
+        { error: "Adresse (Address) is required." },
+        { status: 400 }
+      );
+    }
+    if (!commune) {
+      return Response.json({ error: "Commune is required." }, { status: 400 });
+    }
+    if (!code_wilaya) {
+      return Response.json(
+        { error: "Code wilaya is required." },
+        { status: 400 }
+      );
+    }
+    if (!montant) {
+      return Response.json(
+        { error: "Montant (Amount) is required." },
+        { status: 400 }
+      );
+    }
+    if (!produit) {
+      return Response.json(
+        { error: "Produit (Product) is required." },
+        { status: 400 }
+      );
+    }
+    if (!type) {
+      return Response.json({ error: "Type is required." }, { status: 400 });
+    }
+    if (!stop_desk) {
+      return Response.json(
+        { error: "Stop desk is required." },
         { status: 400 }
       );
     }
@@ -83,6 +115,20 @@ export async function POST(request: Request) {
 
       // Ensure the "reference" field in ordersTable is correctly set.
       // Use "reference: produit" since that is what is sent to DHD, and our schema allows it to be null or string.
+
+      const AvailableSources: Record<string, string> = {
+        i: "instagram",
+        f: "facebook",
+        t: "tiktok",
+        w: "whatsapp",
+        k: "Ignore",
+        m: "mossab",
+      };
+
+      // const platform =
+      //   typeof produit === "string" ? produit.slice(-1).toLowerCase() : "";
+      // const source = AvailableSources[platform] ?? "unknown";
+
       await db.insert(ordersTable).values({
         id: tracking,
         reference: produit, // Add this field, as it's required by the table and is a default/optional param, but sometimes needed for Drizzle PG
