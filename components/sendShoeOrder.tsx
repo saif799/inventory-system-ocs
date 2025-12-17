@@ -84,7 +84,10 @@ export default function SendOrderForm({
     try {
       const res = await fetch("/api/order", {
         method: "POST",
-        body: JSON.stringify({ formData, source }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, source }), // send formData fields at top-level, not wrapped
       });
       if (res.ok) {
         setSuccess("Order created successfully!");
