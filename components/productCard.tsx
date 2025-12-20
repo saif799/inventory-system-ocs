@@ -8,9 +8,9 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import SendOrderForm from "./sendShoeOrder";
-import { Button } from "./ui/button";
-import { Minus } from "lucide-react";
-import { decreaseQuantity } from "@/lib/decreaseQuantity";
+// import { Button } from "./ui/button";
+// import { Minus } from "lucide-react";
+// import { decreaseQuantity } from "@/lib/decreaseQuantity";
 
 interface ProductCardProps {
   id: string;
@@ -88,14 +88,14 @@ export default function ProductCard({
           </DialogContent>
         </Dialog>
 
-        <Button
+        {/* <Button
           variant="outline"
           size="icon"
           onClick={() => decreaseQuantity(id)}
         >
           {" "}
           <Minus />{" "}
-        </Button>
+        </Button> */}
 
         {/* <span className="rounded-md bg-purple-600 px-3 py-1 text-xs font-medium text-white group-hover:bg-purple-700">
           View
