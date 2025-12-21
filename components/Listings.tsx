@@ -44,8 +44,8 @@ export type shoesType = {
 };
 
 const sizes = [
-  36, 36.5, 37, 37.5, 38, 38.5, 39, 40, 40.5, 41, 42, 42.5, 43, 44, 44.5, 45,
-  45.5, 46, 47, 47.5, 48, 48.5, 49, 50, 50.5, 51,
+  35.5, 36, 36.5, 37, 37.5, 38, 38.5, 39, 40, 40.5, 41, 42, 42.5, 43, 44, 44.5,
+  45, 45.5, 46, 47, 47.5, 48, 48.5, 49, 49.5, 50, 50.5, 51, 51.5,
 ];
 export default function Listings({
   products,
@@ -82,29 +82,30 @@ export default function Listings({
 
   useEffect(() => {
     let filteredshoes = products;
+
     if (selectedModels.length > 0) {
-      filteredshoes = products.filter((l) =>
+      filteredshoes = filteredshoes.filter((l) =>
         selectedModels.includes(l.modelName)
       );
     }
 
     if (searchQuery && searchQuery.length > 0) {
-      filteredshoes = products.filter((l) =>
-        l.modelName.toLowerCase().includes(searchQuery.toLowerCase())
+      filteredshoes = filteredshoes.filter((l) =>
+        l.modelName.toLowerCase().includes(searchQuery)
       );
     }
 
     if (selectedSizes.length > 0) {
-      filteredshoes = products.filter((l) =>
+      filteredshoes = filteredshoes.filter((l) =>
         selectedSizes.includes(parseFloat(l.size))
       );
     }
 
     if (maxQuantity || minQuantity) {
-      filteredshoes = products.filter(
-        (l) =>
-          l.quantity <= (maxQuantity ? parseFloat(maxQuantity) : Infinity) &&
-          l.quantity >= (minQuantity ? parseFloat(minQuantity) : 0)
+      const minQ = minQuantity ? parseFloat(minQuantity) : 0;
+      const maxQ = maxQuantity ? parseFloat(maxQuantity) : Infinity;
+      filteredshoes = filteredshoes.filter(
+        (l) => l.quantity <= maxQ && l.quantity >= minQ
       );
     }
 
