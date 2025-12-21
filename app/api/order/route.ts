@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     if (!type) {
       return Response.json({ error: "Type is required." }, { status: 400 });
     }
-    if (!stop_desk) {
+    if (isNaN(stop_desk) || stop_desk < 0) {
       return Response.json(
         { error: "Stop desk is required." },
         { status: 400 }
