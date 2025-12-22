@@ -32,8 +32,9 @@ import { InferSelectModel } from "drizzle-orm";
 import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
 import { Input } from "./ui/input";
-
+import { GroupedProduct } from "@/app/(inventory)/page";
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
+
 export type shoesType = {
   id: string;
   modelId: string;
@@ -42,7 +43,6 @@ export type shoesType = {
   quantity: number;
   size: string;
 };
-
 const sizes = [
   35.5, 36, 36.5, 37, 37.5, 38, 38.5, 39, 40, 40.5, 41, 42, 42.5, 43, 44, 44.5,
   45, 45.5, 46, 47, 47.5, 48, 48.5, 49, 49.5, 50, 50.5, 51, 51.5,
@@ -51,14 +51,15 @@ export default function Listings({
   products,
   models,
 }: {
-  products: Array<shoesType>;
+  products: GroupedProduct[];
   models: shoe_modelsType;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [listings, setListings] = useState<Array<shoesType>>(products);
+  const [listings, setListings] = useState<GroupedProduct[]>(products);
+
   const [selectedShoes, setSelectedShoes] =
     useState<Array<{ id: string; name: string }>>();
   const [selectIsOn, setSelectIsOn] = useState<boolean>(false);
@@ -97,15 +98,15 @@ export default function Listings({
 
     if (selectedSizes.length > 0) {
       filteredshoes = filteredshoes.filter((l) =>
-        selectedSizes.includes(parseFloat(l.size))
+        l.sizes.some((s) => selectedSizes.includes(parseFloat(s.size)))
       );
     }
 
     if (maxQuantity || minQuantity) {
       const minQ = minQuantity ? parseFloat(minQuantity) : 0;
       const maxQ = maxQuantity ? parseFloat(maxQuantity) : Infinity;
-      filteredshoes = filteredshoes.filter(
-        (l) => l.quantity <= maxQ && l.quantity >= minQ
+      filteredshoes = filteredshoes.filter((l) =>
+        l.sizes.some((s) => s.quantity <= maxQ && s.quantity >= minQ)
       );
     }
 
@@ -156,6 +157,8 @@ export default function Listings({
     <div className="w-full">
       <div className=" flex w-full items-center justify-center bg-white px-4 pb-2 pt-2 gap-2 lg:pb-4">
         <Input
+          // value={searchQuery ?? ""}
+          defaultValue={searchQuery ?? ""}
           placeholder="Search Product..."
           className="w-full lg:max-w-3xl px-4 py-2  text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           onChange={(e) => {
@@ -201,8 +204,8 @@ export default function Listings({
                       } else {
                         setSelectedShoes(
                           listings.map((shoe) => ({
-                            id: shoe.id,
-                            name: shoe.modelName + shoe.color + shoe.size,
+                            id: shoe.shoeId,
+                            name: shoe.modelName + shoe.color,
                           }))
                         );
                       }
@@ -221,12 +224,12 @@ export default function Listings({
                         const shoesToPrint = listings
                           .filter((shoe) =>
                             selectedShoes.some(
-                              (selected) => selected.id === shoe.id
+                              (selected) => selected.id === shoe.shoeId
                             )
                           )
                           .map((shoe) => ({
-                            id: shoe.id,
-                            name: shoe.modelName + shoe.color + shoe.size,
+                            id: shoe.shoeId,
+                            name: shoe.modelName + shoe.color,
                           }));
 
                         PrintPdf(shoesToPrint);
@@ -239,7 +242,7 @@ export default function Listings({
               )}
             </label>
             <h3 className="text-left text-xl font-medium">
-              Listings ({products.length})
+              Listings ({listings.length})
             </h3>
 
             <div className="hidden items-center gap-1 pr-4 lg:inline-flex">
@@ -350,21 +353,17 @@ export default function Listings({
             {listings
               .sort((pa, pb) => {
                 if (sortOption === "asc") {
-                  return pa.quantity - pb.quantity;
+                  return pa.modelName.localeCompare(pb.modelName);
                 } else if (sortOption === "desc") {
-                  return pb.quantity - pa.quantity;
+                  return pb.modelName.localeCompare(pa.modelName);
                 } else {
                   return 0;
                 }
               })
               .map((p) => (
                 <ProductCard
-                  key={p.id}
-                  id={p.id}
-                  modelName={p.modelName}
-                  color={p.color}
-                  size={p.size}
-                  quantity={p.quantity}
+                  key={p.shoeId}
+                  product={p}
                   selectshoe={selectshoe}
                   selectedShoes={selectedShoes}
                 />

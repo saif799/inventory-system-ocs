@@ -21,6 +21,7 @@ import communesByWilaya from "@/communes.json";
 import wilayas from "@/wilayas.json";
 import Tarifs from "@/tarifs.json";
 import { SelectGroup } from "./ui/customSelect";
+import { GroupedProduct } from "@/app/(inventory)/page";
 
 // Types for the new order API
 type OrderFormData = {
@@ -35,7 +36,6 @@ type OrderFormData = {
   produit: string | null;
   type: number;
   stop_desk: number;
-  modelId: string;
 };
 
 export default function SendOrderForm({
@@ -43,13 +43,17 @@ export default function SendOrderForm({
   shoe,
 }: {
   onSuccess?: () => void;
-  shoe: shoesType;
+  shoe: GroupedProduct;
 }) {
   // Original state for shoes management
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [source, setSource] = useState("i");
+  const [selectedSize, setSelectedSize] = useState<{
+    inventoryId: string;
+    size: string;
+  }>(shoe.sizes[0]);
 
   const AvailableSources = [
     { code: "i", value: "instagram" },
@@ -62,7 +66,6 @@ export default function SendOrderForm({
 
   // New order form data state with all required fields for the API
   const [formData, setFormData] = useState<OrderFormData>({
-    modelId: shoe.id,
     nom_client: "",
     telephone: "",
     telephone_2: null,
@@ -71,10 +74,13 @@ export default function SendOrderForm({
     code_wilaya: "",
     montant: "",
     remarque: null,
-    produit: `${shoe.modelName} ${shoe.color} ${shoe.size} ${source}`,
+    produit: `${shoe.modelName} ${shoe.color} ${selectedSize.size} ${source}`,
     type: 1,
     stop_desk: 1,
   });
+
+  console.log(formData.produit);
+  console.log(selectedSize.inventoryId);
 
   const handleSubmitToApi = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,12 +93,15 @@ export default function SendOrderForm({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, source }), // send formData fields at top-level, not wrapped
+        body: JSON.stringify({
+          ...formData,
+          source,
+          selectedSizeShoeId: selectedSize.inventoryId,
+        }), // send formData fields at top-level, not wrapped
       });
       if (res.ok) {
         setSuccess("Order created successfully!");
         setFormData({
-          modelId: shoe.id,
           nom_client: "",
           telephone: "",
           telephone_2: null,
@@ -227,7 +236,7 @@ export default function SendOrderForm({
         </div>
 
         <div className="flex gap-4">
-          <div className="grow space-y-2">
+          <div className=" space-y-2 w-full">
             <label htmlFor="wilaya">wilaya</label>
             <Select
               name="wilaya"
@@ -262,7 +271,7 @@ export default function SendOrderForm({
               </SelectContent>
             </Select>
           </div>
-          <div className="grow ">
+          <div className=" space-y-2 w-full ">
             <label htmlFor="commune"> commune</label>
 
             <Select
@@ -313,7 +322,7 @@ export default function SendOrderForm({
         </div>
 
         <div className="flex gap-4">
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label htmlFor="adresse">Address</Label>
             <Input
               id="adresse"
@@ -326,8 +335,8 @@ export default function SendOrderForm({
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
+          <div className="space-y-2 w-full">
+            <div className="flex items-center justify-between ">
               <Label htmlFor="montant">Amount </Label>
               {formData.code_wilaya && (
                 <span className=" text-xs font-semibold text-orange-700">
@@ -354,18 +363,32 @@ export default function SendOrderForm({
         </div>
 
         <div className="flex gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="product">Product</Label>
-            <Input
-              disabled
-              id="product"
-              value={formData.produit || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, produit: e.target.value })
-              }
-              placeholder="Additional notes or remarks"
-              className="placeholder:text-slate-500"
-            />
+          <div className="grow space-y-2">
+            <Label htmlFor="type of service" className="pb-1">
+              size
+            </Label>
+            <Select
+              name="type of service"
+              value={selectedSize.size}
+              onValueChange={(value) => {
+                setSelectedSize(shoe.sizes.find((s) => s.size === value)!);
+                setFormData({
+                  ...formData,
+                  produit: `${shoe.modelName} ${shoe.color} ${value} ${source}`,
+                });
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Source " />
+              </SelectTrigger>
+              <SelectContent>
+                {shoe.sizes.map((s) => (
+                  <SelectItem key={s.inventoryId} value={s.size}>
+                    {s.size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grow space-y-2">
             <Label htmlFor="type of service" className="pb-1">
@@ -378,7 +401,7 @@ export default function SendOrderForm({
                 setSource(value);
                 setFormData({
                   ...formData,
-                  produit: `${shoe.modelName} ${shoe.color} ${shoe.size} ${value}`,
+                  produit: `${shoe.modelName} ${shoe.color} ${selectedSize.size} ${value}`,
                 });
               }}
             >
@@ -395,19 +418,33 @@ export default function SendOrderForm({
             </Select>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="remarque">Remarks</Label>
-          <Input
-            id="remarque"
-            value={formData.remarque || ""}
-            onChange={(e) =>
-              setFormData({ ...formData, remarque: e.target.value })
-            }
-            placeholder="Additional notes or remarks"
-            className="placeholder:text-slate-500"
-          />
+        <div className="flex gap-4 grow">
+          <div className="space-y-2 w-full">
+            <Label htmlFor="product">Product</Label>
+            <Input
+              disabled
+              id="product"
+              value={formData.produit || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, produit: e.target.value })
+              }
+              placeholder="Additional notes or remarks"
+              className="placeholder:text-slate-500"
+            />
+          </div>
+          <div className="space-y-2 w-full">
+            <Label htmlFor="remarque">Remarks</Label>
+            <Input
+              id="remarque"
+              value={formData.remarque || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, remarque: e.target.value })
+              }
+              placeholder="Additional notes or remarks"
+              className="placeholder:text-slate-500"
+            />
+          </div>
         </div>
-
         <Button
           type="submit"
           disabled={loading}

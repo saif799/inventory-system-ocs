@@ -22,32 +22,29 @@ export const shoes = pgTable("shoes", {
   color: varchar("color").notNull(),
   // barcode moved to inventory (size-specific)
 });
-export const ordersTable = pgTable(
-  "orders",
-  {
-    id: varchar("id").primaryKey(),
-    reference: varchar("reference"),
-    nom_client: varchar("nom_client").notNull(),
-    telephone: varchar("telephone").notNull(),
-    telephone_2: varchar("telephone_2"),
-    adresse: varchar("adresse").notNull(),
-    commune: varchar("commune").notNull(),
-    code_wilaya: varchar("code_wilaya").notNull(),
-    montant: varchar("montant").notNull(),
-    remarque: varchar("remarque"),
-    shoeInventoryId: uuid("shoe_inventory_id")
-      .notNull()
-      .references(() => shoeInventory.id),
-    type: integer("type").notNull(),
-    source : varchar("source").notNull().default("i"),
-    stop_desk: integer("stop_desk").notNull(),
-    status: varchar("status").notNull().default("en livraison"),
-    saif_paid:boolean("saif_paid").notNull().default(false),
-    createdAt: date("created_at").notNull().defaultNow(),
-    updatedAt: date("updated_at").notNull().defaultNow(),
-  }
- 
-);
+
+export const ordersTable = pgTable("orders", {
+  id: varchar("id").primaryKey(),
+  reference: varchar("reference"),
+  nom_client: varchar("nom_client").notNull(),
+  telephone: varchar("telephone").notNull(),
+  telephone_2: varchar("telephone_2"),
+  adresse: varchar("adresse").notNull(),
+  commune: varchar("commune").notNull(),
+  code_wilaya: varchar("code_wilaya").notNull(),
+  montant: varchar("montant").notNull(),
+  remarque: varchar("remarque"),
+  shoeInventoryId: uuid("shoe_inventory_id")
+    .notNull()
+    .references(() => shoeInventory.id),
+  type: integer("type").notNull(),
+  source: varchar("source").notNull().default("i"),
+  stop_desk: integer("stop_desk").notNull(),
+  status: varchar("status").notNull().default("en livraison"),
+  saif_paid: boolean("saif_paid").notNull().default(false),
+  createdAt: date("created_at").notNull().defaultNow(),
+  updatedAt: date("updated_at").notNull().defaultNow(),
+});
 
 export const shoeInventory = pgTable("shoe_inventory", {
   id: uuid().primaryKey().defaultRandom(),

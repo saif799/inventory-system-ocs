@@ -138,6 +138,7 @@ export default function AddShoeForm({
       }
     }
     setLoading(true);
+
     const sizes = formData.size.split(",").map((size) => size.trim());
     try {
       if (mode === "existing") {
@@ -274,7 +275,6 @@ export default function AddShoeForm({
                     placeholder="Type a command or search..."
                     value={shoeSearch}
                     onValueChange={setShoeSearch}
-                    
                   />
                   <CommandList>
                     <CommandGroup>
