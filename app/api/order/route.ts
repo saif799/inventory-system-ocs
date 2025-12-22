@@ -15,7 +15,6 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const {
-      modelId,
       nom_client,
       telephone,
       telephone_2,
@@ -28,11 +27,18 @@ export async function POST(request: Request) {
       type,
       stop_desk,
       source,
+      selectedSizeShoeId,
     } = await request.json();
 
     if (!nom_client) {
       return Response.json(
         { error: "Nom client (Customer name) is required." },
+        { status: 400 }
+      );
+    }
+    if (!selectedSizeShoeId) {
+      return Response.json(
+        { error: "Selected size ID is required." },
         { status: 400 }
       );
     }
@@ -116,15 +122,6 @@ export async function POST(request: Request) {
       // Ensure the "reference" field in ordersTable is correctly set.
       // Use "reference: produit" since that is what is sent to DHD, and our schema allows it to be null or string.
 
-      const AvailableSources: Record<string, string> = {
-        i: "instagram",
-        f: "facebook",
-        t: "tiktok",
-        w: "whatsapp",
-        k: "Ignore",
-        m: "mossab",
-      };
-
       // const platform =
       //   typeof produit === "string" ? produit.slice(-1).toLowerCase() : "";
       // const source = AvailableSources[platform] ?? "unknown";
@@ -140,7 +137,7 @@ export async function POST(request: Request) {
         code_wilaya,
         montant,
         remarque,
-        shoeInventoryId: modelId,
+        shoeInventoryId: selectedSizeShoeId,
         type,
         stop_desk,
         source,
@@ -152,7 +149,7 @@ export async function POST(request: Request) {
         .set({
           quantity: sql`${shoeInventory.quantity} - 1`,
         })
-        .where(eq(shoeInventory.id, modelId));
+        .where(eq(shoeInventory.id, selectedSizeShoeId));
 
       console.log("decremented the quantity of the shoe");
       revalidatePath("/");

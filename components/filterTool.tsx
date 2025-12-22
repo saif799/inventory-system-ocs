@@ -48,13 +48,20 @@ export default function FilterTool({
 
   function clearQueryString() {
     const params = new URLSearchParams(searchParams);
-    const paramNames = ["models", "sizes", "minPrice", "maxPrice"];
+    const paramNames = [
+      "models",
+      "sizes",
+      "minPrice",
+      "maxPrice",
+      "ProductName",
+    ];
 
     paramNames.forEach((name) => {
       if (params.has(name)) {
         params.delete(name);
       }
     });
+
     return params.toString();
   }
 
