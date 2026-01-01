@@ -126,30 +126,32 @@ export async function POST(request: Request) {
       //   typeof produit === "string" ? produit.slice(-1).toLowerCase() : "";
       // const source = AvailableSources[platform] ?? "unknown";
 
-      await db.insert(ordersTable).values({
-        id: tracking,
-        reference: produit, // Add this field, as it's required by the table and is a default/optional param, but sometimes needed for Drizzle PG
-        nom_client,
-        telephone,
-        telephone_2,
-        adresse,
-        commune,
-        code_wilaya,
-        montant,
-        remarque,
-        shoeInventoryId: selectedSizeShoeId,
-        type,
-        stop_desk,
-        source,
-      });
+      await Promise.all([
+        db.insert(ordersTable).values({
+          id: tracking,
+          reference: produit, // Add this field, as it's required by the table and is a default/optional param, but sometimes needed for Drizzle PG
+          nom_client,
+          telephone,
+          telephone_2,
+          adresse,
+          commune,
+          code_wilaya,
+          montant,
+          remarque,
+          shoeInventoryId: selectedSizeShoeId,
+          type,
+          stop_desk,
+          source,
+        }),
 
-      // Decrement shoe inventory by 1
-      await db
-        .update(shoeInventory)
-        .set({
-          quantity: sql`${shoeInventory.quantity} - 1`,
-        })
-        .where(eq(shoeInventory.id, selectedSizeShoeId));
+        // Decrement shoe inventory by 1
+        db
+          .update(shoeInventory)
+          .set({
+            quantity: sql`${shoeInventory.quantity} - 1`,
+          })
+          .where(eq(shoeInventory.id, selectedSizeShoeId)),
+      ]);
 
       console.log("decremented the quantity of the shoe");
       revalidatePath("/");
@@ -157,7 +159,7 @@ export async function POST(request: Request) {
       revalidatePath("/add-shoes");
       //   revalidatePath("/inventory");
     } else {
-      console.log("eror happend in the backend");
+      console.log("dhd failed to insert order");
 
       return Response.json(
         { error: "Failed to create order" },
@@ -171,6 +173,96 @@ export async function POST(request: Request) {
   } catch (error) {
     return Response.json(
       { error: `Failed to create order ${error}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { orderId, shoeInventoryId } = await request.json();
+
+    if (!orderId) {
+      console.log("no oreder id");
+
+      return Response.json({ error: "order ID is required." }, { status: 400 });
+    }
+
+    if (!shoeInventoryId) {
+      console.log("no shoe inventory id");
+
+      return Response.json(
+        { error: "Shoe inventory ID is required." },
+        { status: 400 }
+      );
+    }
+
+    console.log(orderId);
+    console.log(process.env.NEXT_PUBLIC_DHD_API_KEY);
+
+    const res = await fetch(
+      `https://platform.dhd-dz.com/api/v1/delete/order?tracking=${encodeURIComponent(
+        "DHD5CD22512297748173"
+      )}`,
+      {
+        method: "DELETE",
+        headers: {
+          // "Content-Type": "application/json",
+          authorization: `Bearer ${process.env.NEXT_PUBLIC_DHD_API_KEY}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      console.log("dhd failed to delete order ", res);
+
+      return Response.json(
+        { error: `DHD Failed to delete order}` },
+        { status: 500 }
+      );
+    }
+    const apiResponse = await res.json();
+
+    if (apiResponse?.success) {
+      // fetch the order to know which inventory item to update
+
+      // delete the order locally
+      // await db.delete(ordersTable).where(eq(ordersTable.id, orderId));
+
+      // increment the shoe inventory back by 1 (if we have the id)
+      await db
+        .update(ordersTable)
+        .set({ statusId: "e01a36c1-087c-46ab-aa4c-12b1a5186bf1" })
+        .where(eq(ordersTable.id, orderId));
+
+      await db
+        .update(shoeInventory)
+        .set({ quantity: sql`${shoeInventory.quantity} + 1` })
+        .where(eq(shoeInventory.id, shoeInventoryId));
+
+      revalidatePath("/");
+      revalidatePath("/orders");
+      revalidatePath("/add-shoes");
+      return Response.json({
+        message: "Order deleted successfully",
+      });
+    } else {
+      return Response.json(
+        { error: "Failed to delete order from dhd first section" },
+        { status: 500 }
+      );
+    }
+  } catch (error) {
+    // const errorText = await res.text();
+    // console.log("failed to delete the order cz of the request i assume ");
+
+    // return Response.json(
+    //   { error: `Failed to delete order: ${errorText}` },
+    //   { status: res.status || 500 }
+    // );
+    console.log(error);
+    return Response.json(
+      { error: `Failed to delete order: ${error}` },
       { status: 500 }
     );
   }

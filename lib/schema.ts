@@ -40,7 +40,11 @@ export const ordersTable = pgTable("orders", {
   type: integer("type").notNull(),
   source: varchar("source").notNull().default("i"),
   stop_desk: integer("stop_desk").notNull(),
-  status: varchar("status").notNull().default("en livraison"),
+  status: varchar("status").notNull().default("prete_a_expedier"),
+  statusId: uuid("status_id")
+    .notNull()
+    .references(() => stautsGroupsTable.id)
+    .default("404332b3-998f-498f-a325-3e4ecf6c3bbb"),
   saif_paid: boolean("saif_paid").notNull().default(false),
   createdAt: date("created_at").notNull().defaultNow(),
   updatedAt: date("updated_at").notNull().defaultNow(),
@@ -54,4 +58,23 @@ export const shoeInventory = pgTable("shoe_inventory", {
   size: varchar("size").notNull(),
   quantity: integer("quantity").notNull().default(0),
   createdAt: date("created_at").notNull().defaultNow(),
+});
+
+export const stautsGroupsTable = pgTable("status_groups_table", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: varchar("status_name").notNull(),
+
+  external_statuses: varchar("external_statuses")
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
+});
+export const ImageNotifierTable = pgTable("image_notifier_table", {
+  id: uuid().primaryKey().defaultRandom(),
+  shoeInventoryId: uuid("shoe_inventory_id")
+    .notNull()
+    .references(() => shoeInventory.id),
+  orderId: varchar("order_id")
+    .notNull()
+    .references(() => ordersTable.id),
 });
