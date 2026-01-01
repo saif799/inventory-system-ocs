@@ -4,38 +4,7 @@ import { neon } from "@neondatabase/serverless";
 const sql = neon(process.env.DATABASE_URL!);
 export const db = drizzle(sql);
 
-interface ShoeModel {
-  id: number;
-  modelName: string;
-}
-
-interface Shoe {
-  id: number;
-  modelId: number;
-  color: string;
-  barcode: string;
-}
-
-interface ShoeInventoryItem {
-  id: number;
-  shoeId: number;
-  size: string;
-  quantity: number;
-}
-
 // In-memory storage
-const shoeModels: ShoeModel[] = [
-  { id: 1, modelName: "Air Max" },
-  { id: 2, modelName: "Jordan 1" },
-  { id: 3, modelName: "Yeezy Boost" },
-];
-
-const shoes: Shoe[] = [];
-const shoeInventory: ShoeInventoryItem[] = [];
-
-let nextModelId = 4;
-let nextShoeId = 1;
-let nextInventoryId = 1;
 
 // Legacy in-memory store kept for reference:
 // export const dB = {
