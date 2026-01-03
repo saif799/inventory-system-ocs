@@ -101,25 +101,9 @@ export const columnsOrder: ColumnDef<Order>[] = [
       return <div className=" font-medium">{row.getValue("montant")} DA</div>;
     },
   },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  //   cell: ({ row }) => {
-  //     return (
-  //       <Badge
-  //         variant={
-  //           row.getValue("status") === "prete_a_expedier"
-  //             ? "onDelivery"
-  //             : "outline"
-  //         }
-  //       >
-  //         {row.getValue("status")}
-  //       </Badge>
-  //     );
-  //   },
-  // },
 
   //todo edit this later to be not visible by default
+  // todo make sure to unisntall the badge compoent
   {
     accessorKey: "statusId",
     header: "Status",
