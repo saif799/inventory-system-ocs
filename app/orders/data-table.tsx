@@ -59,8 +59,7 @@ type OrderKeys = keyof Pick<
   "nom_client" | "reference" | "telephone" | "montant"
 >;
 
-
-// TODO the table needs the data to be loaded client side so it cant perform better 
+// TODO the table needs the data to be loaded client side so it cant perform better
 
 export function DataTable<TData, TValue>({
   columns,
@@ -99,115 +98,98 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log(Statuses);
   return (
     <div>
-      <div className="flex items-center gap-2 py-4">
-        <Input
-          placeholder="Filter nom_client..."
-          value={
-            (table.getColumn(filterUsing)?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn(filterUsing)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <Select
-          defaultValue="nom_client"
-          onValueChange={(value) => {
-            setFilterUsing(value as OrderKeys);
-          }}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a fruit" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Filter using</SelectLabel>
-              <SelectItem value="nom_client">Nom client</SelectItem>
-              <SelectItem value="reference">Reference</SelectItem>
-              <SelectItem value="telephone">Telephone</SelectItem>
-              <SelectItem value="montant">Montant</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select
-          defaultValue="404332b3-998f-498f-a325-3e4ecf6c3bbb"
-          onValueChange={(value) => {
-            table.getColumn("statusId")?.setFilterValue(value);
-            console.log("set it to ", value);
-          }}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a fruit" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Statuses</SelectLabel>
-              {Statuses.map((column) => {
-                return (
-                  <SelectItem value={column.id} key={column.id}>
-                    {column.name}
-                  </SelectItem>
-                );
-              })}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        <div className="ml-auto flex items-center gap-2">
-          <Button
-            disabled={isUpdating}
-            variant="outline"
-            onClick={async () => {
-              try {
-                setIsUpdating(true);
-                const res = await fetch("/api/status", {
-                  method: "GET",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                });
-                if (!res.ok) {
-                  console.log("Failed to update statuses");
-                } else {
-                  console.log("Statuses updated successfully");
+      <div
+        className="
+          flex flex-col gap-2 py-4
+          md:flex-row md:items-center
+        "
+      >
+        {/* First row for mobile, left side for desktop */}
+        <div className="flex items-center gap-2  md:w-auto m-auto md:m-0">
+          <Input
+            placeholder={`Filter ${filterUsing}...`}
+            value={
+              (table.getColumn(filterUsing)?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn(filterUsing)?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm flex-1"
+          />
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              disabled={isUpdating}
+              variant="outline"
+              onClick={async () => {
+                try {
+                  setIsUpdating(true);
+                  const res = await fetch("/api/status", {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  });
+                  if (!res.ok) {
+                    console.log("Failed to update statuses");
+                  } else {
+                    console.log("Statuses updated successfully");
+                  }
+                } catch (error) {
+                } finally {
+                  setIsUpdating(false);
                 }
-              } catch (error) {
-              } finally {
-                setIsUpdating(false);
-              }
+              }}
+            >
+              <RefreshCcw className={isUpdating ? "animate-spin" : ""} />
+            </Button>
+          </div>
+        </div>
+        {/* Second row for mobile, right side for desktop */}
+        <div className="flex items-center justify-center gap-2 w-full md:flex-row md:w-auto">
+          <Select
+            defaultValue="nom_client"
+            onValueChange={(value) => {
+              setFilterUsing(value as OrderKeys);
             }}
           >
-            <RefreshCcw className={isUpdating ? "animate-spin" : ""} />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Filter using</SelectLabel>
+                <SelectItem value="nom_client">Nom client</SelectItem>
+                <SelectItem value="reference">Reference</SelectItem>
+                <SelectItem value="telephone">Telephone</SelectItem>
+                <SelectItem value="montant">Montant</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select
+            defaultValue="404332b3-998f-498f-a325-3e4ecf6c3bbb"
+            onValueChange={(value) => {
+              table.getColumn("statusId")?.setFilterValue(value);
+              console.log("set it to ", value);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Statuses</SelectLabel>
+                {Statuses.map((column) => {
                   return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
+                    <SelectItem value={column.id} key={column.id}>
+                      {column.name}
+                    </SelectItem>
                   );
                 })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <div className="overflow-hidden rounded-md border">
@@ -269,8 +251,9 @@ export function DataTable<TData, TValue>({
         >
           Previous
         </Button>
-        <p>
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        <p className="text-sm text-gray-800">
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}
         </p>
         <Button
           variant="outline"
