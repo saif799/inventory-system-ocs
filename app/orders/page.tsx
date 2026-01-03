@@ -12,7 +12,7 @@ export default async function DemoPage() {
     .orderBy(desc(ordersTable.createdAt));
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-5">
       <DataTable columns={columnsOrder} data={orders} Statuses={dbStatus} />
     </div>
   );
