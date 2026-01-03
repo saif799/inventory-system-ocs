@@ -178,6 +178,7 @@ export async function POST(request: Request) {
   }
 }
 
+// todo make it update the statusId not hte status
 export async function DELETE(request: Request) {
   try {
     const { orderId, shoeInventoryId } = await request.json();
@@ -253,13 +254,6 @@ export async function DELETE(request: Request) {
       );
     }
   } catch (error) {
-    // const errorText = await res.text();
-    // console.log("failed to delete the order cz of the request i assume ");
-
-    // return Response.json(
-    //   { error: `Failed to delete order: ${errorText}` },
-    //   { status: res.status || 500 }
-    // );
     console.log(error);
     return Response.json(
       { error: `Failed to delete order: ${error}` },
