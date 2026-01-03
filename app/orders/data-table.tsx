@@ -28,10 +28,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {
   Select,
@@ -45,6 +42,7 @@ import {
 import { InferSelectModel } from "drizzle-orm";
 import { stautsGroupsTable } from "@/lib/schema";
 import { RefreshCcw } from "lucide-react";
+import { OrderType } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -56,6 +54,14 @@ type DbStatus = Omit<
   "external_statuses"
 >;
 
+type OrderKeys = keyof Pick<
+  OrderType,
+  "nom_client" | "reference" | "telephone" | "montant"
+>;
+
+
+// TODO the table needs the data to be loaded client side so it cant perform better 
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -66,8 +72,10 @@ export function DataTable<TData, TValue>({
     { id: "statusId", value: "404332b3-998f-498f-a325-3e4ecf6c3bbb" },
   ]);
   const [rowSelection, setRowSelection] = useState({});
+  const [filterUsing, setFilterUsing] = useState<OrderKeys>("nom_client");
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     statusId: false,
+    telephone: false,
   });
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
@@ -92,20 +100,38 @@ export function DataTable<TData, TValue>({
   });
 
   console.log(Statuses);
-
   return (
     <div>
       <div className="flex items-center gap-2 py-4">
         <Input
           placeholder="Filter nom_client..."
           value={
-            (table.getColumn("nom_client")?.getFilterValue() as string) ?? ""
+            (table.getColumn(filterUsing)?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("nom_client")?.setFilterValue(event.target.value)
+            table.getColumn(filterUsing)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
+        <Select
+          defaultValue="nom_client"
+          onValueChange={(value) => {
+            setFilterUsing(value as OrderKeys);
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select a fruit" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Filter using</SelectLabel>
+              <SelectItem value="nom_client">Nom client</SelectItem>
+              <SelectItem value="reference">Reference</SelectItem>
+              <SelectItem value="telephone">Telephone</SelectItem>
+              <SelectItem value="montant">Montant</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
         <Select
           defaultValue="404332b3-998f-498f-a325-3e4ecf6c3bbb"
           onValueChange={(value) => {
@@ -243,6 +269,9 @@ export function DataTable<TData, TValue>({
         >
           Previous
         </Button>
+        <p>
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        </p>
         <Button
           variant="outline"
           size="sm"

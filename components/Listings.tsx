@@ -91,8 +91,9 @@ export default function Listings({
     }
 
     if (searchQuery && searchQuery.length > 0) {
-      filteredshoes = filteredshoes.filter((l) =>
-        l.modelName.toLowerCase().includes(searchQuery)
+      filteredshoes = filteredshoes.filter(
+        (l) =>
+          (l.modelName + " " + l.color).toLowerCase().includes(searchQuery)
       );
     }
 

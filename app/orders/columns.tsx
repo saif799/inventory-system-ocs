@@ -22,9 +22,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export type Order = InferSelectModel<typeof ordersTable>;
+export type OrderType = InferSelectModel<typeof ordersTable>;
 
-export const columnsOrder: ColumnDef<Order>[] = [
+export const columnsOrder: ColumnDef<OrderType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -58,6 +58,7 @@ export const columnsOrder: ColumnDef<Order>[] = [
         </>
       );
     },
+    filterFn: "includesString",
   },
 
   {
@@ -88,6 +89,7 @@ export const columnsOrder: ColumnDef<Order>[] = [
   },
   {
     accessorKey: "reference",
+    filterFn: "includesString",
     header: ({ column }) => {
       return <DataTableColumnHeader column={column} title="Reference" />;
     },
@@ -100,6 +102,12 @@ export const columnsOrder: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       return <div className=" font-medium">{row.getValue("montant")} DA</div>;
     },
+  },
+
+  {
+    accessorKey: "telephone",
+    header: "Telephone",
+    filterFn: "equals",
   },
 
   //todo edit this later to be not visible by default
