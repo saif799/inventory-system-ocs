@@ -79,9 +79,6 @@ export default function SendOrderForm({
     stop_desk: 1,
   });
 
-  console.log(formData.produit);
-  console.log(selectedSize.inventoryId);
-
   const handleSubmitToApi = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
