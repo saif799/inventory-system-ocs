@@ -171,7 +171,6 @@ export function DataTable<TData, TValue>({
             defaultValue="404332b3-998f-498f-a325-3e4ecf6c3bbb"
             onValueChange={(value) => {
               table.getColumn("statusId")?.setFilterValue(value);
-              console.log("set it to ", value);
             }}
           >
             <SelectTrigger className="w-[180px]">
