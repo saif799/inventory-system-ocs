@@ -198,12 +198,9 @@ export async function DELETE(request: Request) {
       );
     }
 
-    console.log(orderId);
-    console.log(process.env.NEXT_PUBLIC_DHD_API_KEY);
-
     const res = await fetch(
       `https://platform.dhd-dz.com/api/v1/delete/order?tracking=${encodeURIComponent(
-        "DHD5CD22512297748173"
+        orderId
       )}`,
       {
         method: "DELETE",
@@ -224,22 +221,20 @@ export async function DELETE(request: Request) {
     }
     const apiResponse = await res.json();
 
-    if (apiResponse?.success) {
+    if (apiResponse?.delete === "success") {
       // fetch the order to know which inventory item to update
 
-      // delete the order locally
-      // await db.delete(ordersTable).where(eq(ordersTable.id, orderId));
-
       // increment the shoe inventory back by 1 (if we have the id)
-      await db
-        .update(ordersTable)
-        .set({ statusId: "e01a36c1-087c-46ab-aa4c-12b1a5186bf1" })
-        .where(eq(ordersTable.id, orderId));
-
-      await db
-        .update(shoeInventory)
-        .set({ quantity: sql`${shoeInventory.quantity} + 1` })
-        .where(eq(shoeInventory.id, shoeInventoryId));
+      await Promise.all([
+        db
+          .update(ordersTable)
+          .set({ statusId: "e01a36c1-087c-46ab-aa4c-12b1a5186bf1" })
+          .where(eq(ordersTable.id, orderId)),
+        db
+          .update(shoeInventory)
+          .set({ quantity: sql`${shoeInventory.quantity} + 1` })
+          .where(eq(shoeInventory.id, shoeInventoryId)),
+      ]);
 
       revalidatePath("/");
       revalidatePath("/orders");

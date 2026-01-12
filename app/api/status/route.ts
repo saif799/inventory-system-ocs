@@ -95,8 +95,9 @@ export async function GET() {
       })
     );
 
-    revalidatePath("/orders");
     revalidatePath("/");
+    revalidatePath("/orders");
+    revalidatePath("/add-shoes");
 
     return Response.json({ groupedStatuses }, { status: 200 });
   } catch (error) {
