@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 "use client";
 import FilterTool from "./filterTool";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -55,65 +55,94 @@ export default function Listings({
   models: shoe_modelsType;
 }) {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
-
-  const [listings, setListings] = useState<GroupedProduct[]>(products);
 
   const [selectedShoes, setSelectedShoes] =
     useState<Array<{ id: string; name: string }>>();
   const [selectIsOn, setSelectIsOn] = useState<boolean>(false);
   const [sortOption, setSortOption] = useState<"asc" | "desc">();
 
+  type FilterParams = {
+    models: string[];
+    sizes: number[];
+    minPrice?: string | null;
+    maxPrice?: string | null;
+    ProductName?: string;
+  };
   const selectedModels = searchParams.get("models")?.split(",") ?? [];
 
-  const selectedSizes =
-    searchParams
-      .get("sizes")
-      ?.split(",")
-      .map((size) => parseFloat(size)) ?? [];
+  const [filterParams, setFilterParams] = useState<FilterParams>({
+    models: searchParams.get("models")?.split(",") ?? [],
+    sizes:
+      searchParams
+        .get("sizes")
+        ?.split(",")
+        .map((size) => parseFloat(size)) ?? [],
+    minPrice: searchParams.get("minPrice"),
+    maxPrice: searchParams.get("maxPrice"),
+    ProductName: searchParams.get("ProductName")?.toLowerCase(),
+  });
 
-  const searchQuery = searchParams.get("ProductName")?.toLowerCase();
-  // const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
+  useEffect(() => {
+    const id = setTimeout(() => {
+      const params = new URLSearchParams();
+      if (filterParams.ProductName) {
+        params.set("ProductName", filterParams.ProductName);
+      }
+      window.history.replaceState(null, "", `?${params.toString()}`);
+    }, 300);
 
-  const minQuantity = searchParams.get("minPrice");
-  const maxQuantity = searchParams.get("maxPrice");
+    return () => clearTimeout(id);
+  }, [filterParams.ProductName]);
 
   const strModels = models.map((m) => m.modelName);
 
-  useEffect(() => {
-    let filteredshoes = products;
+  const productsWithSearch = useMemo(
+    () =>
+      products.map((p) => ({
+        ...p,
+        lowerModelColor: `${p.modelName} ${p.color}`.toLowerCase(),
+        sizesNum: p.sizes.map((s) => ({ ...s, sizeNum: Number(s.size) })),
+      })),
+    [products]
+  );
 
-    if (selectedModels.length > 0) {
-      filteredshoes = filteredshoes.filter((l) =>
-        selectedModels.includes(l.modelName)
-      );
+  const listings = productsWithSearch.filter((p) => {
+    if (
+      filterParams.models.length > 0 &&
+      !filterParams.models.includes(p.modelName)
+    ) {
+      return false;
     }
 
-    if (searchQuery && searchQuery.length > 0) {
-      filteredshoes = filteredshoes.filter(
-        (l) =>
-          (l.modelName + " " + l.color).toLowerCase().includes(searchQuery)
-      );
+    if (
+      filterParams.ProductName &&
+      !p.lowerModelColor.includes(filterParams.ProductName)
+    ) {
+      return false;
     }
 
-    if (selectedSizes.length > 0) {
-      filteredshoes = filteredshoes.filter((l) =>
-        l.sizes.some((s) => selectedSizes.includes(parseFloat(s.size)))
-      );
+    if (
+      filterParams.sizes.length > 0 &&
+      !p.sizesNum.some((s) => filterParams.sizes.includes(s.sizeNum))
+    ) {
+      return false;
     }
 
-    if (maxQuantity || minQuantity) {
-      const minQ = minQuantity ? parseFloat(minQuantity) : 0;
-      const maxQ = maxQuantity ? parseFloat(maxQuantity) : Infinity;
-      filteredshoes = filteredshoes.filter((l) =>
-        l.sizes.some((s) => s.quantity <= maxQ && s.quantity >= minQ)
-      );
+    if (filterParams.minPrice || filterParams.maxPrice) {
+      const minQ = filterParams.minPrice ? Number(filterParams.minPrice) : 0;
+      const maxQ = filterParams.maxPrice
+        ? Number(filterParams.maxPrice)
+        : Infinity;
+      if (!p.sizesNum.some((s) => s.quantity >= minQ && s.quantity <= maxQ)) {
+        return false;
+      }
     }
 
-    setListings(filteredshoes);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, searchParams]);
+    return true;
+  });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   function selectshoe(id: string, name: string) {
     if (selectIsOn) {
@@ -136,10 +165,20 @@ export default function Listings({
   }
 
   function SearchProduct(value: string) {
-    router.push(`${pathname}?${createQueryString("ProductName", value)}`, {
-      // Use encodeURIComponent here
-      scroll: false,
-    });
+    setFilterParams((prev) => ({
+      ...prev,
+      ProductName: value,
+    }));
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (value) {
+      params.set("ProductName", value);
+    } else {
+      params.delete("ProductName", value);
+    }
+
+    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
   function scrollToListings() {
@@ -159,7 +198,7 @@ export default function Listings({
       <div className=" flex w-full items-center justify-center bg-white px-4 pb-2 pt-2 gap-2 lg:pb-4">
         <Input
           // value={searchQuery ?? ""}
-          defaultValue={searchQuery ?? ""}
+          defaultValue={filterParams.ProductName ?? ""}
           placeholder="Search Product..."
           className="w-full lg:max-w-3xl px-4 py-2  text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           onChange={(e) => {
@@ -169,7 +208,12 @@ export default function Listings({
       </div>
       <div id="listings" className="grid w-full lg:grid-cols-4">
         <div className="hidden flex-col lg:col-span-1 lg:ml-4 lg:mr-14 lg:inline-flex">
-          <FilterTool models={strModels} sizes={sizes} />
+          <FilterTool
+            models={strModels}
+            sizes={sizes}
+            filterTool={filterParams}
+            setfilterTool={setFilterParams}
+          />
         </div>
         <div className="col-span-3 w-full">
           <div className="top-[62px] z-50 flex w-full items-center justify-between bg-white px-4 pb-2 pt-2 lg:sticky lg:pb-4">
@@ -281,9 +325,9 @@ export default function Listings({
                     "",
 
                     ((selectedModels && selectedModels.length > 0) ||
-                      selectedSizes.length > 0 ||
-                      maxQuantity ||
-                      minQuantity) &&
+                      filterParams.sizes.length > 0 ||
+                      filterParams.maxPrice ||
+                      filterParams.minPrice) &&
                       "font-medium text-purple-900"
                   )}
                 >
@@ -346,7 +390,12 @@ export default function Listings({
                     </RadioGroup>
                   </div>
                 </div> */}
-                <FilterTool models={strModels} sizes={sizes} />
+                <FilterTool
+                  models={strModels}
+                  sizes={sizes}
+                  filterTool={filterParams}
+                  setfilterTool={setFilterParams}
+                />
               </DrawerContent>
             </Drawer>
           </div>
