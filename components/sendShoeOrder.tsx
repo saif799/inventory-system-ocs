@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { shoesType } from "./Listings";
 import communesByWilaya from "@/communes.json";
 import wilayas from "@/wilayas.json";
 import Tarifs from "@/tarifs.json";
@@ -93,7 +92,7 @@ export default function SendOrderForm({
         body: JSON.stringify({
           ...formData,
           source,
-          selectedSizeShoeId: selectedSize.inventoryId,
+          selectedSizeShoeId: [selectedSize.inventoryId],
         }), // send formData fields at top-level, not wrapped
       });
       if (res.ok) {

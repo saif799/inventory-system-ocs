@@ -34,9 +34,7 @@ export const ordersTable = pgTable("orders", {
   code_wilaya: varchar("code_wilaya").notNull(),
   montant: varchar("montant").notNull(),
   remarque: varchar("remarque"),
-  shoeInventoryId: uuid("shoe_inventory_id")
-    .notNull()
-    .references(() => shoeInventory.id),
+
   type: integer("type").notNull(),
   source: varchar("source").notNull().default("i"),
   stop_desk: integer("stop_desk").notNull(),
@@ -57,6 +55,18 @@ export const shoeInventory = pgTable("shoe_inventory", {
     .references(() => shoes.id),
   size: varchar("size").notNull(),
   quantity: integer("quantity").notNull().default(0),
+  createdAt: date("created_at").notNull().defaultNow(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: varchar("order_id")
+    .notNull()
+    .references(() => ordersTable.id, { onDelete: "cascade" }),
+  shoeInventoryId: uuid("shoe_inventory_id")
+    .notNull()
+    .references(() => shoeInventory.id),
+  quantity: integer("quantity").notNull().default(1),
   createdAt: date("created_at").notNull().defaultNow(),
 });
 
