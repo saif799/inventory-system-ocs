@@ -2,6 +2,7 @@ import { DeliveryOrderType } from "@/lib/dataTypes";
 import { db } from "@/lib/db";
 import {
   ImageNotifierTable,
+  orderItems,
   ordersTable,
   shoeInventory,
   stautsGroupsTable,
@@ -35,12 +36,14 @@ export async function GET() {
     // get all statuses from the db and map their names to ids
     const dbStatuses = await db.select().from(stautsGroupsTable);
 
+    // mapping all the status names to their ids for easy access
     const statusNameToId: Record<string, string> = {};
 
     dbStatuses.forEach((s) => {
       statusNameToId[s.name] = s.id;
     });
 
+    // grouping the orders by their status (retour : [...], livre:[])
     const groupedStatuses: Record<string, Array<string>> = {};
 
     data.data.map((order) => {
@@ -58,32 +61,41 @@ export async function GET() {
       groupedStatuses[originalstatus.name].push(order.tracking);
     });
 
-    // todo: make sure to retrieve the orders of the status return before u update it
-
     const ordersToReturn = await db
       .select()
       .from(ordersTable)
       .where(inArray(ordersTable.id, groupedStatuses["retour"] || []));
-
-    // add shoe back to inventory if it wasnt added yet
     if (ordersToReturn.length > 0) {
+      // adding back the quantity of the shoe in inventory + notify IF we didnt already add them back before (check using the filter on the items to return)
+      const itemsToreturn = db
+        .select({
+          shoeInventoryId: orderItems.shoeInventoryId,
+          orderId: orderItems.orderId,
+        })
+        .from(orderItems)
+        .where(inArray(orderItems.orderId, groupedStatuses["retour"] || []));
+
       await Promise.all(
         ordersToReturn
+          // this makes sure we dont repeat the addition of quantity and notifier if we already did it before
           .filter((order) => order.statusId !== statusNameToId["retour"])
           .map(async (order) => {
             await db
               .update(shoeInventory)
               .set({ quantity: sql`${shoeInventory.quantity} + 1` })
-              .where(eq(shoeInventory.id, order.shoeInventoryId));
-
-            await db.insert(ImageNotifierTable).values({
-              shoeInventoryId: order.shoeInventoryId,
-              orderId: order.id,
-            });
+              .where(inArray(shoeInventory.id, itemsToreturn));
+            // currently this is notifying for everything while it should be notifying only for the items that had previous quantity 0 and now have more than 0
+            await db.execute(sql`
+  INSERT INTO ${ImageNotifierTable} (shoe_inventory_id, order_id)
+  SELECT shoe_inventory_id, order_id
+  FROM ${orderItems}
+  WHERE order_id = ${order.id}
+`);
           })
       );
     }
 
+    // changing the status of the orders in the db
     await Promise.all(
       Object.keys(groupedStatuses).map(async (externalStatus) => {
         await db

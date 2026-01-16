@@ -1,6 +1,12 @@
 import { db } from "@/lib/db";
-import { ordersTable, shoeInventory, shoeModels } from "@/lib/schema";
-import { eq, sql } from "drizzle-orm";
+import {
+  ImageNotifierTable,
+  orderItems,
+  ordersTable,
+  shoeInventory,
+  shoeModels,
+} from "@/lib/schema";
+import { eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
@@ -36,7 +42,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    if (!selectedSizeShoeId) {
+    if (!selectedSizeShoeId || selectedSizeShoeId.length === 0) {
       return Response.json(
         { error: "Selected size ID is required." },
         { status: 400 }
@@ -127,22 +133,32 @@ export async function POST(request: Request) {
       // const source = AvailableSources[platform] ?? "unknown";
 
       await Promise.all([
-        db.insert(ordersTable).values({
-          id: tracking,
-          reference: produit, // Add this field, as it's required by the table and is a default/optional param, but sometimes needed for Drizzle PG
-          nom_client,
-          telephone,
-          telephone_2,
-          adresse,
-          commune,
-          code_wilaya,
-          montant,
-          remarque,
-          shoeInventoryId: selectedSizeShoeId,
-          type,
-          stop_desk,
-          source,
-        }),
+        db
+          .insert(ordersTable)
+          .values({
+            id: tracking,
+            reference: produit, // Add this field, as it's required by the table and is a default/optional param, but sometimes needed for Drizzle PG
+            nom_client,
+            telephone,
+            telephone_2,
+            adresse,
+            commune,
+            code_wilaya,
+            montant,
+            remarque,
+            // shoeInventoryId: selectedSizeShoeId,
+            type,
+            stop_desk,
+            source,
+          })
+          .then(async () => {
+            await db.insert(orderItems).values(
+              selectedSizeShoeId.map((shoeId: string) => ({
+                orderId: tracking,
+                shoeInventoryId: shoeId,
+              }))
+            );
+          }),
 
         // Decrement shoe inventory by 1
         db
@@ -150,14 +166,15 @@ export async function POST(request: Request) {
           .set({
             quantity: sql`${shoeInventory.quantity} - 1`,
           })
-          .where(eq(shoeInventory.id, selectedSizeShoeId)),
+          .where(inArray(shoeInventory.id, selectedSizeShoeId)),
       ]);
+
+      //TODO add image notifier logic in here
 
       console.log("decremented the quantity of the shoe");
       revalidatePath("/");
       revalidatePath("/orders");
       revalidatePath("/add-shoes");
-      //   revalidatePath("/inventory");
     } else {
       console.log("dhd failed to insert order");
 
@@ -166,8 +183,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    // TODO make sure to revalidate hte orders path when u add it
 
     return Response.json({ message: "Order created successfully" });
   } catch (error) {
@@ -178,24 +193,14 @@ export async function POST(request: Request) {
   }
 }
 
-// todo make it update the statusId not hte status
 export async function DELETE(request: Request) {
   try {
-    const { orderId, shoeInventoryId } = await request.json();
+    const { orderId } = await request.json();
 
     if (!orderId) {
       console.log("no oreder id");
 
       return Response.json({ error: "order ID is required." }, { status: 400 });
-    }
-
-    if (!shoeInventoryId) {
-      console.log("no shoe inventory id");
-
-      return Response.json(
-        { error: "Shoe inventory ID is required." },
-        { status: 400 }
-      );
     }
 
     const res = await fetch(
@@ -226,6 +231,7 @@ export async function DELETE(request: Request) {
 
       // increment the shoe inventory back by 1 (if we have the id)
       await Promise.all([
+        // set status to canceled
         db
           .update(ordersTable)
           .set({ statusId: "e01a36c1-087c-46ab-aa4c-12b1a5186bf1" })
@@ -233,7 +239,21 @@ export async function DELETE(request: Request) {
         db
           .update(shoeInventory)
           .set({ quantity: sql`${shoeInventory.quantity} + 1` })
-          .where(eq(shoeInventory.id, shoeInventoryId)),
+          .where(
+            inArray(
+              shoeInventory.id,
+              db
+                .select({ id: orderItems.shoeInventoryId })
+                .from(orderItems)
+                .where(eq(orderItems.orderId, orderId))
+            )
+          ),
+        db.execute(sql`
+  INSERT INTO ${ImageNotifierTable} (shoe_inventory_id, order_id)
+  SELECT shoe_inventory_id, order_id
+  FROM ${orderItems}
+  WHERE order_id = ${orderId}
+`),
       ]);
 
       revalidatePath("/");

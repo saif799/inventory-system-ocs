@@ -1,0 +1,628 @@
+"use client";
+
+import type React from "react";
+
+import { Dispatch, SetStateAction, useState } from "react";
+import { Button, buttonVariants } from "@/components/ui/button";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { AlertCircle, X } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import communesByWilaya from "@/communes.json";
+import wilayas from "@/wilayas.json";
+import Tarifs from "@/tarifs.json";
+import { SelectGroup } from "./ui/customSelect";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { GroupedProduct } from "@/app/(inventory)/page";
+
+import { ChevronsUpDown } from "lucide-react";
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+// Types for the new order API
+type OrderFormData = {
+  nom_client: string;
+  telephone: string;
+  telephone_2: string | null;
+  adresse: string;
+  commune: string;
+  code_wilaya: string;
+  montant: string;
+  remarque: string | null;
+  produit: string | null;
+  type: number;
+  stop_desk: number;
+};
+
+interface ProductCardProps {
+  product: GroupedProduct;
+  selectedShoes?: Array<{ id: string }>;
+  selectshoe: (id: string, identifier: string) => void;
+}
+
+export default function MultipleItemsOrder({
+  onSuccess,
+  shoe,
+  shoes,
+}: {
+  onSuccess?: () => void;
+  shoe: GroupedProduct;
+  shoes: Array<GroupedProduct>;
+}) {
+  // Original state for shoes management
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [source, setSource] = useState("i");
+  const [selectedShoes, setSelectedShoes] = useState<
+    Array<{ shoe: GroupedProduct; inventoryId: string; selectedSize: string }>
+  >([]);
+  console.log(selectedShoes);
+
+  const [selectedSize, setSelectedSize] = useState<{
+    inventoryId: string;
+    size: string;
+  }>(shoe.sizes[0]);
+
+  const AvailableSources = [
+    { code: "i", value: "instagram" },
+    { code: "f", value: "facebook" },
+    { code: "t", value: "tiktok" },
+    { code: "w", value: "whatsapp" },
+    { code: "k", value: "Ignore" },
+    { code: "m", value: "mossab" },
+  ];
+
+  // New order form data state with all required fields for the API
+  const [formData, setFormData] = useState<OrderFormData>({
+    nom_client: "",
+    telephone: "",
+    telephone_2: null,
+    adresse: "ville",
+    commune: "",
+    code_wilaya: "",
+    montant: "",
+    remarque: null,
+    produit: `${selectedShoes.length} chassures ${selectedShoes.map(
+      (shoe) =>
+        shoe.shoe.modelName + " " + shoe.shoe.color + " " + shoe.selectedSize
+    )} ${source}`,
+    type: 1,
+    stop_desk: 1,
+  });
+
+  const handleSubmitToApi = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    if (selectedShoes.length === 0) {
+      setError("Please select at least one shoe");
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          source,
+          selectedSizeShoeId: selectedShoes.map((s) => s.inventoryId),
+        }), // send formData fields at top-level, not wrapped
+      });
+      if (res.ok) {
+        setSuccess("Order created successfully!");
+        setFormData({
+          nom_client: "",
+          telephone: "",
+          telephone_2: null,
+          adresse: "",
+          commune: "",
+          code_wilaya: "",
+          montant: "",
+          remarque: null,
+          produit: null,
+          type: 1,
+          stop_desk: 1,
+        });
+        onSuccess?.();
+      } else {
+        const errorData = await res.json();
+        console.log(errorData);
+
+        setError("Failed to create order");
+      }
+    } catch (error) {
+      console.error("Error submitting order to API:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger className={buttonVariants({ variant: "outline" })}>
+        Add an Order
+      </DialogTrigger>
+      <DialogContent
+        className="w-full max-w-full sm:max-w-xl transition-all duration-300 max-h-[80vh] overflow-y-auto overflow-x-hidden px-2 md:p-6"
+        style={{ boxSizing: "border-box" }}
+      >
+        <DialogHeader>
+          <DialogTitle>add an Order</DialogTitle>
+          <DialogDescription>enter the client info</DialogDescription>
+        </DialogHeader>
+        <div className="w-full">
+          <form onSubmit={handleSubmitToApi} className="space-y-6">
+            {error && (
+              <Alert className="bg-red-900/20 border-red-700">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <AlertDescription className="text-red-400">
+                  {error || "failed"}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {success && (
+              <Alert className="border-green-400">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-green-400">
+                  {success}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex gap-4">
+              <div className="grow space-y-2">
+                <Label htmlFor="type of service" className="pb-1">
+                  Service Type
+                </Label>
+                <Select
+                  name="type of service"
+                  value={String(formData.type)}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, type: Number(value) })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select order type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Livraison</SelectItem>
+                    <SelectItem value="2">echange</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grow space-y-2">
+                <Label htmlFor="type of delivery" className="pb-1">
+                  delivery Type
+                </Label>
+                <Select
+                  name="type of delivery"
+                  value={String(formData.stop_desk)}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      stop_desk: Number(value),
+                      commune: "",
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select order type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">a domicile</SelectItem>
+                    <SelectItem value="1">bureau</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="nom_client">Client Name</Label>
+              <Input
+                id="nom_client"
+                value={formData.nom_client}
+                onChange={(e) =>
+                  setFormData({ ...formData, nom_client: e.target.value })
+                }
+                placeholder="Enter client name"
+                className="placeholder:text-slate-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="telephone">Phone Number</Label>
+                <Input
+                  id="telephone"
+                  value={formData.telephone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, telephone: e.target.value })
+                  }
+                  placeholder="Primary phone number"
+                  className="placeholder:text-slate-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="telephone_2">Alternative Phone</Label>
+                <Input
+                  id="telephone_2"
+                  value={formData.telephone_2 || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, telephone_2: e.target.value })
+                  }
+                  placeholder="Alternative phone number"
+                  className="placeholder:text-slate-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className=" space-y-2 w-full">
+                <label htmlFor="wilaya">wilaya</label>
+                <Select
+                  name="wilaya"
+                  value={String(formData.code_wilaya)}
+                  onValueChange={(value) => {
+                    setFormData({
+                      ...formData,
+                      code_wilaya: String(value),
+                      commune: "",
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a wilaya..." />
+                  </SelectTrigger>
+                  <SelectContent className="w-[200px] p-0">
+                    <SelectGroup>
+                      {wilayas.map((s) => (
+                        <SelectItem
+                          key={s.wilaya_id}
+                          value={String(s.wilaya_id)}
+                          className={
+                            formData.code_wilaya === String(s.wilaya_id)
+                              ? "text-green-400"
+                              : "text-right"
+                          }
+                        >
+                          {s.wilaya_id} - {s.wilaya_name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className=" space-y-2 w-full ">
+                <label htmlFor="commune"> commune</label>
+
+                <Select
+                  name="commune"
+                  value={formData.commune}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      commune: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a commune..." />
+                  </SelectTrigger>
+                  <SelectContent className="w-[200px] p-0">
+                    <SelectGroup>
+                      {formData.code_wilaya &&
+                        (() => {
+                          const communesForWilaya = (
+                            communesByWilaya as Record<
+                              string,
+                              { nom: string; has_stop_desk: number }[]
+                            >
+                          )[formData.code_wilaya];
+                          return communesForWilaya
+                            ?.filter((c) =>
+                              formData.stop_desk ? c.has_stop_desk : true
+                            )
+                            .map((c) => (
+                              <SelectItem
+                                key={c.nom}
+                                value={c.nom}
+                                className={
+                                  formData.commune === c.nom
+                                    ? "text-green-400"
+                                    : "text-right"
+                                }
+                              >
+                                {c.nom}
+                              </SelectItem>
+                            ));
+                        })()}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="space-y-2 w-full">
+                <Label htmlFor="adresse">Address</Label>
+                <Input
+                  id="adresse"
+                  value={formData.adresse}
+                  onChange={(e) =>
+                    setFormData({ ...formData, adresse: e.target.value })
+                  }
+                  placeholder="Enter delivery address"
+                  className="placeholder:text-slate-500"
+                />
+              </div>
+
+              <div className="space-y-2 w-full">
+                <div className="flex items-center justify-between ">
+                  <Label htmlFor="montant">Amount </Label>
+                  {formData.code_wilaya && (
+                    <span className=" text-xs font-semibold text-orange-700">
+                      {formData.stop_desk === 1
+                        ? Tarifs.livraison[Number(formData.code_wilaya) - 1]
+                            .tarif_stopdesk
+                        : Tarifs.livraison[Number(formData.code_wilaya) - 1]
+                            .tarif}
+                      DA
+                    </span>
+                  )}
+                </div>
+                <Input
+                  id="montant"
+                  value={formData.montant}
+                  onChange={(e) =>
+                    setFormData({ ...formData, montant: e.target.value })
+                  }
+                  type="number"
+                  min="0"
+                  placeholder="Enter order amount"
+                  className="placeholder:text-slate-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="grow space-y-2 w-full">
+                <Label htmlFor="type of service" className="pb-1">
+                  Source
+                </Label>
+                <Select
+                  name="type of service"
+                  value={source}
+                  onValueChange={(value) => {
+                    setSource(value);
+                    setFormData({
+                      ...formData,
+                      produit: `${
+                        selectedShoes.length
+                      } chassures ${selectedShoes.map(
+                        (shoe) =>
+                          shoe.shoe.modelName +
+                          " " +
+                          shoe.shoe.color +
+                          " " +
+                          shoe.selectedSize
+                      )} ${source}`,
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Source " />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AvailableSources.map((source) => (
+                      <SelectItem key={source.code} value={source.code}>
+                        {source.value}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 w-full">
+                <Label htmlFor="remarque">Remarks</Label>
+                <Input
+                  id="remarque"
+                  value={formData.remarque || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, remarque: e.target.value })
+                  }
+                  placeholder="Additional notes or remarks"
+                  className="placeholder:text-slate-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <ComboboxDemo shoes={shoes} addShoe={setSelectedShoes} />
+            </div>
+            <div className="">
+              {selectedShoes.map((item, index) => (
+                <div
+                  key={item.shoe.shoeId + index + item.inventoryId}
+                  className="flex items-center gap-2 py-1"
+                >
+                  <Input
+                    disabled
+                    value={item.shoe.modelName + " " + item.shoe.color}
+                  />
+                  <Select
+                    name="type of service"
+                    value={item.selectedSize}
+                    onValueChange={(value) => {
+                      const prev = selectedShoes;
+                      const target = item.shoe.sizes.find(
+                        (s) => s.size === value
+                      );
+
+                      if (!target) return;
+
+                      prev[index] = {
+                        shoe: item.shoe,
+                        inventoryId: target.inventoryId,
+                        selectedSize: target.size,
+                      };
+                      setSelectedShoes([...prev]);
+                      setFormData({
+                        ...formData,
+                        produit: `${prev.length} chassures ${prev.map(
+                          (shoe) =>
+                            shoe.shoe.modelName +
+                            " " +
+                            shoe.shoe.color +
+                            " " +
+                            shoe.selectedSize
+                        )} ${source}`,
+                      });
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Source " />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {item.shoe.sizes.map((s) => (
+                        <SelectItem key={s.inventoryId} value={s.size}>
+                          {s.size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        produit: `${
+                          selectedShoes.length
+                        } chassures ${selectedShoes.map(
+                          (shoe) =>
+                            shoe.shoe.modelName +
+                            " " +
+                            shoe.shoe.color +
+                            " " +
+                            shoe.selectedSize
+                        )} ${source}`,
+                      });
+                      setSelectedShoes((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
+                    }}
+                  >
+                    <X size={16} />
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              {loading ? "Creating Order..." : "Create Order"}
+            </Button>
+          </form>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function ComboboxDemo({
+  shoes,
+  addShoe,
+}: {
+  shoes: GroupedProduct[];
+  addShoe: Dispatch<
+    SetStateAction<
+      {
+        shoe: GroupedProduct;
+        inventoryId: string;
+        selectedSize: string;
+      }[]
+    >
+  >;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between"
+        >
+          Select a shoe
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command id="addShoe">
+          <CommandInput placeholder="Search framework..." className="h-9" />
+          <CommandList>
+            <CommandEmpty>No Shoes Found.</CommandEmpty>
+            <CommandGroup>
+              {shoes.map((shoe) => (
+                <CommandItem
+                  key={shoe.shoeId}
+                  value={shoe.modelName + " " + shoe.color}
+                  onSelect={() => {
+                    addShoe((prev) => [
+                      ...prev,
+                      {
+                        shoe: shoe,
+                        inventoryId: shoe.sizes[0].inventoryId,
+                        selectedSize: shoe.sizes[0].size,
+                      },
+                    ]);
+                  }}
+                >
+                  {shoe.modelName} - {shoe.color}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}

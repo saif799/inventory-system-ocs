@@ -162,7 +162,6 @@ export const columnsOrder: ColumnDef<OrderType>[] = [
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       orderId: order.id,
-                      shoeInventoryId: order.shoeInventoryId,
                     }),
                   });
                   if (!res.ok) {

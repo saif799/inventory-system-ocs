@@ -33,6 +33,7 @@ import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
 import { Input } from "./ui/input";
 import { GroupedProduct } from "@/app/(inventory)/page";
+import MultipleItemsOrder from "./multipleItemsOrder";
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
 
 export type shoesType = {
@@ -290,7 +291,7 @@ export default function Listings({
               Listings ({listings.length})
             </h3>
 
-            <div className="hidden items-center gap-1 pr-4 lg:inline-flex">
+            {/* <div className="hidden items-center gap-1 pr-4 lg:inline-flex">
               <p className="font-medium">Order by</p>
               <Select onValueChange={(e) => handleSorting(e)}>
                 <SelectTrigger className="w-max">
@@ -315,38 +316,47 @@ export default function Listings({
                 </SelectContent>
               </Select>
               <ArrowDownUp strokeWidth={1.5} size={18} />
-            </div>
-            <Drawer>
-              <DrawerTrigger asChild className="lg:hidden">
-                <Button
-                  onClick={() => scrollToListings()}
-                  variant="outline"
-                  className={cn(
-                    "",
+            </div> */}
+            <div className="flex gap-1">
+              <MultipleItemsOrder
+                shoe={products[0]}
+                shoes={products}
+                onSuccess={() => {
+                  // Refresh listings or update UI
+                }}
+              />
 
-                    ((selectedModels && selectedModels.length > 0) ||
-                      filterParams.sizes.length > 0 ||
-                      filterParams.maxPrice ||
-                      filterParams.minPrice) &&
-                      "font-medium text-purple-900"
-                  )}
-                >
-                  Filter <FilterIcon className="size-4" />
-                </Button>
-              </DrawerTrigger>
-              <DrawerContent className="max-h-[90vh]">
-                <DrawerHeader>
-                  <DrawerTitle className="text-xl font-medium">
-                    Filter tools
-                  </DrawerTitle>
-                  <div className="flex w-full items-center justify-between pb-">
-                    <h3 className="w-full text-left text-lg font-medium">
-                      Filters
-                    </h3>
-                    <Filter className="size-6" color="#000" strokeWidth={2} />
-                  </div>{" "}
-                </DrawerHeader>
-                {/* <div className="flex w-full flex-col pb-2 pl-6 lg:hidden">
+              <Drawer>
+                <DrawerTrigger asChild className="lg:hidden">
+                  <Button
+                    onClick={() => scrollToListings()}
+                    variant="outline"
+                    className={cn(
+                      "",
+
+                      ((selectedModels && selectedModels.length > 0) ||
+                        filterParams.sizes.length > 0 ||
+                        filterParams.maxPrice ||
+                        filterParams.minPrice) &&
+                        "font-medium text-purple-900"
+                    )}
+                  >
+                    Filter <FilterIcon className="size-4" />
+                  </Button>
+                </DrawerTrigger>
+                <DrawerContent className="max-h-[90vh]">
+                  <DrawerHeader>
+                    <DrawerTitle className="text-xl font-medium">
+                      Filter tools
+                    </DrawerTitle>
+                    <div className="flex w-full items-center justify-between pb-">
+                      <h3 className="w-full text-left text-lg font-medium">
+                        Filters
+                      </h3>
+                      <Filter className="size-6" color="#000" strokeWidth={2} />
+                    </div>{" "}
+                  </DrawerHeader>
+                  {/* <div className="flex w-full flex-col pb-2 pl-6 lg:hidden">
                   <h5 className="pb-4 text-lg text-black">Sort by</h5>
                   <div className="flex items-center space-x-2 pl-3 hover:font-medium">
                     <RadioGroup
@@ -390,14 +400,15 @@ export default function Listings({
                     </RadioGroup>
                   </div>
                 </div> */}
-                <FilterTool
-                  models={strModels}
-                  sizes={sizes}
-                  filterTool={filterParams}
-                  setfilterTool={setFilterParams}
-                />
-              </DrawerContent>
-            </Drawer>
+                  <FilterTool
+                    models={strModels}
+                    sizes={sizes}
+                    filterTool={filterParams}
+                    setfilterTool={setFilterParams}
+                  />
+                </DrawerContent>
+              </Drawer>
+            </div>
           </div>
           <div className="grid w-full grid-cols-2 gap-3 py-2 px-3 pb-10 md:grid-cols-3 md:gap-4 lg:gap-4 lg:pr-8">
             {listings
