@@ -118,7 +118,7 @@ export default function Listings({
 
     if (
       filterParams.ProductName &&
-      !p.lowerModelColor.includes(filterParams.ProductName)
+      !p.lowerModelColor.includes(filterParams.ProductName.toLowerCase())
     ) {
       return false;
     }
