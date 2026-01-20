@@ -32,7 +32,6 @@ type OrderFormData = {
   code_wilaya: string;
   montant: string;
   remarque: string | null;
-  produit: string | null;
   type: number;
   stop_desk: number;
 };
@@ -73,7 +72,6 @@ export default function SendOrderForm({
     code_wilaya: "",
     montant: "",
     remarque: null,
-    produit: `${shoe.modelName} ${shoe.color} ${selectedSize.size} ${source}`,
     type: 1,
     stop_desk: 1,
   });
@@ -84,6 +82,8 @@ export default function SendOrderForm({
     setSuccess("");
     setLoading(true);
     try {
+      const produit = `${shoe.modelName} ${shoe.color} ${selectedSize.size} ${source}`;
+
       const res = await fetch("/api/order", {
         method: "POST",
         headers: {
@@ -92,6 +92,7 @@ export default function SendOrderForm({
         body: JSON.stringify({
           ...formData,
           source,
+          produit,
           selectedSizeShoeId: [selectedSize.inventoryId],
         }), // send formData fields at top-level, not wrapped
       });
@@ -106,7 +107,6 @@ export default function SendOrderForm({
           code_wilaya: "",
           montant: "",
           remarque: null,
-          produit: null,
           type: 1,
           stop_desk: 1,
         });
@@ -368,10 +368,6 @@ export default function SendOrderForm({
               value={selectedSize.size}
               onValueChange={(value) => {
                 setSelectedSize(shoe.sizes.find((s) => s.size === value)!);
-                setFormData({
-                  ...formData,
-                  produit: `${shoe.modelName} ${shoe.color} ${value} ${source}`,
-                });
               }}
             >
               <SelectTrigger className="w-full">
@@ -395,10 +391,6 @@ export default function SendOrderForm({
               value={source}
               onValueChange={(value) => {
                 setSource(value);
-                setFormData({
-                  ...formData,
-                  produit: `${shoe.modelName} ${shoe.color} ${selectedSize.size} ${value}`,
-                });
               }}
             >
               <SelectTrigger className="w-full">
@@ -420,10 +412,7 @@ export default function SendOrderForm({
             <Input
               disabled
               id="product"
-              value={formData.produit || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, produit: e.target.value })
-              }
+              value={`${shoe.modelName} ${shoe.color} ${selectedSize.size} ${source}`}
               placeholder="Additional notes or remarks"
               className="placeholder:text-slate-500"
             />
