@@ -56,7 +56,6 @@ type OrderFormData = {
   code_wilaya: string;
   montant: string;
   remarque: string | null;
-  produit: string | null;
   type: number;
   stop_desk: number;
 };
@@ -86,11 +85,6 @@ export default function MultipleItemsOrder({
   >([]);
   console.log(selectedShoes);
 
-  const [selectedSize, setSelectedSize] = useState<{
-    inventoryId: string;
-    size: string;
-  }>(shoe.sizes[0]);
-
   const AvailableSources = [
     { code: "i", value: "instagram" },
     { code: "f", value: "facebook" },
@@ -110,10 +104,6 @@ export default function MultipleItemsOrder({
     code_wilaya: "",
     montant: "",
     remarque: null,
-    produit: `${selectedShoes.length} chassures ${selectedShoes.map(
-      (shoe) =>
-        shoe.shoe.modelName + " " + shoe.shoe.color + " " + shoe.selectedSize
-    )} ${source}`,
     type: 1,
     stop_desk: 1,
   });
@@ -129,6 +119,11 @@ export default function MultipleItemsOrder({
       return;
     }
     try {
+      const produit = `${selectedShoes.length} chassures ${selectedShoes.map(
+        (shoe) =>
+          shoe.shoe.modelName + " " + shoe.shoe.color + " " + shoe.selectedSize
+      )} ${source}`;
+
       const res = await fetch("/api/order", {
         method: "POST",
         headers: {
@@ -137,6 +132,7 @@ export default function MultipleItemsOrder({
         body: JSON.stringify({
           ...formData,
           source,
+          produit,
           selectedSizeShoeId: selectedShoes.map((s) => s.inventoryId),
         }), // send formData fields at top-level, not wrapped
       });
@@ -151,7 +147,6 @@ export default function MultipleItemsOrder({
           code_wilaya: "",
           montant: "",
           remarque: null,
-          produit: null,
           type: 1,
           stop_desk: 1,
         });
@@ -428,19 +423,6 @@ export default function MultipleItemsOrder({
                   value={source}
                   onValueChange={(value) => {
                     setSource(value);
-                    setFormData({
-                      ...formData,
-                      produit: `${
-                        selectedShoes.length
-                      } chassures ${selectedShoes.map(
-                        (shoe) =>
-                          shoe.shoe.modelName +
-                          " " +
-                          shoe.shoe.color +
-                          " " +
-                          shoe.selectedSize
-                      )} ${source}`,
-                    });
                   }}
                 >
                   <SelectTrigger className="w-full">
@@ -470,7 +452,7 @@ export default function MultipleItemsOrder({
             </div>
 
             <div>
-              <ComboboxDemo shoes={shoes} addShoe={setSelectedShoes} />
+              <ChooseShoeComboBox shoes={shoes} addShoe={setSelectedShoes} />
             </div>
             <div className="">
               {selectedShoes.map((item, index) => (
@@ -499,17 +481,6 @@ export default function MultipleItemsOrder({
                         selectedSize: target.size,
                       };
                       setSelectedShoes([...prev]);
-                      setFormData({
-                        ...formData,
-                        produit: `${prev.length} chassures ${prev.map(
-                          (shoe) =>
-                            shoe.shoe.modelName +
-                            " " +
-                            shoe.shoe.color +
-                            " " +
-                            shoe.selectedSize
-                        )} ${source}`,
-                      });
                     }}
                   >
                     <SelectTrigger className="w-full">
@@ -528,19 +499,6 @@ export default function MultipleItemsOrder({
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setFormData({
-                        ...formData,
-                        produit: `${
-                          selectedShoes.length
-                        } chassures ${selectedShoes.map(
-                          (shoe) =>
-                            shoe.shoe.modelName +
-                            " " +
-                            shoe.shoe.color +
-                            " " +
-                            shoe.selectedSize
-                        )} ${source}`,
-                      });
                       setSelectedShoes((prev) =>
                         prev.filter((_, i) => i !== index)
                       );
@@ -565,7 +523,7 @@ export default function MultipleItemsOrder({
   );
 }
 
-export function ComboboxDemo({
+export function ChooseShoeComboBox({
   shoes,
   addShoe,
 }: {
@@ -606,6 +564,7 @@ export function ComboboxDemo({
                   key={shoe.shoeId}
                   value={shoe.modelName + " " + shoe.color}
                   onSelect={() => {
+                    setOpen(false);
                     addShoe((prev) => [
                       ...prev,
                       {

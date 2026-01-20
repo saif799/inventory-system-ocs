@@ -7,7 +7,7 @@ import {
   shoeInventory,
   stautsGroupsTable,
 } from "@/lib/schema";
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, inArray, ne, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 // fetch the data from dhd(handle all posssible states) +> update the status in the orders table -> edit what needs to be edited from adding a shoe if the sate is retour ->notify me to add teh pic back if its a reour
@@ -61,39 +61,61 @@ export async function GET() {
       groupedStatuses[originalstatus.name].push(order.tracking);
     });
 
+    // fetch the orders that need to be returned and their status wasnt changed before
     const ordersToReturn = await db
-      .select()
+      .select({ orderId: ordersTable.id })
       .from(ordersTable)
-      .where(inArray(ordersTable.id, groupedStatuses["retour"] || []));
+      .where(
+        and(
+          inArray(ordersTable.id, groupedStatuses["retour"] || []),
+          // makes sure we dont fetch orders where status was alreayd chnaged to retour
+          ne(ordersTable.statusId, statusNameToId["retour"])
+        )
+      );
+
+    // get all orders to retunr -> update the items(shoeinventory) that didnt get updated and dont update the items that ogt updated (their order id is alreay set to return)
     if (ordersToReturn.length > 0) {
-      // adding back the quantity of the shoe in inventory + notify IF we didnt already add them back before (check using the filter on the items to return)
-      const itemsToreturn = db
+      // adding back the quantity of the shoe in inventory + notify IF we didnt already add them back before -> update image notifier by adding the new items
+      const itemsToreturn = await db
         .select({
           shoeInventoryId: orderItems.shoeInventoryId,
           orderId: orderItems.orderId,
+          quantity: orderItems.quantity,
         })
         .from(orderItems)
-        .where(inArray(orderItems.orderId, groupedStatuses["retour"] || []));
+        .where(
+          inArray(
+            orderItems.orderId,
+            ordersToReturn.map((o) => o.orderId)
+          )
+        );
 
-      await Promise.all(
-        ordersToReturn
-          // this makes sure we dont repeat the addition of quantity and notifier if we already did it before
-          .filter((order) => order.statusId !== statusNameToId["retour"])
-          .map(async (order) => {
-            await db
-              .update(shoeInventory)
-              .set({ quantity: sql`${shoeInventory.quantity} + 1` })
-              .where(inArray(shoeInventory.id, itemsToreturn));
-            // currently this is notifying for everything while it should be notifying only for the items that had previous quantity 0 and now have more than 0
-            await db.execute(sql`
-  INSERT INTO ${ImageNotifierTable} (shoe_inventory_id, order_id)
-  SELECT shoe_inventory_id, order_id
-  FROM ${orderItems}
-  WHERE order_id = ${order.id}
-`);
-          })
-      );
+      console.log("selected the items");
+
+      await Promise.all([
+        itemsToreturn.map(async (item) => {
+          await db
+            .update(shoeInventory)
+            .set({
+              quantity: sql`${shoeInventory.quantity} + ${item.quantity}`,
+            })
+            .where(
+              inArray(
+                shoeInventory.id,
+                itemsToreturn.map((i) => i.shoeInventoryId)
+              )
+            );
+        }),
+        db.insert(ImageNotifierTable).values(
+          itemsToreturn.map((item) => ({
+            shoeInventoryId: item.shoeInventoryId,
+            orderId: item.orderId,
+          }))
+        ),
+      ]);
     }
+
+    console.log("updated the shoe inventory and the image notifier table");
 
     // changing the status of the orders in the db
     await Promise.all(
@@ -113,6 +135,8 @@ export async function GET() {
 
     return Response.json({ groupedStatuses }, { status: 200 });
   } catch (error) {
+    console.log("failed with this error ", error);
+
     return Response.json({ error: "Failed to fetch models" }, { status: 500 });
   }
 }
