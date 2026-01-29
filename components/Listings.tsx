@@ -11,21 +11,13 @@ import {
 } from "./ui/drawer";
 import { Button } from "./ui/button";
 import {
-  ArrowDown,
-  ArrowDownUp,
-  ArrowUp,
+  
   Filter,
   FilterIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/customSelect";
+import { usePathname,  useSearchParams } from "next/navigation";
+
 import { shoeModels } from "@/lib/schema";
 import { InferSelectModel } from "drizzle-orm";
 

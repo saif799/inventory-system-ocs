@@ -36,25 +36,7 @@ export default function FilterTool({
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const sizeParam =
-    searchParams
-      .get("sizes")
-      ?.split(",")
-      .map((size) => parseFloat(size)) ?? [];
-  const modelParam = searchParams.get("models")?.split(",") ?? [];
-
-  // Get filters from URL
-
-  function createQueryString(name: string, value: string) {
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set(name, value);
-    } else {
-      params.delete(name);
-    }
-    return params.toString();
-  }
-
+ 
   function clearQueryString() {
     const params = new URLSearchParams(searchParams);
 
@@ -76,9 +58,9 @@ export default function FilterTool({
   }
 
   function selectModelFilterS(newModel: string) {
-    const Check = modelParam.includes(newModel)
-      ? modelParam.filter((m) => m !== newModel)
-      : [...modelParam, newModel];
+    const Check = filterTool.models.includes(newModel)
+      ? filterTool.models.filter((m) => m !== newModel)
+      : [...filterTool.models, newModel];
 
     const newValue = Check.length > 0 ? Check.join(",") : "";
 
@@ -99,9 +81,9 @@ export default function FilterTool({
   }
 
   function selectSizesFilterS(size: number) {
-    const Check = sizeParam.includes(size)
-      ? sizeParam.filter((m) => m !== size)
-      : [...sizeParam, size];
+    const Check = filterTool.sizes.includes(size)
+      ? filterTool.sizes.filter((m) => m !== size)
+      : [...filterTool.sizes, size];
 
     const newValue = Check.length > 0 ? Check.join(",") : "";
     setfilterTool((prev) => ({
@@ -188,7 +170,7 @@ export default function FilterTool({
           <AccordionTrigger
             className={cn(
               "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
-              modelParam.length > 0 ? "font-medium text-purple-900" : ""
+              filterTool.models.length > 0 ? "font-medium text-purple-900" : ""
             )}
           >
             <p>Model</p>
@@ -207,7 +189,7 @@ export default function FilterTool({
                   >
                     <Checkbox
                       id={m}
-                      checked={modelParam.includes(m)}
+                      checked={filterTool.models.includes(m)}
                       onCheckedChange={() => selectModelFilterS(m)}
                     />
                     <label htmlFor={m} className="text-base">
@@ -221,7 +203,7 @@ export default function FilterTool({
         <AccordionItem value="size">
           <AccordionTrigger
             className={cn(
-              "pl-2 text-lg font-light text-black ",
+              "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
               filterTool.sizes.length > 0 ? "font-medium text-purple-900" : ""
             )}
           >
@@ -234,7 +216,7 @@ export default function FilterTool({
                 disabled={false}
                 selectHandler={() => selectSizesFilterS(s)}
                 size={s}
-                isSelected={sizeParam.includes(s)}
+                isSelected={filterTool.sizes.includes(s)}
               />
             ))}
           </AccordionContent>
