@@ -1,14 +1,15 @@
 import { db } from "@/lib/db";
 import { shoeInventory } from "@/lib/schema";
 import { eq, sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { action } = await request.json();
-    const id = params.id;
+    const { action, quantity } = await request.json();
+    const { id } = await params;
 
     if (!id) {
       return Response.json({ error: "Invalid id" }, { status: 400 });
@@ -23,11 +24,26 @@ export async function PATCH(
       if (!updated) {
         return Response.json({ error: "Item not found" }, { status: 404 });
       }
+      revalidatePath("/");
+      return Response.json(updated);
+    }
+
+    if (action === "update" && typeof quantity === "number") {
+      const [updated] = await db
+        .update(shoeInventory)
+        .set({ quantity: Math.max(0, quantity) })
+        .where(eq(shoeInventory.id, id))
+        .returning();
+      if (!updated) {
+        return Response.json({ error: "Item not found" }, { status: 404 });
+      }
+      revalidatePath("/");
       return Response.json(updated);
     }
 
     return Response.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
+    console.log("Failed to update inventory", error);
     return Response.json(
       { error: "Failed to update inventory" },
       { status: 500 }
@@ -37,10 +53,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     if (!id) {
       return Response.json({ error: "Invalid id" }, { status: 400 });
     }
