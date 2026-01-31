@@ -21,7 +21,7 @@ import SendOrderForm from "./sendShoeOrder";
 import EditInventoryDialog from "./EditInventoryDialog";
 import StoreSaleDialog from "./StoreSaleDialog";
 import { GroupedProduct } from "@/app/(inventory)/page";
-import { Button} from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { MoreHorizontal, Package, Pencil, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 
@@ -49,7 +49,7 @@ export default function ProductCard({
         // show a visible ring when selected
         selectedShoes?.some((shoe) => shoe.id === shoeId)
           ? "ring-2 ring-purple-500/50 ring-offset-2"
-          : ""
+          : "",
       )}
     >
       <div className="flex items-start justify-between">
@@ -80,23 +80,17 @@ export default function ProductCard({
         </div>
 
         <div className="flex items-center gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-            >
           <Dialog>
             <DialogTrigger
               onClick={(e) => e.stopPropagation()}
-               className="flex items-center gap-1"
+              className={buttonVariants({
+                variant: "outline",
+                className: "flex items-center",
+                size: "icon",
+              })}
             >
-           <Package className="h-3 w-3" />    <span >Add an order</span>
+              <Package className="h-3 w-3" />
+              {/* <span>order</span> */}
             </DialogTrigger>
             <DialogContent
               className="w-full max-w-full sm:max-w-xl transition-all duration-300 max-h-[80vh] overflow-y-auto overflow-x-hidden px-2 md:p-6"
@@ -112,39 +106,53 @@ export default function ProductCard({
                 />
               </div>
             </DialogContent>
-          </Dialog>            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-            onClick={() => setIsStoreSaleOpen(true)}
-            >
- <Dialog open={isStoreSaleOpen} onOpenChange={setIsStoreSaleOpen} >
-      <DialogTrigger onClick={(e) => e.stopPropagation()} className="flex items-center gap-1">
-          <ShoppingCart className="h-3 w-3 " /> Store Sale
-         
-      </DialogTrigger>
-      <StoreSaleDialog product={{ modelId, modelName, color, sizes, shoeId }} setIsStoreSaleOpen={setIsStoreSaleOpen} />
+          </Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setIsStoreSaleOpen(true)}>
+                <Dialog
+                  open={isStoreSaleOpen}
+                  onOpenChange={setIsStoreSaleOpen}
+                >
+                  <DialogTrigger
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1"
+                  >
+                    <ShoppingCart className="h-3 w-3 " /> Store Sale
+                  </DialogTrigger>
+                  <StoreSaleDialog
+                    product={{ modelId, modelName, color, sizes, shoeId }}
+                    setIsStoreSaleOpen={setIsStoreSaleOpen}
+                  />
+                </Dialog>{" "}
+              </DropdownMenuItem>
 
-      
-    </Dialog>          </DropdownMenuItem>
-
-          <DropdownMenuItem>
-          <Dialog open={isEditInventoryOpen} onOpenChange={setIsEditInventoryOpen} >
-      <DialogTrigger onClick={(e) => e.stopPropagation()} className="flex items-center gap-1">
-          <Pencil className="h-3 w-3" /> Edit
-         
-      </DialogTrigger>
-      <EditInventoryDialog product={{ modelId, modelName, color, sizes, shoeId }} setIsEditInventoryOpen={setIsEditInventoryOpen} />
-
-      
-    </Dialog>
-
-          </DropdownMenuItem>
-
-           
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-          
+              <DropdownMenuItem>
+                <Dialog
+                  open={isEditInventoryOpen}
+                  onOpenChange={setIsEditInventoryOpen}
+                >
+                  <DialogTrigger
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1"
+                  >
+                    <Pencil className="h-3 w-3" /> Edit
+                  </DialogTrigger>
+                  <EditInventoryDialog
+                    product={{ modelId, modelName, color, sizes, shoeId }}
+                    setIsEditInventoryOpen={setIsEditInventoryOpen}
+                  />
+                </Dialog>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
