@@ -7,7 +7,7 @@ import {
   shoeInventory,
   stautsGroupsTable,
 } from "@/lib/schema";
-import { and, inArray, ne, sql } from "drizzle-orm";
+import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 // fetch the data from dhd(handle all posssible states) +> update the status in the orders table -> edit what needs to be edited from adding a shoe if the sate is retour ->notify me to add teh pic back if its a reour
@@ -27,7 +27,7 @@ export async function GET() {
     if (!res.ok) {
       return Response.json(
         { error: "Failed to fetch orders from DHD" },
-        { status: res.status }
+        { status: res.status },
       );
     }
 
@@ -48,7 +48,7 @@ export async function GET() {
 
     data.data.map((order) => {
       const originalstatus = dbStatuses.find((s) =>
-        s.external_statuses.includes(order.status)
+        s.external_statuses.includes(order.status),
       );
 
       if (!originalstatus) {
@@ -69,8 +69,8 @@ export async function GET() {
         and(
           inArray(ordersTable.id, groupedStatuses["retour"] || []),
           // makes sure we dont fetch orders where status was alreayd chnaged to retour
-          ne(ordersTable.statusId, statusNameToId["retour"])
-        )
+          ne(ordersTable.statusId, statusNameToId["retour"]),
+        ),
       );
 
     // get all orders to retunr -> update the items(shoeinventory) that didnt get updated and dont update the items that ogt updated (their order id is alreay set to return)
@@ -86,8 +86,8 @@ export async function GET() {
         .where(
           inArray(
             orderItems.orderId,
-            ordersToReturn.map((o) => o.orderId)
-          )
+            ordersToReturn.map((o) => o.orderId),
+          ),
         );
 
       console.log("selected the items");
@@ -99,18 +99,13 @@ export async function GET() {
             .set({
               quantity: sql`${shoeInventory.quantity} + ${item.quantity}`,
             })
-            .where(
-              inArray(
-                shoeInventory.id,
-                itemsToreturn.map((i) => i.shoeInventoryId)
-              )
-            );
+            .where(eq(shoeInventory.id, item.shoeInventoryId));
         }),
         db.insert(ImageNotifierTable).values(
           itemsToreturn.map((item) => ({
             shoeInventoryId: item.shoeInventoryId,
             orderId: item.orderId,
-          }))
+          })),
         ),
       ]);
     }
@@ -126,7 +121,7 @@ export async function GET() {
           .where(inArray(ordersTable.id, groupedStatuses[externalStatus]));
 
         console.log("updated orders with status ", externalStatus);
-      })
+      }),
     );
 
     revalidatePath("/");
