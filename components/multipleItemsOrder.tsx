@@ -121,7 +121,7 @@ export default function MultipleItemsOrder({
     try {
       const produit = `${selectedShoes.length} chassures ${selectedShoes.map(
         (shoe) =>
-          shoe.shoe.modelName + " " + shoe.shoe.color + " " + shoe.selectedSize
+          shoe.shoe.modelName + " " + shoe.shoe.color + " " + shoe.selectedSize,
       )} ${source}`;
 
       const res = await fetch("/api/order", {
@@ -349,7 +349,7 @@ export default function MultipleItemsOrder({
                           )[formData.code_wilaya];
                           return communesForWilaya
                             ?.filter((c) =>
-                              formData.stop_desk ? c.has_stop_desk : true
+                              formData.stop_desk ? c.has_stop_desk : true,
                             )
                             .map((c) => (
                               <SelectItem
@@ -391,10 +391,12 @@ export default function MultipleItemsOrder({
                   {formData.code_wilaya && (
                     <span className=" text-xs font-semibold text-orange-700">
                       {formData.stop_desk === 1
-                        ? Tarifs.livraison[Number(formData.code_wilaya) - 1]
-                            .tarif_stopdesk
-                        : Tarifs.livraison[Number(formData.code_wilaya) - 1]
-                            .tarif}
+                        ? Tarifs.livraison.find(
+                            (t) => t.wilaya_id === Number(formData.code_wilaya),
+                          )?.tarif_stopdesk
+                        : Tarifs.livraison.find(
+                            (t) => t.wilaya_id === Number(formData.code_wilaya),
+                          )?.tarif}
                       DA
                     </span>
                   )}
@@ -470,7 +472,7 @@ export default function MultipleItemsOrder({
                     onValueChange={(value) => {
                       const prev = selectedShoes;
                       const target = item.shoe.sizes.find(
-                        (s) => s.size === value
+                        (s) => s.size === value,
                       );
 
                       if (!target) return;
@@ -500,7 +502,7 @@ export default function MultipleItemsOrder({
                     size="sm"
                     onClick={() => {
                       setSelectedShoes((prev) =>
-                        prev.filter((_, i) => i !== index)
+                        prev.filter((_, i) => i !== index),
                       );
                     }}
                   >

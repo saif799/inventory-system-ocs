@@ -295,7 +295,7 @@ export default function SendOrderForm({
                       )[formData.code_wilaya];
                       return communesForWilaya
                         ?.filter((c) =>
-                          formData.stop_desk ? c.has_stop_desk : true
+                          formData.stop_desk ? c.has_stop_desk : true,
                         )
                         .map((c) => (
                           <SelectItem
@@ -335,11 +335,14 @@ export default function SendOrderForm({
             <div className="flex items-center justify-between ">
               <Label htmlFor="montant">Amount </Label>
               {formData.code_wilaya && (
-                <span className=" text-xs font-semibold text-orange-700">
+                <span className="text-xs font-semibold text-orange-700">
                   {formData.stop_desk === 1
-                    ? Tarifs.livraison[Number(formData.code_wilaya) - 1]
-                        .tarif_stopdesk
-                    : Tarifs.livraison[Number(formData.code_wilaya) - 1].tarif}
+                    ? Tarifs.livraison.find(
+                        (t) => t.wilaya_id === Number(formData.code_wilaya),
+                      )?.tarif_stopdesk
+                    : Tarifs.livraison.find(
+                        (t) => t.wilaya_id === Number(formData.code_wilaya),
+                      )?.tarif}
                   DA
                 </span>
               )}
