@@ -84,9 +84,7 @@ export const ImageNotifierTable = pgTable("image_notifier_table", {
   shoeInventoryId: uuid("shoe_inventory_id")
     .notNull()
     .references(() => shoeInventory.id),
-  orderId: varchar("order_id")
-    .references(() => ordersTable.id),
-
+  orderId: varchar("order_id").references(() => ordersTable.id),
 });
 
 export const storeSales = pgTable("store_sales", {
