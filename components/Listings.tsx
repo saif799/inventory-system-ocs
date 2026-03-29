@@ -10,13 +10,9 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { Button } from "./ui/button";
-import {
-  
-  Filter,
-  FilterIcon,
-} from "lucide-react";
+import { Filter, FilterIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePathname,  useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { shoeModels } from "@/lib/schema";
 import { InferSelectModel } from "drizzle-orm";
@@ -26,6 +22,7 @@ import ProductCard from "./productCard";
 import { Input } from "./ui/input";
 import { GroupedProduct } from "@/app/(inventory)/page";
 import MultipleItemsOrder from "./multipleItemsOrder";
+import printShoeLabels from "@/lib/print";
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
 
 export type shoesType = {
@@ -97,7 +94,7 @@ export default function Listings({
         lowerModelColor: `${p.modelName} ${p.color}`.toLowerCase(),
         sizesNum: p.sizes.map((s) => ({ ...s, sizeNum: Number(s.size) })),
       })),
-    [products]
+    [products],
   );
 
   const listings = productsWithSearch.filter((p) => {
@@ -244,7 +241,7 @@ export default function Listings({
                           listings.map((shoe) => ({
                             id: shoe.shoeId,
                             name: shoe.modelName + shoe.color,
-                          }))
+                          })),
                         );
                       }
                     }}
@@ -262,15 +259,15 @@ export default function Listings({
                         const shoesToPrint = listings
                           .filter((shoe) =>
                             selectedShoes.some(
-                              (selected) => selected.id === shoe.shoeId
-                            )
+                              (selected) => selected.id === shoe.shoeId,
+                            ),
                           )
                           .map((shoe) => ({
                             id: shoe.shoeId,
                             name: shoe.modelName + shoe.color,
                           }));
 
-                        PrintPdf(shoesToPrint);
+                        // PrintPdf(shoesToPrint);
                       }}
                     >
                       Print Selected
@@ -278,6 +275,7 @@ export default function Listings({
                   )}
                 </>
               )}
+              {/* <TestPrintButton /> */}
             </label>
             <h3 className="text-left text-xl font-medium">
               Listings ({listings.length})
@@ -330,7 +328,7 @@ export default function Listings({
                         filterParams.sizes.length > 0 ||
                         filterParams.maxPrice ||
                         filterParams.minPrice) &&
-                        "font-medium text-purple-900"
+                        "font-medium text-purple-900",
                     )}
                   >
                     Filter <FilterIcon className="size-4" />
@@ -426,4 +424,19 @@ export default function Listings({
       </div>
     </div>
   );
+}
+
+export function TestPrintButton() {
+  const handleTestPrint = () => {
+    printShoeLabels([
+      {
+        id: "TEST7343079276",
+        name: "Air Max 90",
+        sizes: "40, 41, 43, 45",
+        price: "4500",
+      },
+    ]);
+  };
+
+  return <button onClick={handleTestPrint}>Print test labels</button>;
 }
