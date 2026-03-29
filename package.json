@@ -61,6 +61,7 @@
     "pdf-lib": "^1.17.1",
     "pg": "latest",
     "postgres": "latest",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-barcode": "latest",
     "react-dom": "^19.2.0",
