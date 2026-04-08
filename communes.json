@@ -200,7 +200,7 @@
     },
     {
       "nom": "Tenes",
-      "has_stop_desk": 0
+      "has_stop_desk": 1
     },
     {
       "nom": "Zeboudja",
@@ -404,7 +404,7 @@
     },
     {
       "nom": "Oum El Bouaghi",
-      "has_stop_desk": 0
+      "has_stop_desk": 1
     },
     {
       "nom": "Rahia",
@@ -446,7 +446,7 @@
     },
     {
       "nom": "Barika",
-      "has_stop_desk": 0
+      "has_stop_desk": 1
     },
     {
       "nom": "Batna",
@@ -1070,7 +1070,7 @@
     },
     {
       "nom": "Bouinan",
-      "has_stop_desk": 0
+      "has_stop_desk": 1
     },
     {
       "nom": "Chebli",
@@ -3298,7 +3298,7 @@
     },
     {
       "nom": "El Bouni",
-      "has_stop_desk": 0
+      "has_stop_desk": 1
     },
     {
       "nom": "El Hadjar",
@@ -4690,7 +4690,7 @@
     },
     {
       "nom": "Bordj Menaiel",
-      "has_stop_desk": 0
+      "has_stop_desk": 1
     },
     {
       "nom": "Boudouaou",
