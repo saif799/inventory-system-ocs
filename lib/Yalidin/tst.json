@@ -1,0 +1,1401 @@
+ [
+    {
+      "id": 101,
+      "name": "Adrar",
+      "wilaya_id": 1,
+      "wilaya_name": "Adrar",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 104,
+      "name": "Reggane",
+      "wilaya_id": 1,
+      "wilaya_name": "Adrar",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 112,
+      "name": "Aoulef",
+      "wilaya_id": 1,
+      "wilaya_name": "Adrar",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 211,
+      "name": "Chlef",
+      "wilaya_id": 2,
+      "wilaya_name": "Chlef",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 234,
+      "name": "Ténès",
+      "wilaya_id": 2,
+      "wilaya_name": "Chlef",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 301,
+      "name": "Laghouat",
+      "wilaya_id": 3,
+      "wilaya_name": "Laghouat",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 319,
+      "name": "Aflou",
+      "wilaya_id": 3,
+      "wilaya_name": "Laghouat",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 401,
+      "name": "Oum el Bouaghi",
+      "wilaya_id": 4,
+      "wilaya_name": "Oum El Bouaghi",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 403,
+      "name": "Aïn M'lila",
+      "wilaya_id": 4,
+      "wilaya_name": "Oum El Bouaghi",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 501,
+      "name": "Batna",
+      "wilaya_id": 5,
+      "wilaya_name": "Batna",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 542,
+      "name": "Barika",
+      "wilaya_id": 5,
+      "wilaya_name": "Batna",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 601,
+      "name": "Béjaïa",
+      "wilaya_id": 6,
+      "wilaya_name": "Béjaïa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 625,
+      "name": "Akbou",
+      "wilaya_id": 6,
+      "wilaya_name": "Béjaïa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 640,
+      "name": "El Kseur",
+      "wilaya_id": 6,
+      "wilaya_name": "Béjaïa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 704,
+      "name": "Biskra",
+      "wilaya_id": 7,
+      "wilaya_name": "Biskra",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 716,
+      "name": "El Kantara",
+      "wilaya_id": 7,
+      "wilaya_name": "Biskra",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 12,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 732,
+      "name": "Tolga",
+      "wilaya_id": 7,
+      "wilaya_name": "Biskra",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 801,
+      "name": "Béchar",
+      "wilaya_id": 8,
+      "wilaya_name": "Béchar",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 10
+    },
+    {
+      "id": 901,
+      "name": "Blida",
+      "wilaya_id": 9,
+      "wilaya_name": "Blida",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 903,
+      "name": "Bouinan",
+      "wilaya_id": 9,
+      "wilaya_name": "Blida",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 907,
+      "name": "Ouled Yaïch",
+      "wilaya_id": 9,
+      "wilaya_name": "Blida",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 916,
+      "name": "Mouzaia",
+      "wilaya_id": 9,
+      "wilaya_name": "Blida",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 920,
+      "name": "Boufarik",
+      "wilaya_id": 9,
+      "wilaya_name": "Blida",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 921,
+      "name": "Larbaa",
+      "wilaya_id": 9,
+      "wilaya_name": "Blida",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1001,
+      "name": "Aïn Bessem",
+      "wilaya_id": 10,
+      "wilaya_name": "Bouira",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1016,
+      "name": "Bouira",
+      "wilaya_id": 10,
+      "wilaya_name": "Bouira",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1031,
+      "name": "Lakhdaria",
+      "wilaya_id": 10,
+      "wilaya_name": "Bouira",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1041,
+      "name": "Sour El Ghouzlane",
+      "wilaya_id": 10,
+      "wilaya_name": "Bouira",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1101,
+      "name": "Tamanrasset",
+      "wilaya_id": 11,
+      "wilaya_name": "Tamanrasset",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 10
+    },
+    {
+      "id": 1201,
+      "name": "Tébessa",
+      "wilaya_id": 12,
+      "wilaya_name": "Tébessa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1203,
+      "name": "Cheria",
+      "wilaya_id": 12,
+      "wilaya_name": "Tébessa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1301,
+      "name": "Tlemcen",
+      "wilaya_id": 13,
+      "wilaya_name": "Tlemcen",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1304,
+      "name": "Remchi",
+      "wilaya_id": 13,
+      "wilaya_name": "Tlemcen",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1327,
+      "name": "Maghnia",
+      "wilaya_id": 13,
+      "wilaya_name": "Tlemcen",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1350,
+      "name": "Chetouane",
+      "wilaya_id": 13,
+      "wilaya_name": "Tlemcen",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1439,
+      "name": "Tiaret",
+      "wilaya_id": 14,
+      "wilaya_name": "Tiaret",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 6,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1501,
+      "name": "Tizi Ouzou",
+      "wilaya_id": 15,
+      "wilaya_name": "Tizi Ouzou",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1511,
+      "name": "Tizi Gheniff",
+      "wilaya_id": 15,
+      "wilaya_name": "Tizi Ouzou",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1518,
+      "name": "Azazga",
+      "wilaya_id": 15,
+      "wilaya_name": "Tizi Ouzou",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1532,
+      "name": "Beni Douala",
+      "wilaya_id": 15,
+      "wilaya_name": "Tizi Ouzou",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1547,
+      "name": "Draâ Ben Khedda",
+      "wilaya_id": 15,
+      "wilaya_name": "Tizi Ouzou",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1601,
+      "name": "Alger Centre",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1605,
+      "name": "Bab El Oued",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1609,
+      "name": "Bir Mourad Raïs",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1612,
+      "name": "Birkhadem",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1614,
+      "name": "Baraki",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1615,
+      "name": "Oued Smar",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1616,
+      "name": "Bachdjerrah",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1617,
+      "name": "Hussein Dey",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1618,
+      "name": "Kouba",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1620,
+      "name": "Dar El Beïda",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1621,
+      "name": "Bab Ezzouar",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1630,
+      "name": "Bordj El Kiffan",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1633,
+      "name": "Les Eucalyptus",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1634,
+      "name": "Birtouta",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1639,
+      "name": "Bordj El Bahri",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1642,
+      "name": "Rouïba",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1643,
+      "name": "Reghaïa",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1644,
+      "name": "Aïn Benian",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1646,
+      "name": "Zeralda",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1647,
+      "name": "Mahelma",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1650,
+      "name": "Cheraga",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1651,
+      "name": "Ouled Fayet",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1653,
+      "name": "Draria",
+      "wilaya_id": 16,
+      "wilaya_name": "Alger",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1705,
+      "name": "Aïn Oussara",
+      "wilaya_id": 17,
+      "wilaya_name": "Djelfa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 1714,
+      "name": "Djelfa",
+      "wilaya_id": 17,
+      "wilaya_name": "Djelfa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 1801,
+      "name": "Jijel",
+      "wilaya_id": 18,
+      "wilaya_name": "Jijel",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1805,
+      "name": "Taher",
+      "wilaya_id": 18,
+      "wilaya_name": "Jijel",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1809,
+      "name": "El Milia",
+      "wilaya_id": 18,
+      "wilaya_name": "Jijel",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1814,
+      "name": "Kaous",
+      "wilaya_id": 18,
+      "wilaya_name": "Jijel",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1902,
+      "name": "Aïn Arnat",
+      "wilaya_id": 19,
+      "wilaya_name": "Sétif",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 7,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1907,
+      "name": "Aïn Oulmene",
+      "wilaya_id": 19,
+      "wilaya_name": "Sétif",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1926,
+      "name": "Bougaa",
+      "wilaya_id": 19,
+      "wilaya_name": "Sétif",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1932,
+      "name": "El Eulma",
+      "wilaya_id": 19,
+      "wilaya_name": "Sétif",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 1955,
+      "name": "Sétif",
+      "wilaya_id": 19,
+      "wilaya_name": "Sétif",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2011,
+      "name": "Saïda",
+      "wilaya_id": 20,
+      "wilaya_name": "Saïda",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2105,
+      "name": "Azzaba",
+      "wilaya_id": 21,
+      "wilaya_name": "Skikda",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2114,
+      "name": "Collo",
+      "wilaya_id": 21,
+      "wilaya_name": "Skikda",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2118,
+      "name": "El Harrouch",
+      "wilaya_id": 21,
+      "wilaya_name": "Skikda",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2135,
+      "name": "Skikda",
+      "wilaya_id": 21,
+      "wilaya_name": "Skikda",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2236,
+      "name": "Sidi Bel Abbes",
+      "wilaya_id": 22,
+      "wilaya_name": "Sidi Bel Abbès",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2301,
+      "name": "Annaba",
+      "wilaya_id": 23,
+      "wilaya_name": "Annaba",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2305,
+      "name": "El Bouni",
+      "wilaya_id": 23,
+      "wilaya_name": "Annaba",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2419,
+      "name": "Guelma",
+      "wilaya_id": 24,
+      "wilaya_name": "Guelma",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2430,
+      "name": "Oued Zenati",
+      "wilaya_id": 24,
+      "wilaya_name": "Guelma",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2504,
+      "name": "Constantine",
+      "wilaya_id": 25,
+      "wilaya_name": "Constantine",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2505,
+      "name": "Didouche Mourad",
+      "wilaya_id": 25,
+      "wilaya_name": "Constantine",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2506,
+      "name": "El Khroub",
+      "wilaya_id": 25,
+      "wilaya_name": "Constantine",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2607,
+      "name": "Beni Slimane",
+      "wilaya_id": 26,
+      "wilaya_name": "Médéa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2633,
+      "name": "Médéa",
+      "wilaya_id": 26,
+      "wilaya_name": "Médéa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2659,
+      "name": "Tablat",
+      "wilaya_id": 26,
+      "wilaya_name": "Médéa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2718,
+      "name": "Mostaganem",
+      "wilaya_id": 27,
+      "wilaya_name": "Mostaganem",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2810,
+      "name": "Berhoum",
+      "wilaya_id": 28,
+      "wilaya_name": "M'Sila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2812,
+      "name": "Bou Saâda",
+      "wilaya_id": 28,
+      "wilaya_name": "M'Sila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2828,
+      "name": "M'Sila",
+      "wilaya_id": 28,
+      "wilaya_name": "M'Sila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2839,
+      "name": "Sidi Aïssa",
+      "wilaya_id": 28,
+      "wilaya_name": "M'Sila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 2928,
+      "name": "Mascara",
+      "wilaya_id": 29,
+      "wilaya_name": "Mascara",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3008,
+      "name": "Hassi Messaoud",
+      "wilaya_id": 30,
+      "wilaya_name": "Ouargla",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3013,
+      "name": "Ouargla",
+      "wilaya_id": 30,
+      "wilaya_name": "Ouargla",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3101,
+      "name": "Oran",
+      "wilaya_id": 31,
+      "wilaya_name": "Oran",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    }, {
+      "id": 3103,
+      "name": "Bir El Djir",
+      "wilaya_id": 31,
+      "wilaya_name": "Oran",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3106,
+      "name": "Arzew",
+      "wilaya_id": 31,
+      "wilaya_name": "Oran",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3201,
+      "name": "El Bayadh",
+      "wilaya_id": 32,
+      "wilaya_name": "El Bayadh",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 3301,
+      "name": "Illizi",
+      "wilaya_id": 33,
+      "wilaya_name": "Illizi",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 15
+    },
+    {
+      "id": 3306,
+      "name": "In Amenas",
+      "wilaya_id": 33,
+      "wilaya_name": "Illizi",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 15
+    },
+    {
+      "id": 3406,
+      "name": "Bordj Bou Arreridj",
+      "wilaya_id": 34,
+      "wilaya_name": "Bordj Bou Arreridj",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3428,
+      "name": "Ras El Oued",
+      "wilaya_id": 34,
+      "wilaya_name": "Bordj Bou Arreridj",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3501,
+      "name": "Boumerdes",
+      "wilaya_id": 35,
+      "wilaya_name": "Boumerdès",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3502,
+      "name": "Boudouaou",
+      "wilaya_id": 35,
+      "wilaya_name": "Boumerdès",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3505,
+      "name": "Bordj Menaiel",
+      "wilaya_id": 35,
+      "wilaya_name": "Boumerdès",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3536,
+      "name": "Hammedi",
+      "wilaya_id": 35,
+      "wilaya_name": "Boumerdès",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3613,
+      "name": "Dréan",
+      "wilaya_id": 36,
+      "wilaya_name": "El Tarf",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 3
+    },
+    {
+      "id": 3617,
+      "name": "El Tarf",
+      "wilaya_id": 36,
+      "wilaya_name": "El Tarf",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 3
+    },
+    {
+      "id": 3702,
+      "name": "Tindouf",
+      "wilaya_id": 37,
+      "wilaya_name": "Tindouf",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 3821,
+      "name": "Tissemsilt",
+      "wilaya_id": 38,
+      "wilaya_name": "Tissemsilt",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 3901,
+      "name": "El Oued",
+      "wilaya_id": 39,
+      "wilaya_name": "El Oued",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4013,
+      "name": "Khenchela",
+      "wilaya_id": 40,
+      "wilaya_name": "Khenchela",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4101,
+      "name": "Souk Ahras",
+      "wilaya_id": 41,
+      "wilaya_name": "Souk Ahras",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 3
+    },
+    {
+      "id": 4201,
+      "name": "Tipaza",
+      "wilaya_id": 42,
+      "wilaya_name": "Tipaza",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4212,
+      "name": "Hadjout",
+      "wilaya_id": 42,
+      "wilaya_name": "Tipaza",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4222,
+      "name": "Cherchell",
+      "wilaya_id": 42,
+      "wilaya_name": "Tipaza",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4235,
+      "name": "Koléa",
+      "wilaya_id": 42,
+      "wilaya_name": "Tipaza",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4308,
+      "name": "Chelghoum Laid",
+      "wilaya_id": 43,
+      "wilaya_name": "Mila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4313,
+      "name": "Ferdjioua",
+      "wilaya_id": 43,
+      "wilaya_name": "Mila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4316,
+      "name": "Mila",
+      "wilaya_id": 43,
+      "wilaya_name": "Mila",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4401,
+      "name": "Aïn Defla",
+      "wilaya_id": 44,
+      "wilaya_name": "Aïn Defla",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4426,
+      "name": "Khemis Miliana",
+      "wilaya_id": 44,
+      "wilaya_name": "Aïn Defla",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4502,
+      "name": "Mecheria",
+      "wilaya_id": 45,
+      "wilaya_name": "Naâma",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 4604,
+      "name": "Aïn Témouchent",
+      "wilaya_id": 46,
+      "wilaya_name": "Aïn Témouchent",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4607,
+      "name": "Beni Saf",
+      "wilaya_id": 46,
+      "wilaya_name": "Aïn Témouchent",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4707,
+      "name": "Ghardaïa",
+      "wilaya_id": 47,
+      "wilaya_name": "Ghardaïa",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 10
+    },
+    {
+      "id": 4830,
+      "name": "Relizane",
+      "wilaya_id": 48,
+      "wilaya_name": "Relizane",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 8,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 4909,
+      "name": "Timimoun",
+      "wilaya_id": 49,
+      "wilaya_name": "Timimoun",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 5
+    },
+    {
+      "id": 5126,
+      "name": "Ouled Djellal",
+      "wilaya_id": 51,
+      "wilaya_name": "Ouled Djellal",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 12,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 5308,
+      "name": "In Salah",
+      "wilaya_id": 53,
+      "wilaya_name": "In Salah",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 15,
+      "delivery_time_payment": 10
+    },
+    {
+      "id": 5520,
+      "name": "Touggourt",
+      "wilaya_id": 55,
+      "wilaya_name": "Touggourt",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 5602,
+      "name": "Djanet",
+      "wilaya_id": 56,
+      "wilaya_name": "Djanet",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 5,
+      "delivery_time_payment": 15
+    },
+    {
+      "id": 5727,
+      "name": "El M'Ghair",
+      "wilaya_id": 57,
+      "wilaya_name": "El M'Ghair",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 5728,
+      "name": "Djamaa",
+      "wilaya_id": 57,
+      "wilaya_name": "El M'Ghair",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 10,
+      "delivery_time_payment": 2
+    },
+    {
+      "id": 5806,
+      "name": "El Menia",
+      "wilaya_id": 58,
+      "wilaya_name": "El Menia",
+      "has_stop_desk": 1,
+      "is_deliverable": 1,
+      "delivery_time_parcel": 20,
+      "delivery_time_payment": 10
+    }
+  ]

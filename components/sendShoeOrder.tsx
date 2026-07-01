@@ -17,10 +17,13 @@ import {
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import communesByWilaya from "@/communes.json";
+import yalidineCommunes from "@/yalidinCommunes_withExpressDesk.json";
 import wilayas from "@/wilayas.json";
 import Tarifs from "@/tarifs.json";
 import { SelectGroup } from "./ui/customSelect";
 import { GroupedProduct } from "@/app/(inventory)/page";
+
+type DeliveryProviderName = "dhd" | "yalidine";
 
 // Types for the new order API
 type OrderFormData = {
@@ -39,15 +42,23 @@ type OrderFormData = {
 export default function SendOrderForm({
   onSuccess,
   shoe,
+  borrowerId,
 }: {
   onSuccess?: () => void;
   shoe: GroupedProduct;
+  /** Set when the order is placed from a borrower's page (sells their stock). */
+  borrowerId?: string;
 }) {
   // Original state for shoes management
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [source, setSource] = useState("i");
+  // Borrowers default to Yalidine; the owner defaults to DHD (cheaper at home).
+  const [provider, setProvider] = useState<DeliveryProviderName>(
+    borrowerId ? "yalidine" : "dhd",
+  );
+  const isYalidine = provider === "yalidine";
   const [selectedSize, setSelectedSize] = useState<{
     inventoryId: string;
     size: string;
@@ -93,6 +104,8 @@ export default function SendOrderForm({
           ...formData,
           source,
           produit,
+          provider,
+          borrowerId: borrowerId ?? null,
           selectedSizeShoeId: [selectedSize.inventoryId],
         }), // send formData fields at top-level, not wrapped
       });
@@ -143,6 +156,34 @@ export default function SendOrderForm({
           </Alert>
         )}
 
+        <div className="space-y-2">
+          <Label htmlFor="provider" className="pb-1">
+            Delivery Company
+          </Label>
+          <Select
+            name="provider"
+            value={provider}
+            onValueChange={(value) => {
+              const next = value as DeliveryProviderName;
+              setProvider(next);
+              // Yalidine is used stop-desk only here; force bureau + reset commune.
+              setFormData((prev) => ({
+                ...prev,
+                commune: "",
+                stop_desk: next === "yalidine" ? 1 : prev.stop_desk,
+              }));
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select delivery company" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dhd">DHD (Ecotrack)</SelectItem>
+              <SelectItem value="yalidine">Yalidine (stop desk)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="flex gap-4">
           <div className="grow space-y-2">
             <Label htmlFor="type of service" className="pb-1">
@@ -171,6 +212,7 @@ export default function SendOrderForm({
             <Select
               name="type of delivery"
               value={String(formData.stop_desk)}
+              disabled={isYalidine}
               onValueChange={(value) =>
                 setFormData({
                   ...formData,
@@ -187,6 +229,11 @@ export default function SendOrderForm({
                 <SelectItem value="1">bureau</SelectItem>
               </SelectContent>
             </Select>
+            {isYalidine && (
+              <p className="text-xs text-slate-500">
+                Yalidine is stop-desk only here.
+              </p>
+            )}
           </div>
         </div>
 
@@ -287,29 +334,42 @@ export default function SendOrderForm({
                 <SelectGroup>
                   {formData.code_wilaya &&
                     (() => {
-                      const communesForWilaya = (
-                        communesByWilaya as Record<
-                          string,
-                          { nom: string; has_stop_desk: number }[]
+                      // Yalidine communes come from the Yalidine file (guarantees
+                      // the name validates against Yalidine); DHD uses communes.json.
+                      const names = isYalidine
+                        ? (
+                            (
+                              yalidineCommunes as Record<
+                                string,
+                                { name: string }[]
+                              >
+                            )[formData.code_wilaya] ?? []
+                          ).map((c) => c.name)
+                        : (
+                            (
+                              communesByWilaya as Record<
+                                string,
+                                { nom: string; has_stop_desk: number }[]
+                              >
+                            )[formData.code_wilaya] ?? []
+                          )
+                            .filter((c) =>
+                              formData.stop_desk ? c.has_stop_desk : true,
+                            )
+                            .map((c) => c.nom);
+                      return names.map((name) => (
+                        <SelectItem
+                          key={name}
+                          value={name}
+                          className={
+                            formData.commune === name
+                              ? "text-green-400"
+                              : "text-right"
+                          }
                         >
-                      )[formData.code_wilaya];
-                      return communesForWilaya
-                        ?.filter((c) =>
-                          formData.stop_desk ? c.has_stop_desk : true,
-                        )
-                        .map((c) => (
-                          <SelectItem
-                            key={c.nom}
-                            value={c.nom}
-                            className={
-                              formData.commune === c.nom
-                                ? "text-green-400"
-                                : "text-right"
-                            }
-                          >
-                            {c.nom}
-                          </SelectItem>
-                        ));
+                          {name}
+                        </SelectItem>
+                      ));
                     })()}
                 </SelectGroup>
               </SelectContent>
@@ -334,7 +394,7 @@ export default function SendOrderForm({
           <div className="space-y-2 w-full">
             <div className="flex items-center justify-between ">
               <Label htmlFor="montant">Amount </Label>
-              {formData.code_wilaya && (
+              {formData.code_wilaya && !isYalidine && (
                 <span className="text-xs font-semibold text-orange-700">
                   {formData.stop_desk === 1
                     ? Tarifs.livraison.find(

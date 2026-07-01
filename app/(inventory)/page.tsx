@@ -9,6 +9,7 @@ export type GroupedProduct = {
   modelId: string;
   modelName: string;
   color: string;
+  hexCode: string;
   sizes: {
     inventoryId: string;
     size: string;
@@ -25,6 +26,7 @@ export default async function InventoryPage() {
       shoeId: shoes.id,
       modelId: shoes.modelId,
       color: shoes.color,
+      hexCode: shoes.hexCode,
       quantity: shoeInventory.quantity,
       size: shoeInventory.size,
       modelName: shoeModels.modelName,
@@ -48,6 +50,7 @@ export default async function InventoryPage() {
         modelId: product.modelId,
         modelName: product.modelName,
         color: product.color,
+        hexCode: product.hexCode,
         sizes: [],
       };
       groupedMap.set(key, group);

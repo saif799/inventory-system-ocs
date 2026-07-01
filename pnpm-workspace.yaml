@@ -1,0 +1,6 @@
+allowBuilds:
+  better-sqlite3: false
+  bufferutil: false
+  esbuild: false
+  sharp: false
+  sqlite3: false

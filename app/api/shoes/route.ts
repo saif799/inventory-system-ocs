@@ -10,6 +10,7 @@ export async function GET() {
         id: shoes.id,
         modelName: shoeModels.modelName,
         color: shoes.color,
+        hexCode: shoes.hexCode,
         modelId: shoeModels.id,
       })
       .from(shoes)
@@ -22,7 +23,7 @@ export async function GET() {
 }
 export async function POST(request: Request) {
   try {
-    const { modelId, color, sizes, quantity, id } = await request.json();
+    const { modelId, color, sizes, quantity, id, hexCode } = await request.json();
 
     if (!modelId || !color || !sizes || !quantity) {
       return Response.json(
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
 
     const [insertedShoe] = await db
       .insert(shoes)
-      .values({ modelId, color, id })
+      .values({ modelId, color, id, hexCode })
       .returning();
 
     await db.insert(shoeInventory).values(

@@ -10,6 +10,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -21,19 +22,34 @@ import { Label } from "@/components/ui/label";
 
 import { AlertCircle, ChevronsUpDown, Plus } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import AddedShoeCard, { AddedShoeCardProps } from "./addedShoeCard";
-import { generateShortId } from "@/lib/generateId";
+import AddedShoeCard from "./addedShoeCard";
 
 type ShoesResponseType = {
   id: string;
   modelName: string;
   color: string;
+  hexCode: string;
   modelId: string;
 };
 
 type modelType = {
   id: string;
   modelName: string;
+};
+
+// A staged line in the current arrivage (cart). Carries both what we render and
+// what the /api/arrivals payload needs (modelId for new shoes, shoeId for
+// existing ones).
+type CartLine = {
+  key: string;
+  mode: "new" | "existing";
+  modelName: string;
+  color: string;
+  hexCode?: string;
+  sizes: string[];
+  quantity: number;
+  modelId?: string;
+  shoeId?: string;
 };
 
 export default function AddShoeForm({
@@ -55,18 +71,20 @@ export default function AddShoeForm({
   const [shoesList, setShoesList] = useState<ShoesResponseType[]>([]);
   const [newModel, setNewModel] = useState("");
   const [showNewModel, setShowNewModel] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [shoeSearch, setShoeSearch] = useState("");
   const [modelSearch, setModelSearch] = useState("");
-  const [addedShoes, setAddedShoes] = useState<AddedShoeCardProps[]>();
+
+  const [cart, setCart] = useState<CartLine[]>([]);
+  const [reference, setReference] = useState("");
+  const [note, setNote] = useState("");
 
   const [formData, setFormData] = useState({
     modelId: "",
     color: "",
     size: "",
-    quantity: "",
+    quantity: "1",
   });
 
   useEffect(() => {
@@ -109,6 +127,7 @@ export default function AddShoeForm({
         setModels([...models, data]);
         setNewModel("");
         setShowNewModel(false);
+        setModelValueSelected(data);
         setFormData({ ...formData, modelId: data.id.toString() });
       }
     } catch (err) {
@@ -116,99 +135,133 @@ export default function AddShoeForm({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Stage a line into the current arrivage. Nothing hits the DB until "Save
+  // arrivage" — the whole cart is committed as one shipment.
+  const handleAddToCart = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
+
+    const sizes = formData.size
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const quantity = Number.parseInt(formData.quantity);
+
+    if (sizes.length === 0 || !Number.isFinite(quantity) || quantity < 1) {
+      setError("Add at least one size and a quantity of 1 or more");
+      return;
+    }
 
     if (mode === "existing") {
-      if (!formData.modelId || !formData.size || !formData.quantity) {
-        setError("Please fill in all fields");
+      if (!valueSelected) {
+        setError("Select an existing shoe");
         return;
       }
+      setCart((prev) => [
+        ...prev,
+        {
+          key: crypto.randomUUID(),
+          mode: "existing",
+          modelName: valueSelected.modelName,
+          color: valueSelected.color,
+          hexCode: valueSelected.hexCode,
+          sizes,
+          quantity,
+          shoeId: valueSelected.id,
+        },
+      ]);
     } else {
-      if (
-        !formData.modelId ||
-        !formData.color ||
-        !formData.size ||
-        !formData.quantity
-      ) {
-        setError("Please fill in all fields");
+      if (!formData.modelId || !modelValueSelected) {
+        setError("Select a model");
         return;
       }
+      if (!formData.color.trim()) {
+        setError("Enter a color");
+        return;
+      }
+      setCart((prev) => [
+        ...prev,
+        {
+          key: crypto.randomUUID(),
+          mode: "new",
+          modelName: modelValueSelected.modelName,
+          color: formData.color.trim(),
+          sizes,
+          quantity,
+          modelId: formData.modelId,
+        },
+      ]);
     }
-    setLoading(true);
 
-    const sizes = formData.size.split(",").map((size) => size.trim());
+    // Keep the model/shoe selection for fast repeated entry; clear the rest.
+    setFormData((prev) => ({
+      ...prev,
+      color: "",
+      size: "",
+      quantity: "1",
+    }));
+  };
+
+  const removeLine = (key: string) =>
+    setCart((prev) => prev.filter((l) => l.key !== key));
+
+  const totalPairs = cart.reduce(
+    (sum, l) => sum + l.quantity * l.sizes.length,
+    0
+  );
+
+  const handleSaveArrivage = async () => {
+    if (cart.length === 0) return;
+    setSaving(true);
+    setError("");
+
+    const lines = cart.map((l) =>
+      l.mode === "new"
+        ? {
+            mode: "new" as const,
+            modelId: l.modelId,
+            color: l.color,
+            sizes: l.sizes,
+            quantity: l.quantity,
+          }
+        : {
+            mode: "existing" as const,
+            shoeId: l.shoeId,
+            sizes: l.sizes,
+            quantity: l.quantity,
+          }
+    );
+
     try {
-      if (mode === "existing") {
-        const shoeId = formData.modelId;
-        const res = await fetch("/api/inventory", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            shoeId,
-            sizes: sizes,
-            quantity: Number.parseInt(formData.quantity),
-          }),
-        });
-        if (res.ok) {
-          setSuccess("Size added successfully!");
-          setAddedShoes([
-            ...(addedShoes || []),
-            {
-              color: formData.color,
-              modelName: valueSelected?.modelName || "",
-              quantity: Number.parseInt(formData.quantity),
-              id: formData.modelId,
-              sizes: formData.size.split(",").map((size) => size.trim()),
-            },
-          ]);
-          setFormData({ modelId: "", color: "", size: "", quantity: "" });
+      const res = await fetch("/api/arrivals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reference: reference.trim() || undefined,
+          note: note.trim() || undefined,
+          lines,
+        }),
+      });
 
-          await fetchShoes();
-          onSuccess?.();
-        } else {
-          setError("Failed to add size");
-        }
+      if (res.ok) {
+        toast.success(
+          `Arrivage saved — ${cart.length} line${
+            cart.length === 1 ? "" : "s"
+          }, ${totalPairs} pair${totalPairs === 1 ? "" : "s"}`
+        );
+        setCart([]);
+        setReference("");
+        setNote("");
+        await fetchShoes();
+        onSuccess?.();
       } else {
-        const id = generateShortId();
-
-        const res = await fetch("/api/shoes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            modelId: formData.modelId,
-            color: formData.color,
-            sizes: sizes,
-            quantity: Number.parseInt(formData.quantity),
-            id: id,
-          }),
-        });
-        if (res.ok) {
-          setSuccess("Shoe added successfully!");
-          setAddedShoes([
-            ...(addedShoes || []),
-            {
-              color: formData.color,
-              modelName: valueSelected?.modelName || "",
-              quantity: Number.parseInt(formData.quantity),
-              id: formData.modelId,
-              sizes: formData.size.split(",").map((size) => size.trim()),
-            },
-          ]);
-          setFormData({ modelId: "", color: "", size: "", quantity: "" });
-
-          await fetchShoes();
-          onSuccess?.();
-        } else {
-          setError("Failed to add shoe");
-        }
+        const err = await res.json().catch(() => ({}));
+        toast.error(err?.error || "Failed to save arrivage");
       }
     } catch (err) {
-      setError("An error occurred");
+      toast.error("Failed to save arrivage");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -230,7 +283,7 @@ export default function AddShoeForm({
           Add Size to Existing
         </Button>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleAddToCart} className="space-y-6">
         {error && (
           <Alert className="bg-red-900/20 border-red-700">
             <AlertCircle className="h-4 w-4 text-red-500" />
@@ -240,15 +293,6 @@ export default function AddShoeForm({
           </Alert>
         )}
 
-        {success && (
-          <Alert className=" border-green-400">
-            <AlertCircle className="h-4 w-4 " />
-
-            <AlertDescription className="text-green-400">
-              {success}
-            </AlertDescription>
-          </Alert>
-        )}
         {mode === "existing" ? (
           <div className="space-y-2">
             <Label>Existing Shoe</Label>
@@ -290,9 +334,6 @@ export default function AddShoeForm({
                               modelId: s.id.toString(),
                             });
                           }}
-                          className={
-                            formData.modelId === s.id.toString() ? "" : ""
-                          }
                         >
                           {s.modelName} - {s.color}
                         </CommandItem>
@@ -408,12 +449,12 @@ export default function AddShoeForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="quantity">Quantity</Label>
+          <Label htmlFor="quantity">Quantity (per size)</Label>
           <Input
             id="quantity"
             type="number"
-            placeholder="0"
-            min={0}
+            placeholder="1"
+            min={1}
             value={formData.quantity}
             onChange={(e) =>
               setFormData({ ...formData, quantity: e.target.value })
@@ -423,38 +464,72 @@ export default function AddShoeForm({
 
         <Button
           type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700"
+          variant="outline"
+          className="w-full"
         >
-          {loading ? "Adding..." : "Add Shoes"}
+          <Plus className="h-4 w-4" />
+          Add to arrivage
         </Button>
       </form>
 
-      <div>
-        {showAdded && (
-          <div className="mt-4 space-y-2">
-            <div className="flex justify-between">
-              <h3 className="text-lg font-semibold">Recently Added Shoes</h3>
-              {/* TODO complete the print functionality */}
-              {addedShoes?.length && <Button>print</Button>}
-            </div>
-            {addedShoes ? (
-              addedShoes.map((shoe, index) => (
-                <AddedShoeCard
-                  key={`${shoe.modelName}-${shoe.color}-${index}`}
-                  color={shoe.color}
-                  id={shoe.modelName}
-                  modelName={shoe.modelName}
-                  quantity={shoe.quantity}
-                  sizes={shoe.sizes}
-                />
-              ))
-            ) : (
-              <div>No shoes added yet.</div>
+      {showAdded && (
+        <div className="mt-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Current arrivage</h3>
+            {cart.length > 0 && (
+              <span className="text-sm text-muted-foreground">
+                {cart.length} line{cart.length === 1 ? "" : "s"} · {totalPairs}{" "}
+                pair{totalPairs === 1 ? "" : "s"}
+              </span>
             )}
           </div>
-        )}
-      </div>
+
+          {cart.length > 0 ? (
+            <>
+              <div className="space-y-2">
+                {cart.map((line) => (
+                  <AddedShoeCard
+                    key={line.key}
+                    id={line.shoeId ?? line.modelId ?? line.key}
+                    modelName={line.modelName}
+                    color={line.color}
+                    hexCode={line.hexCode}
+                    quantity={line.quantity}
+                    sizes={line.sizes}
+                    onRemove={() => removeLine(line.key)}
+                  />
+                ))}
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Input
+                  placeholder="Reference (optional)"
+                  value={reference}
+                  onChange={(e) => setReference(e.target.value)}
+                />
+                <Input
+                  placeholder="Note — supplier, invoice… (optional)"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </div>
+
+              <Button
+                type="button"
+                onClick={handleSaveArrivage}
+                disabled={saving}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                {saving ? "Saving…" : "Save arrivage"}
+              </Button>
+            </>
+          ) : (
+            <div className="text-sm text-muted-foreground">
+              No shoes added yet. Build the shipment above, then save it.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

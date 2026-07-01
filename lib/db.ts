@@ -1,8 +1,39 @@
 import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle as drizzleWs } from "drizzle-orm/neon-serverless";
+import { neon, Pool, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
+
+// The neon-http driver is fast for one-shot queries but has NO transaction
+// support. We keep it as the default client for every read / non-atomic write,
+// and lazily spin up a WebSocket Pool client (which DOES support interactive
+// transactions) only for the handful of write paths that need atomicity.
+neonConfig.webSocketConstructor = ws;
 
 const sql = neon(process.env.DATABASE_URL!);
 export const db = drizzle(sql);
+
+let poolDb: ReturnType<typeof drizzleWs> | null = null;
+
+/**
+ * Returns a Drizzle client backed by a WebSocket Pool that supports
+ * `.transaction()`. The pool is created once, on first use, so read-only
+ * requests never pay the WebSocket cost.
+ */
+export function txClient() {
+  if (!poolDb) {
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
+    poolDb = drizzleWs(pool);
+  }
+  return poolDb;
+}
+
+/** A transaction handle produced by `txClient().transaction(...)`. */
+export type Tx = Parameters<
+  Parameters<ReturnType<typeof txClient>["transaction"]>[0]
+>[0];
+
+/** Anything that can run queries: the default db, or a transaction handle. */
+export type Executor = typeof db | Tx;
 
 // In-memory storage
 

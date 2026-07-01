@@ -1,88 +1,83 @@
-import { DeliveryOrderType } from "@/lib/dataTypes";
-import { db } from "@/lib/db";
+import { db, txClient } from "@/lib/db";
 import {
-  ImageNotifierTable,
+  LendedShoes,
   orderItems,
   ordersTable,
   shoeInventory,
   stautsGroupsTable,
 } from "@/lib/schema";
+import { flagNotifier } from "@/lib/notifier";
+import { DELIVERY_PROVIDERS } from "@/lib/delivery";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-// fetch the data from dhd(handle all posssible states) +> update the status in the orders table -> edit what needs to be edited from adding a shoe if the sate is retour ->notify me to add teh pic back if its a reour
-
-// suspendu, TODO make sure to handle thi state
-
 export async function GET() {
   try {
-    const res = await fetch(`https://platform.dhd-dz.com/api/v1/get/orders`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${process.env.NEXT_PUBLIC_DHD_API_KEY}`,
-      },
-    });
-
-    if (!res.ok) {
-      return Response.json(
-        { error: "Failed to fetch orders from DHD" },
-        { status: res.status },
-      );
-    }
-
-    const data: { data: Array<DeliveryOrderType> } = await res.json();
+    // Pull parcels + statuses from every provider. A provider failing (or not
+    // implemented yet, like Yalidine sync) must not break the whole sync.
+    const providerStatuses = (
+      await Promise.all(
+        DELIVERY_PROVIDERS.map((p) =>
+          p.fetchStatuses().catch((e) => {
+            console.log(`${p.name} status sync failed`, e);
+            return [];
+          }),
+        ),
+      )
+    ).flat();
 
     // get all statuses from the db and map their names to ids
     const dbStatuses = await db.select().from(stautsGroupsTable);
 
-    // mapping all the status names to their ids for easy access
     const statusNameToId: Record<string, string> = {};
-
     dbStatuses.forEach((s) => {
       statusNameToId[s.name] = s.id;
     });
 
-    // grouping the orders by their status (retour : [...], livre:[])
+    // group the (provider) parcels by our internal status name
     const groupedStatuses: Record<string, Array<string>> = {};
 
-    data.data.map((order) => {
+    providerStatuses.forEach((order) => {
       const originalstatus = dbStatuses.find((s) =>
         s.external_statuses.includes(order.status),
       );
-
-      if (!originalstatus) {
-        return;
-      }
+      if (!originalstatus) return;
       if (!groupedStatuses[originalstatus.name]) {
         groupedStatuses[originalstatus.name] = [];
       }
-
       groupedStatuses[originalstatus.name].push(order.tracking);
     });
 
-    // fetch the orders that need to be returned and their status wasnt changed before
+    // Only orders we created (id exists) AND whose status wasn't already set to
+    // retour. Manually-added dashboard parcels never match a row here.
     const ordersToReturn = await db
-      .select({ orderId: ordersTable.id })
+      .select({ orderId: ordersTable.id, borrowerId: ordersTable.borrowerId })
       .from(ordersTable)
       .where(
         and(
           inArray(ordersTable.id, groupedStatuses["retour"] || []),
-          // makes sure we dont fetch orders where status was alreayd chnaged to retour
           ne(ordersTable.statusId, statusNameToId["retour"]),
         ),
       );
 
-    // get all orders to retunr -> update the items(shoeinventory) that didnt get updated and dont update the items that ogt updated (their order id is alreay set to return)
     if (ordersToReturn.length > 0) {
-      // adding back the quantity of the shoe in inventory + notify IF we didnt already add them back before -> update image notifier by adding the new items
+      const borrowerByOrder = new Map(
+        ordersToReturn.map((o) => [o.orderId, o.borrowerId] as const),
+      );
+
       const itemsToreturn = await db
         .select({
           shoeInventoryId: orderItems.shoeInventoryId,
           orderId: orderItems.orderId,
           quantity: orderItems.quantity,
+          // current stock BEFORE we add the returned units back
+          prevQuantity: shoeInventory.quantity,
         })
         .from(orderItems)
+        .innerJoin(
+          shoeInventory,
+          eq(orderItems.shoeInventoryId, shoeInventory.id),
+        )
         .where(
           inArray(
             orderItems.orderId,
@@ -90,37 +85,46 @@ export async function GET() {
           ),
         );
 
-      console.log("selected the items");
-
-      await Promise.all([
-        itemsToreturn.map(async (item) => {
-          await db
+      await txClient().transaction(async (tx) => {
+        for (const item of itemsToreturn) {
+          await tx
             .update(shoeInventory)
             .set({
               quantity: sql`${shoeInventory.quantity} + ${item.quantity}`,
             })
             .where(eq(shoeInventory.id, item.shoeInventoryId));
-        }),
-        db.insert(ImageNotifierTable).values(
-          itemsToreturn.map((item) => ({
-            shoeInventoryId: item.shoeInventoryId,
-            orderId: item.orderId,
-          })),
-        ),
-      ]);
+
+          // If the returned order was placed by a borrower, hand the units back
+          // to that borrower's held stock too.
+          const borrowerId = borrowerByOrder.get(item.orderId);
+          if (borrowerId) {
+            await tx.insert(LendedShoes).values({
+              borrowerId,
+              shoeInventoryId: item.shoeInventoryId,
+              quantity: item.quantity,
+            });
+          }
+
+          // gallery add-back only for variants that were out of stock before
+          if (item.prevQuantity === 0) {
+            await flagNotifier(
+              item.shoeInventoryId,
+              "restock",
+              item.orderId,
+              tx,
+            );
+          }
+        }
+      });
     }
 
-    console.log("updated the shoe inventory and the image notifier table");
-
-    // changing the status of the orders in the db
+    // changing the status of the orders in the db (only rows whose id matches)
     await Promise.all(
       Object.keys(groupedStatuses).map(async (externalStatus) => {
         await db
           .update(ordersTable)
           .set({ statusId: statusNameToId[externalStatus] })
           .where(inArray(ordersTable.id, groupedStatuses[externalStatus]));
-
-        console.log("updated orders with status ", externalStatus);
       }),
     );
 
@@ -131,7 +135,6 @@ export async function GET() {
     return Response.json({ groupedStatuses }, { status: 200 });
   } catch (error) {
     console.log("failed with this error ", error);
-
     return Response.json({ error: "Failed to fetch models" }, { status: 500 });
   }
 }
