@@ -1,6 +1,9 @@
 import {
   createYalidineParcel,
+  deleteYalidineParcel,
+  fetchYalidineLatestStatuses,
   type YalidineCreateParcelApiResponse,
+  type YalidineDeleteRow,
 } from "@/lib/Yalidin/parcel";
 import yalidineCommunes from "@/yalidinCommunes_withExpressDesk.json";
 import type {
@@ -16,7 +19,12 @@ type YalidineCommune = {
   name: string;
   wilaya_name: string;
   has_stop_desk: number;
+  // Stop-desk delivery price (DA), shown as a label in the order form. Not sent
+  // to the create endpoint.
   express_desk: number | null;
+  // Yalidine center id, used as the parcel's stopdesk_id (from the Centers
+  // endpoint). Null when the commune has no stop-desk center.
+  stopdesk_id: number | null;
 };
 
 const COMMUNES = yalidineCommunes as Record<string, YalidineCommune[]>;
@@ -64,9 +72,9 @@ export const yalidineProvider: DeliveryProvider = {
         `Yalidine has no stop-desk commune "${input.commune}" in wilaya ${input.code_wilaya}`,
       );
     }
-    if (commune.express_desk == null) {
+    if (commune.stopdesk_id == null) {
       throw new Error(
-        `Yalidine commune "${input.commune}" has no stop-desk id (express_desk)`,
+        `Yalidine commune "${input.commune}" has no stop-desk center`,
       );
     }
 
@@ -91,8 +99,10 @@ export const yalidineProvider: DeliveryProvider = {
       weight: YALIDINE_PARCEL_DEFAULTS.weight,
       freeshipping: YALIDINE_PARCEL_DEFAULTS.freeshipping,
       is_stopdesk: true, // Yalidine is used desk-only in this app
-      stopdesk_id: commune.express_desk,
+      stopdesk_id: commune.stopdesk_id,
       has_exchange: input.type === 2,
+      // Yalidine requires the returned-product description whenever exchange is on.
+      product_to_collect: input.type === 2 ? input.produit : null,
     });
 
     if (!result.ok) {
@@ -111,16 +121,25 @@ export const yalidineProvider: DeliveryProvider = {
     return { tracking: entry.tracking };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async deleteOrder(_tracking: string): Promise<DeleteOrderResult> {
-    // TODO(yalidine): implement once the delete/cancel endpoint docs are provided.
-    throw new Error("Yalidine order deletion is not implemented yet");
+  async deleteOrder(tracking: string): Promise<DeleteOrderResult> {
+    const result = await deleteYalidineParcel(tracking);
+    if (!result.ok) {
+      throw new Error(`Yalidine delete failed (HTTP ${result.status})`);
+    }
+
+    // Response is an array of { tracking, deleted }. `deleted: false` means the
+    // parcel can't be deleted (progressed past "En préparation", nonexistent,
+    // or already deleted) — return ok:false so the route leaves stock untouched.
+    const rows = Array.isArray(result.data)
+      ? (result.data as YalidineDeleteRow[])
+      : [];
+    const entry = rows.find((r) => r?.tracking === tracking) ?? rows[0];
+    return { ok: entry?.deleted === true };
   },
 
-  async fetchStatuses(): Promise<ProviderStatus[]> {
-    // TODO(yalidine): implement once the status/list endpoint docs are provided.
-    // Returning empty keeps multi-provider sync working (Yalidine orders simply
-    // aren't status-synced yet) instead of breaking the whole sync.
-    return [];
+  async fetchStatuses(trackings?: string[]): Promise<ProviderStatus[]> {
+    // No Yalidine orders to sync -> skip the API call entirely.
+    if (!trackings || trackings.length === 0) return [];
+    return fetchYalidineLatestStatuses(trackings);
   },
 };

@@ -5,21 +5,24 @@
       "name": "Adrar",
       "wilaya_name": "Adrar",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 10101
     },
     {
       "id": 104,
       "name": "Reggane",
       "wilaya_name": "Adrar",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 10401
     },
     {
       "id": 112,
       "name": "Aoulef",
       "wilaya_name": "Adrar",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 11201
     }
   ],
   "2": [
@@ -28,14 +31,16 @@
       "name": "Chlef",
       "wilaya_name": "Chlef",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 21101
     },
     {
       "id": 234,
       "name": "Ténès",
       "wilaya_name": "Chlef",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 23401
     }
   ],
   "3": [
@@ -44,14 +49,16 @@
       "name": "Laghouat",
       "wilaya_name": "Laghouat",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 30102
     },
     {
       "id": 319,
       "name": "Aflou",
       "wilaya_name": "Laghouat",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 31901
     }
   ],
   "4": [
@@ -60,14 +67,16 @@
       "name": "Oum el Bouaghi",
       "wilaya_name": "Oum El Bouaghi",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 40101
     },
     {
       "id": 403,
       "name": "Aïn M'lila",
       "wilaya_name": "Oum El Bouaghi",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 40301
     }
   ],
   "5": [
@@ -76,14 +85,16 @@
       "name": "Batna",
       "wilaya_name": "Batna",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 50101
     },
     {
       "id": 542,
       "name": "Barika",
       "wilaya_name": "Batna",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 54201
     }
   ],
   "6": [
@@ -92,21 +103,24 @@
       "name": "Béjaïa",
       "wilaya_name": "Béjaïa",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 60101
     },
     {
       "id": 625,
       "name": "Akbou",
       "wilaya_name": "Béjaïa",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 62501
     },
     {
       "id": 640,
       "name": "El Kseur",
       "wilaya_name": "Béjaïa",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 64001
     }
   ],
   "7": [
@@ -115,21 +129,24 @@
       "name": "Biskra",
       "wilaya_name": "Biskra",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 70402
     },
     {
       "id": 716,
       "name": "El Kantara",
       "wilaya_name": "Biskra",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 71601
     },
     {
       "id": 732,
       "name": "Tolga",
       "wilaya_name": "Biskra",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 73201
     }
   ],
   "8": [
@@ -138,7 +155,8 @@
       "name": "Béchar",
       "wilaya_name": "Béchar",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 80101
     }
   ],
   "9": [
@@ -147,42 +165,48 @@
       "name": "Blida",
       "wilaya_name": "Blida",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 90101
     },
     {
       "id": 903,
       "name": "Bouinan",
       "wilaya_name": "Blida",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 90301
     },
     {
       "id": 907,
       "name": "Ouled Yaïch",
       "wilaya_name": "Blida",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 90701
     },
     {
       "id": 916,
       "name": "Mouzaia",
       "wilaya_name": "Blida",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 91601
     },
     {
       "id": 920,
       "name": "Boufarik",
       "wilaya_name": "Blida",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 92001
     },
     {
       "id": 921,
       "name": "Larbaa",
       "wilaya_name": "Blida",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 92101
     }
   ],
   "10": [
@@ -191,28 +215,32 @@
       "name": "Aïn Bessem",
       "wilaya_name": "Bouira",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 100101
     },
     {
       "id": 1016,
       "name": "Bouira",
       "wilaya_name": "Bouira",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 101601
     },
     {
       "id": 1031,
       "name": "Lakhdaria",
       "wilaya_name": "Bouira",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 103101
     },
     {
       "id": 1041,
       "name": "Sour El Ghouzlane",
       "wilaya_name": "Bouira",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 104101
     }
   ],
   "11": [
@@ -221,7 +249,8 @@
       "name": "Tamanrasset",
       "wilaya_name": "Tamanrasset",
       "has_stop_desk": 1,
-      "express_desk": 1200
+      "express_desk": 1200,
+      "stopdesk_id": 110101
     }
   ],
   "12": [
@@ -230,14 +259,16 @@
       "name": "Tébessa",
       "wilaya_name": "Tébessa",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 120101
     },
     {
       "id": 1203,
       "name": "Cheria",
       "wilaya_name": "Tébessa",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 120301
     }
   ],
   "13": [
@@ -246,28 +277,32 @@
       "name": "Tlemcen",
       "wilaya_name": "Tlemcen",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 130101
     },
     {
       "id": 1304,
       "name": "Remchi",
       "wilaya_name": "Tlemcen",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 130401
     },
     {
       "id": 1327,
       "name": "Maghnia",
       "wilaya_name": "Tlemcen",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 132701
     },
     {
       "id": 1350,
       "name": "Chetouane",
       "wilaya_name": "Tlemcen",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 135001
     }
   ],
   "14": [
@@ -276,7 +311,8 @@
       "name": "Tiaret",
       "wilaya_name": "Tiaret",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 143901
     }
   ],
   "15": [
@@ -285,35 +321,40 @@
       "name": "Tizi Ouzou",
       "wilaya_name": "Tizi Ouzou",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 150101
     },
     {
       "id": 1511,
       "name": "Tizi Gheniff",
       "wilaya_name": "Tizi Ouzou",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 151101
     },
     {
       "id": 1518,
       "name": "Azazga",
       "wilaya_name": "Tizi Ouzou",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 151801
     },
     {
       "id": 1532,
       "name": "Beni Douala",
       "wilaya_name": "Tizi Ouzou",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 153201
     },
     {
       "id": 1547,
       "name": "Draâ Ben Khedda",
       "wilaya_name": "Tizi Ouzou",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 154701
     }
   ],
   "16": [
@@ -322,161 +363,184 @@
       "name": "Alger Centre",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 160101
     },
     {
       "id": 1605,
       "name": "Bab El Oued",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 160501
     },
     {
       "id": 1609,
       "name": "Bir Mourad Raïs",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 160902
     },
     {
       "id": 1612,
       "name": "Birkhadem",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 161201
     },
     {
       "id": 1614,
       "name": "Baraki",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 161401
     },
     {
       "id": 1615,
       "name": "Oued Smar",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 161503
     },
     {
       "id": 1616,
       "name": "Bachdjerrah",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 161601
     },
     {
       "id": 1617,
       "name": "Hussein Dey",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 161701
     },
     {
       "id": 1618,
       "name": "Kouba",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 161801
     },
     {
       "id": 1620,
       "name": "Dar El Beïda",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 162003
     },
     {
       "id": 1621,
       "name": "Bab Ezzouar",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 162102
     },
     {
       "id": 1630,
       "name": "Bordj El Kiffan",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 163001
     },
     {
       "id": 1633,
       "name": "Les Eucalyptus",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 163302
     },
     {
       "id": 1634,
       "name": "Birtouta",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 163401
     },
     {
       "id": 1639,
       "name": "Bordj El Bahri",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 163901
     },
     {
       "id": 1642,
       "name": "Rouïba",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 164201
     },
     {
       "id": 1643,
       "name": "Reghaïa",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 164301
     },
     {
       "id": 1644,
       "name": "Aïn Benian",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 164401
     },
     {
       "id": 1646,
       "name": "Zeralda",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 164601
     },
     {
       "id": 1647,
       "name": "Mahelma",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 164701
     },
     {
       "id": 1650,
       "name": "Cheraga",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 165001
     },
     {
       "id": 1651,
       "name": "Ouled Fayet",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 165101
     },
     {
       "id": 1653,
       "name": "Draria",
       "wilaya_name": "Alger",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 165301
     }
   ],
   "17": [
@@ -485,14 +549,16 @@
       "name": "Aïn Oussara",
       "wilaya_name": "Djelfa",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 170501
     },
     {
       "id": 1714,
       "name": "Djelfa",
       "wilaya_name": "Djelfa",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 171401
     }
   ],
   "18": [
@@ -501,28 +567,32 @@
       "name": "Jijel",
       "wilaya_name": "Jijel",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 180101
     },
     {
       "id": 1805,
       "name": "Taher",
       "wilaya_name": "Jijel",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 180501
     },
     {
       "id": 1809,
       "name": "El Milia",
       "wilaya_name": "Jijel",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 180901
     },
     {
       "id": 1814,
       "name": "Kaous",
       "wilaya_name": "Jijel",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 181401
     }
   ],
   "19": [
@@ -531,35 +601,40 @@
       "name": "Aïn Arnat",
       "wilaya_name": "Sétif",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 190202
     },
     {
       "id": 1907,
       "name": "Aïn Oulmene",
       "wilaya_name": "Sétif",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 190701
     },
     {
       "id": 1926,
       "name": "Bougaa",
       "wilaya_name": "Sétif",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 192601
     },
     {
       "id": 1932,
       "name": "El Eulma",
       "wilaya_name": "Sétif",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 193202
     },
     {
       "id": 1955,
       "name": "Sétif",
       "wilaya_name": "Sétif",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 195501
     }
   ],
   "20": [
@@ -568,7 +643,8 @@
       "name": "Saïda",
       "wilaya_name": "Saïda",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 201101
     }
   ],
   "21": [
@@ -577,28 +653,32 @@
       "name": "Azzaba",
       "wilaya_name": "Skikda",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 210501
     },
     {
       "id": 2114,
       "name": "Collo",
       "wilaya_name": "Skikda",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 211401
     },
     {
       "id": 2118,
       "name": "El Harrouch",
       "wilaya_name": "Skikda",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 211801
     },
     {
       "id": 2135,
       "name": "Skikda",
       "wilaya_name": "Skikda",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 213501
     }
   ],
   "22": [
@@ -607,7 +687,8 @@
       "name": "Sidi Bel Abbes",
       "wilaya_name": "Sidi Bel Abbès",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 223601
     }
   ],
   "23": [
@@ -616,14 +697,16 @@
       "name": "Annaba",
       "wilaya_name": "Annaba",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 230101
     },
     {
       "id": 2305,
       "name": "El Bouni",
       "wilaya_name": "Annaba",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 230501
     }
   ],
   "24": [
@@ -632,14 +715,16 @@
       "name": "Guelma",
       "wilaya_name": "Guelma",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 241901
     },
     {
       "id": 2430,
       "name": "Oued Zenati",
       "wilaya_name": "Guelma",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 243001
     }
   ],
   "25": [
@@ -648,21 +733,24 @@
       "name": "Constantine",
       "wilaya_name": "Constantine",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 250401
     },
     {
       "id": 2505,
       "name": "Didouche Mourad",
       "wilaya_name": "Constantine",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 250501
     },
     {
       "id": 2506,
       "name": "El Khroub",
       "wilaya_name": "Constantine",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 250601
     }
   ],
   "26": [
@@ -671,21 +759,24 @@
       "name": "Beni Slimane",
       "wilaya_name": "Médéa",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 260701
     },
     {
       "id": 2633,
       "name": "Médéa",
       "wilaya_name": "Médéa",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 263301
     },
     {
       "id": 2659,
       "name": "Tablat",
       "wilaya_name": "Médéa",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 265901
     }
   ],
   "27": [
@@ -694,7 +785,8 @@
       "name": "Mostaganem",
       "wilaya_name": "Mostaganem",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 271801
     }
   ],
   "28": [
@@ -703,28 +795,32 @@
       "name": "Berhoum",
       "wilaya_name": "M'Sila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 281001
     },
     {
       "id": 2812,
       "name": "Bou Saâda",
       "wilaya_name": "M'Sila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 281201
     },
     {
       "id": 2828,
       "name": "M'Sila",
       "wilaya_name": "M'Sila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 282802
     },
     {
       "id": 2839,
       "name": "Sidi Aïssa",
       "wilaya_name": "M'Sila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 283901
     }
   ],
   "29": [
@@ -733,7 +829,8 @@
       "name": "Mascara",
       "wilaya_name": "Mascara",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 292801
     }
   ],
   "30": [
@@ -742,14 +839,16 @@
       "name": "Hassi Messaoud",
       "wilaya_name": "Ouargla",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 300801
     },
     {
       "id": 3013,
       "name": "Ouargla",
       "wilaya_name": "Ouargla",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 301301
     }
   ],
   "31": [
@@ -758,21 +857,24 @@
       "name": "Oran",
       "wilaya_name": "Oran",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 310102
     },
     {
       "id": 3103,
       "name": "Bir El Djir",
       "wilaya_name": "Oran",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 310301
     },
     {
       "id": 3106,
       "name": "Arzew",
       "wilaya_name": "Oran",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 310601
     }
   ],
   "32": [
@@ -781,7 +883,8 @@
       "name": "El Bayadh",
       "wilaya_name": "El Bayadh",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 320101
     }
   ],
   "33": [
@@ -790,14 +893,16 @@
       "name": "Illizi",
       "wilaya_name": "Illizi",
       "has_stop_desk": 1,
-      "express_desk": 1200
+      "express_desk": 1200,
+      "stopdesk_id": 330101
     },
     {
       "id": 3306,
       "name": "In Amenas",
       "wilaya_name": "Illizi",
       "has_stop_desk": 1,
-      "express_desk": 1200
+      "express_desk": 1200,
+      "stopdesk_id": 330601
     }
   ],
   "34": [
@@ -806,14 +911,16 @@
       "name": "Bordj Bou Arreridj",
       "wilaya_name": "Bordj Bou Arreridj",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 340601
     },
     {
       "id": 3428,
       "name": "Ras El Oued",
       "wilaya_name": "Bordj Bou Arreridj",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 342801
     }
   ],
   "35": [
@@ -822,28 +929,32 @@
       "name": "Boumerdes",
       "wilaya_name": "Boumerdès",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 350101
     },
     {
       "id": 3502,
       "name": "Boudouaou",
       "wilaya_name": "Boumerdès",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 350201
     },
     {
       "id": 3505,
       "name": "Bordj Menaiel",
       "wilaya_name": "Boumerdès",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 350501
     },
     {
       "id": 3536,
       "name": "Hammedi",
       "wilaya_name": "Boumerdès",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 353601
     }
   ],
   "36": [
@@ -852,14 +963,16 @@
       "name": "Dréan",
       "wilaya_name": "El Tarf",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 361301
     },
     {
       "id": 3617,
       "name": "El Tarf",
       "wilaya_name": "El Tarf",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 361701
     }
   ],
   "37": [
@@ -868,7 +981,8 @@
       "name": "Tindouf",
       "wilaya_name": "Tindouf",
       "has_stop_desk": 1,
-      "express_desk": 1200
+      "express_desk": 1200,
+      "stopdesk_id": 370201
     }
   ],
   "38": [
@@ -877,7 +991,8 @@
       "name": "Tissemsilt",
       "wilaya_name": "Tissemsilt",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 382101
     }
   ],
   "39": [
@@ -886,7 +1001,8 @@
       "name": "El Oued",
       "wilaya_name": "El Oued",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 390101
     }
   ],
   "40": [
@@ -895,7 +1011,8 @@
       "name": "Khenchela",
       "wilaya_name": "Khenchela",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 401302
     }
   ],
   "41": [
@@ -904,7 +1021,8 @@
       "name": "Souk Ahras",
       "wilaya_name": "Souk Ahras",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 410101
     }
   ],
   "42": [
@@ -913,28 +1031,32 @@
       "name": "Tipaza",
       "wilaya_name": "Tipaza",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 420101
     },
     {
       "id": 4212,
       "name": "Hadjout",
       "wilaya_name": "Tipaza",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 421201
     },
     {
       "id": 4222,
       "name": "Cherchell",
       "wilaya_name": "Tipaza",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 422201
     },
     {
       "id": 4235,
       "name": "Koléa",
       "wilaya_name": "Tipaza",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 423501
     }
   ],
   "43": [
@@ -943,21 +1065,24 @@
       "name": "Chelghoum Laid",
       "wilaya_name": "Mila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 430801
     },
     {
       "id": 4313,
       "name": "Ferdjioua",
       "wilaya_name": "Mila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 431302
     },
     {
       "id": 4316,
       "name": "Mila",
       "wilaya_name": "Mila",
       "has_stop_desk": 1,
-      "express_desk": 400
+      "express_desk": 400,
+      "stopdesk_id": 431601
     }
   ],
   "44": [
@@ -966,14 +1091,16 @@
       "name": "Aïn Defla",
       "wilaya_name": "Aïn Defla",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 440101
     },
     {
       "id": 4426,
       "name": "Khemis Miliana",
       "wilaya_name": "Aïn Defla",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 442601
     }
   ],
   "45": [
@@ -982,7 +1109,8 @@
       "name": "Mecheria",
       "wilaya_name": "Naâma",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 450201
     }
   ],
   "46": [
@@ -991,14 +1119,16 @@
       "name": "Aïn Témouchent",
       "wilaya_name": "Aïn Témouchent",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 460401
     },
     {
       "id": 4607,
       "name": "Beni Saf",
       "wilaya_name": "Aïn Témouchent",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 460701
     }
   ],
   "47": [
@@ -1007,7 +1137,8 @@
       "name": "Ghardaïa",
       "wilaya_name": "Ghardaïa",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 470701
     }
   ],
   "48": [
@@ -1016,7 +1147,8 @@
       "name": "Relizane",
       "wilaya_name": "Relizane",
       "has_stop_desk": 1,
-      "express_desk": 550
+      "express_desk": 550,
+      "stopdesk_id": 483001
     }
   ],
   "49": [
@@ -1025,7 +1157,8 @@
       "name": "Timimoun",
       "wilaya_name": "Timimoun",
       "has_stop_desk": 1,
-      "express_desk": 900
+      "express_desk": 900,
+      "stopdesk_id": 490901
     }
   ],
   "51": [
@@ -1034,7 +1167,8 @@
       "name": "Ouled Djellal",
       "wilaya_name": "Ouled Djellal",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 512601
     }
   ],
   "53": [
@@ -1043,7 +1177,8 @@
       "name": "In Salah",
       "wilaya_name": "In Salah",
       "has_stop_desk": 1,
-      "express_desk": 1200
+      "express_desk": 1200,
+      "stopdesk_id": 530801
     }
   ],
   "55": [
@@ -1052,7 +1187,8 @@
       "name": "Touggourt",
       "wilaya_name": "Touggourt",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 552001
     }
   ],
   "56": [
@@ -1061,7 +1197,8 @@
       "name": "Djanet",
       "wilaya_name": "Djanet",
       "has_stop_desk": 1,
-      "express_desk": 1200
+      "express_desk": 1200,
+      "stopdesk_id": 560201
     }
   ],
   "57": [
@@ -1070,14 +1207,16 @@
       "name": "El M'Ghair",
       "wilaya_name": "El M'Ghair",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 572701
     },
     {
       "id": 5728,
       "name": "Djamaa",
       "wilaya_name": "El M'Ghair",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 572801
     }
   ],
   "58": [
@@ -1086,7 +1225,8 @@
       "name": "El Menia",
       "wilaya_name": "El Menia",
       "has_stop_desk": 1,
-      "express_desk": 700
+      "express_desk": 700,
+      "stopdesk_id": 580601
     }
   ]
 }

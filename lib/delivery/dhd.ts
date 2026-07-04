@@ -72,7 +72,10 @@ export const dhdProvider: DeliveryProvider = {
     return { ok: apiResponse?.delete === "success" };
   },
 
-  async fetchStatuses(): Promise<ProviderStatus[]> {
+  // DHD returns every order in one call, so the per-provider `trackings` hint
+  // (used by Yalidine) is intentionally ignored here.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async fetchStatuses(_trackings?: string[]): Promise<ProviderStatus[]> {
     const res = await fetch(`${BASE_URL}/get/orders`, {
       method: "GET",
       headers: {

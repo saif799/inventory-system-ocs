@@ -341,10 +341,14 @@ export default function SendOrderForm({
                             (
                               yalidineCommunes as Record<
                                 string,
-                                { name: string }[]
+                                { name: string; stopdesk_id: number | null }[]
                               >
                             )[formData.code_wilaya] ?? []
-                          ).map((c) => c.name)
+                          )
+                            // Only communes with an actual Yalidine stop-desk
+                            // center are valid destinations for a desk parcel.
+                            .filter((c) => c.stopdesk_id != null)
+                            .map((c) => c.name)
                         : (
                             (
                               communesByWilaya as Record<
@@ -406,6 +410,25 @@ export default function SendOrderForm({
                   DA
                 </span>
               )}
+              {formData.code_wilaya &&
+                isYalidine &&
+                (() => {
+                  // Yalidine stop-desk price is uniform per wilaya, so show it
+                  // as soon as a wilaya is picked (mirrors the DHD label).
+                  const price = (
+                    yalidineCommunes as Record<
+                      string,
+                      { express_desk: number | null }[]
+                    >
+                  )[formData.code_wilaya]?.find(
+                    (c) => c.express_desk != null,
+                  )?.express_desk;
+                  return price != null ? (
+                    <span className="text-xs font-semibold text-orange-700">
+                      {price} DA
+                    </span>
+                  ) : null;
+                })()}
             </div>
             <Input
               id="montant"

@@ -30,6 +30,10 @@ export interface DeliveryProvider {
   name: DeliveryProviderName;
   createOrder(input: NormalizedOrderInput): Promise<CreateOrderResult>;
   deleteOrder(tracking: string): Promise<DeleteOrderResult>;
-  /** All parcels + their current status from the provider (for sync). */
-  fetchStatuses(): Promise<ProviderStatus[]>;
+  /**
+   * The current status of our parcels, for sync. `trackings` is the set of our
+   * own order ids for this provider: Yalidine filters its histories query by
+   * them; DHD ignores the arg and returns every order it holds.
+   */
+  fetchStatuses(trackings?: string[]): Promise<ProviderStatus[]>;
 }

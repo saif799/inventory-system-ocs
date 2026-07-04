@@ -13,12 +13,23 @@ import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
-    // Pull parcels + statuses from every provider. A provider failing (or not
-    // implemented yet, like Yalidine sync) must not break the whole sync.
+    // Group our order ids by provider so each provider syncs only its own
+    // parcels (Yalidine filters its histories query by these; DHD ignores them).
+    const orderProviders = await db
+      .select({ id: ordersTable.id, provider: ordersTable.provider })
+      .from(ordersTable);
+
+    const trackingsByProvider: Record<string, string[]> = {};
+    for (const o of orderProviders) {
+      (trackingsByProvider[o.provider ?? "dhd"] ??= []).push(o.id);
+    }
+
+    // Pull parcels + statuses from every provider. A provider failing (or having
+    // no orders) must not break the whole sync.
     const providerStatuses = (
       await Promise.all(
         DELIVERY_PROVIDERS.map((p) =>
-          p.fetchStatuses().catch((e) => {
+          p.fetchStatuses(trackingsByProvider[p.name] ?? []).catch((e) => {
             console.log(`${p.name} status sync failed`, e);
             return [];
           }),
