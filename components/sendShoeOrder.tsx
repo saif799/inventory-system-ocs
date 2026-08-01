@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
@@ -16,12 +16,9 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import communesByWilaya from "@/communes.json";
-import yalidineCommunes from "@/yalidinCommunes_withExpressDesk.json";
-import wilayas from "@/wilayas.json";
-import Tarifs from "@/tarifs.json";
 import { SelectGroup } from "./ui/customSelect";
 import { GroupedProduct } from "@/app/(inventory)/page";
+import { Checkbox } from "./ui/checkbox";
 
 type DeliveryProviderName = "dhd" | "yalidine";
 
@@ -37,6 +34,7 @@ type OrderFormData = {
   remarque: string | null;
   type: number;
   stop_desk: number;
+  freeshipping?: boolean;
 };
 
 export default function SendOrderForm({
@@ -64,6 +62,42 @@ export default function SendOrderForm({
     size: string;
   }>(shoe.sizes[0]);
 
+  // Dynamic coverage state from API
+  const [wilayasList, setWilayasList] = useState<
+    { wilayaId: number; name: string }[]
+  >([]);
+  const [communesList, setCommunesList] = useState<any[]>([]);
+  const [tarifInfo, setTarifInfo] = useState<{
+    livraison?: string;
+    stopdesk?: string;
+    echange?: string;
+    stopdeskEchange?: string;
+  } | null>(null);
+
+  // Fetch wilaya list whenever provider changes
+  useEffect(() => {
+    let isMounted = true;
+    async function loadWilayas() {
+      try {
+        const res = await fetch(
+          `/api/coverage?list=wilayas&provider=${provider}`,
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.wilayas) {
+            setWilayasList(data.wilayas);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load wilayas:", err);
+      }
+    }
+    loadWilayas();
+    return () => {
+      isMounted = false;
+    };
+  }, [provider]);
+
   const AvailableSources = [
     { code: "i", value: "instagram" },
     { code: "f", value: "facebook" },
@@ -86,6 +120,46 @@ export default function SendOrderForm({
     type: 1,
     stop_desk: 1,
   });
+
+  // Fetch communes & tarif whenever code_wilaya or provider changes
+  useEffect(() => {
+    if (!formData.code_wilaya) {
+      setCommunesList([]);
+      setTarifInfo(null);
+      return;
+    }
+    let isMounted = true;
+    async function loadCoverage() {
+      try {
+        const res = await fetch(
+          `/api/coverage?wilaya_id=${formData.code_wilaya}&provider=${provider}`,
+        );
+        if (res.ok) {
+          const data = await res.json();
+          console.log(data);
+
+          if (provider === "yalidine" && data.tarif?.expressDesk) {
+            console.log(
+              "Yalidine express desk price for wilaya",
+              formData.code_wilaya,
+              "is",
+              data.tarif.expressDesk,
+            );
+          }
+          if (isMounted) {
+            setCommunesList(data.communes || []);
+            setTarifInfo(data.tarif || null);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load communes/tarif:", err);
+      }
+    }
+    loadCoverage();
+    return () => {
+      isMounted = false;
+    };
+  }, [formData.code_wilaya, provider]);
 
   const handleSubmitToApi = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -297,17 +371,17 @@ export default function SendOrderForm({
               </SelectTrigger>
               <SelectContent className="w-[200px] p-0">
                 <SelectGroup>
-                  {wilayas.map((s) => (
+                  {wilayasList.map((s) => (
                     <SelectItem
-                      key={s.wilaya_id}
-                      value={String(s.wilaya_id)}
+                      key={s.wilayaId}
+                      value={String(s.wilayaId)}
                       className={
-                        formData.code_wilaya === String(s.wilaya_id)
+                        formData.code_wilaya === String(s.wilayaId)
                           ? "text-green-400"
                           : "text-right"
                       }
                     >
-                      {s.wilaya_id} - {s.wilaya_name}
+                      {s.wilayaId} - {s.name}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -334,34 +408,17 @@ export default function SendOrderForm({
                 <SelectGroup>
                   {formData.code_wilaya &&
                     (() => {
-                      // Yalidine communes come from the Yalidine file (guarantees
-                      // the name validates against Yalidine); DHD uses communes.json.
-                      const names = isYalidine
-                        ? (
-                            (
-                              yalidineCommunes as Record<
-                                string,
-                                { name: string; stopdesk_id: number | null }[]
-                              >
-                            )[formData.code_wilaya] ?? []
-                          )
-                            // Only communes with an actual Yalidine stop-desk
-                            // center are valid destinations for a desk parcel.
-                            .filter((c) => c.stopdesk_id != null)
-                            .map((c) => c.name)
-                        : (
-                            (
-                              communesByWilaya as Record<
-                                string,
-                                { nom: string; has_stop_desk: number }[]
-                              >
-                            )[formData.code_wilaya] ?? []
-                          )
-                            .filter((c) =>
-                              formData.stop_desk ? c.has_stop_desk : true,
+                      const filtered = isYalidine
+                        ? communesList
+                            .filter((c: any) => c.stopdeskId != null)
+                            .map((c: any) => c.name)
+                        : communesList
+                            .filter((c: any) =>
+                              formData.stop_desk ? c.hasStopDesk : true,
                             )
-                            .map((c) => c.nom);
-                      return names.map((name) => (
+                            .map((c: any) => c.nom || c.name);
+
+                      return filtered.map((name: string) => (
                         <SelectItem
                           key={name}
                           value={name}
@@ -398,31 +455,20 @@ export default function SendOrderForm({
           <div className="space-y-2 w-full">
             <div className="flex items-center justify-between ">
               <Label htmlFor="montant">Amount </Label>
-              {formData.code_wilaya && !isYalidine && (
+              {formData.code_wilaya && !isYalidine && tarifInfo && (
                 <span className="text-xs font-semibold text-orange-700">
                   {formData.stop_desk === 1
-                    ? Tarifs.livraison.find(
-                        (t) => t.wilaya_id === Number(formData.code_wilaya),
-                      )?.tarif_stopdesk
-                    : Tarifs.livraison.find(
-                        (t) => t.wilaya_id === Number(formData.code_wilaya),
-                      )?.tarif}
+                    ? tarifInfo.stopdesk
+                    : tarifInfo.livraison}
                   DA
                 </span>
               )}
               {formData.code_wilaya &&
                 isYalidine &&
                 (() => {
-                  // Yalidine stop-desk price is uniform per wilaya, so show it
-                  // as soon as a wilaya is picked (mirrors the DHD label).
-                  const price = (
-                    yalidineCommunes as Record<
-                      string,
-                      { express_desk: number | null }[]
-                    >
-                  )[formData.code_wilaya]?.find(
-                    (c) => c.express_desk != null,
-                  )?.express_desk;
+                  const price = communesList.find(
+                    (c: any) => c.expressDesk != null,
+                  )?.expressDesk;
                   return price != null ? (
                     <span className="text-xs font-semibold text-orange-700">
                       {price} DA
@@ -516,6 +562,23 @@ export default function SendOrderForm({
             />
           </div>
         </div>
+        {isYalidine && (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="freeshipping"
+              checked={formData.freeshipping}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, freeshipping: checked as boolean })
+              }
+            />
+            <label
+              htmlFor="freeshipping"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Free Shipping
+            </label>
+          </div>
+        )}
         <Button
           type="submit"
           disabled={loading}

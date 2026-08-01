@@ -5,6 +5,7 @@ import {
   integer,
   pgTable,
   timestamp,
+  unique,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -155,3 +156,81 @@ export const arrivalItems = pgTable("arrival_items", {
     .notNull()
     .defaultNow(),
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Delivery coverage tables — replaces communes.json, wilayas.json,
+// tarifs.json, and yalidinCommunes_withExpressDesk.json.
+//
+// DHD and Yalidine cover DIFFERENT sets of wilayas, so each provider has its
+// own wilaya table. The form dropdown shows only the wilayas the selected
+// provider actually covers.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** DHD-covered wilayas (populated from GET /api/v1/get/wilayas). */
+export const dhdWilayas = pgTable("dhd_wilayas", {
+  wilayaId: integer("wilaya_id").primaryKey(), // official DZ code 1-58
+  name: varchar("name").notNull(),
+  syncedAt: timestamp("synced_at", { withTimezone: true }),
+});
+
+/** DHD communes per wilaya (populated from GET /api/v1/get/communes). */
+export const dhdCommunes = pgTable(
+  "dhd_communes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    wilayaId: integer("wilaya_id")
+      .notNull()
+      .references(() => dhdWilayas.wilayaId, { onDelete: "cascade" }),
+    nom: varchar("nom").notNull(),
+    hasStopDesk: integer("has_stop_desk").notNull().default(0),
+    syncedAt: timestamp("synced_at", { withTimezone: true }),
+  },
+  (t) => [unique("dhd_communes_wilaya_nom_unique").on(t.wilayaId, t.nom)],
+);
+
+/**
+ * DHD tarifs per wilaya (populated from GET /api/v1/get/fees).
+ * Stores livraison and echange prices (domicile + stop-desk).
+ */
+export const dhdTarifs = pgTable("dhd_tarifs", {
+  wilayaId: integer("wilaya_id")
+    .primaryKey()
+    .references(() => dhdWilayas.wilayaId, { onDelete: "cascade" }),
+  tarifLivraison: varchar("tarif_livraison").notNull().default("0"),
+  tarifStopdeskLivraison: varchar("tarif_stopdesk_livraison")
+    .notNull()
+    .default("0"),
+  tarifEchange: varchar("tarif_echange").notNull().default("0"),
+  tarifStopdeskEchange: varchar("tarif_stopdesk_echange")
+    .notNull()
+    .default("0"),
+  syncedAt: timestamp("synced_at", { withTimezone: true }),
+});
+
+/** Yalidine-covered wilayas (derived from GET /v1/communes wilaya_id values). */
+export const yalidineWilayas = pgTable("yalidine_wilayas", {
+  wilayaId: integer("wilaya_id").primaryKey(), // official DZ code, Yalidine coverage
+  name: varchar("name").notNull(),
+  syncedAt: timestamp("synced_at", { withTimezone: true }),
+});
+
+/**
+ * Yalidine communes (populated from GET /v1/communes + enriched by GET /centers/).
+ * commune_id is Yalidine's own stable id — used as natural PK for upserts.
+ * stopdesk_id is the center_id from the Centers endpoint (NOT the express_desk fee).
+ * express_desk is the stop-desk delivery price shown as a label in the order form.
+ */
+export const yalidineCommunes = pgTable("yalidine_communes", {
+  communeId: integer("commune_id").primaryKey(), // Yalidine's own id (e.g. 101)
+  wilayaId: integer("wilaya_id")
+    .notNull()
+    .references(() => yalidineWilayas.wilayaId, { onDelete: "cascade" }),
+  name: varchar("name").notNull(),
+  wilayaName: varchar("wilaya_name").notNull(),
+  hasStopDesk: integer("has_stop_desk").notNull().default(0),
+  isDeliverable: integer("is_deliverable").notNull().default(1),
+  expressDesk: integer("express_desk"), // stop-desk delivery price (DA)
+  stopdeskId: integer("stopdesk_id"),   // Yalidine center_id for parcel creation
+  syncedAt: timestamp("synced_at", { withTimezone: true }),
+});
+

@@ -17,6 +17,7 @@ const navLinks = [
   { href: "/notifier", label: "Notifier" },
   { href: "/borrowers", label: "Borrowers" },
   { href: "/rebalance", label: "Rebalance" },
+  { href: "/settings", label: "Settings" },
 ] as const;
 
 const NavBar = () => {

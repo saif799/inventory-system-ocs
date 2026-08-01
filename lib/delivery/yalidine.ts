@@ -5,7 +5,7 @@ import {
   type YalidineCreateParcelApiResponse,
   type YalidineDeleteRow,
 } from "@/lib/Yalidin/parcel";
-import yalidineCommunes from "@/yalidinCommunes_withExpressDesk.json";
+import { getYalidineCommunes } from "@/lib/delivery/coverageData";
 import type {
   CreateOrderResult,
   DeleteOrderResult,
@@ -15,19 +15,14 @@ import type {
 } from "./types";
 
 type YalidineCommune = {
-  id: number;
+  communeId: number;
   name: string;
-  wilaya_name: string;
-  has_stop_desk: number;
-  // Stop-desk delivery price (DA), shown as a label in the order form. Not sent
-  // to the create endpoint.
-  express_desk: number | null;
-  // Yalidine center id, used as the parcel's stopdesk_id (from the Centers
-  // endpoint). Null when the commune has no stop-desk center.
-  stopdesk_id: number | null;
+  wilayaName: string;
+  hasStopDesk: number;
+  isDeliverable: number;
+  expressDesk: number | null;
+  stopdeskId: number | null;
 };
-
-const COMMUNES = yalidineCommunes as Record<string, YalidineCommune[]>;
 
 // One shoebox default for every parcel. Yalidine still computes delivery fees
 // from the wilaya; this only satisfies the required package fields.
@@ -40,7 +35,10 @@ const YALIDINE_PARCEL_DEFAULTS = {
 };
 
 /** Split "Ahmed Ben Ali" -> { firstname: "Ahmed", familyname: "Ben Ali" }. */
-function splitName(fullName: string): { firstname: string; familyname: string } {
+function splitName(fullName: string): {
+  firstname: string;
+  familyname: string;
+} {
   const parts = fullName.trim().split(/\s+/);
   if (parts.length <= 1) {
     return { firstname: fullName.trim() || "-", familyname: "-" };
@@ -50,15 +48,14 @@ function splitName(fullName: string): { firstname: string; familyname: string } 
 
 /**
  * Find the Yalidine commune record so we can send Yalidine's own commune +
- * wilaya spelling and the stop-desk id. Using this file (not the DHD one)
+ * wilaya spelling and the stop-desk id. Using the DB (not the DHD communes)
  * guarantees the names validate against Yalidine.
  */
-function findCommune(
+async function findCommune(
   codeWilaya: string,
   communeName: string,
-): YalidineCommune | undefined {
-  const list = COMMUNES[String(codeWilaya)];
-  if (!list) return undefined;
+): Promise<YalidineCommune | undefined> {
+  const list = await getYalidineCommunes(Number(codeWilaya));
   return list.find((c) => c.name === communeName);
 }
 
@@ -66,13 +63,13 @@ export const yalidineProvider: DeliveryProvider = {
   name: "yalidine",
 
   async createOrder(input: NormalizedOrderInput): Promise<CreateOrderResult> {
-    const commune = findCommune(input.code_wilaya, input.commune);
+    const commune = await findCommune(input.code_wilaya, input.commune);
     if (!commune) {
       throw new Error(
         `Yalidine has no stop-desk commune "${input.commune}" in wilaya ${input.code_wilaya}`,
       );
     }
-    if (commune.stopdesk_id == null) {
+    if (commune.stopdeskId == null) {
       throw new Error(
         `Yalidine commune "${input.commune}" has no stop-desk center`,
       );
@@ -84,13 +81,13 @@ export const yalidineProvider: DeliveryProvider = {
 
     const result = await createYalidineParcel({
       order_id: orderRef,
-      from_wilaya_name: process.env.YALIDINE_FROM_WILAYA ?? "Alger",
+      from_wilaya_name: process.env.YALIDINE_FROM_WILAYA ?? "Sétif",
       firstname,
       familyname,
       contact_phone: input.telephone,
       address: input.adresse,
       to_commune_name: commune.name,
-      to_wilaya_name: commune.wilaya_name,
+      to_wilaya_name: commune.wilayaName,
       product_list: input.produit,
       price: Number(input.montant) || 0,
       height: YALIDINE_PARCEL_DEFAULTS.height,
@@ -99,7 +96,7 @@ export const yalidineProvider: DeliveryProvider = {
       weight: YALIDINE_PARCEL_DEFAULTS.weight,
       freeshipping: YALIDINE_PARCEL_DEFAULTS.freeshipping,
       is_stopdesk: true, // Yalidine is used desk-only in this app
-      stopdesk_id: commune.stopdesk_id,
+      stopdesk_id: commune.stopdeskId,
       has_exchange: input.type === 2,
       // Yalidine requires the returned-product description whenever exchange is on.
       product_to_collect: input.type === 2 ? input.produit : null,

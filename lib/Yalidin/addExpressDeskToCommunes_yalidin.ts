@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 
+// TODO delete this file later its outdated
 interface CommuneInput {
   id: number;
   name: string;
@@ -115,7 +116,7 @@ function getAuthHeaders(): Record<string, string> {
   };
 }
 
-async function fetchFeesForWilaya(
+export async function fetchFeesForWilayaYalidin(
   fromWilayaId: number,
   toWilayaId: string,
   headers: Record<string, string>,
@@ -156,7 +157,11 @@ async function buildCommunesWithExpressDesk(
   const output: GroupedCommunesOutput = {};
 
   for (const [wilayaId, communes] of Object.entries(input)) {
-    const fees = await fetchFeesForWilaya(fromWilayaId, wilayaId, headers);
+    const fees = await fetchFeesForWilayaYalidin(
+      fromWilayaId,
+      wilayaId,
+      headers,
+    );
     const perCommune = fees.per_commune ?? {};
 
     output[wilayaId] = communes.map((commune) => {
