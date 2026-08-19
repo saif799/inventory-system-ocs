@@ -74,59 +74,95 @@ export function ImageUploader({
   const uploadSingleFile = async (fileItem: UploadingFile): Promise<string> => {
     const { file } = fileItem;
 
-    // Step 1: Request presigned URL
-    const res = await fetch("/api/r2/presigned-url", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        filename: file.name,
-        contentType: file.type,
-        folder,
-      }),
-    });
+    // Helper: Server-side upload fallback via FormData
+    const uploadViaServer = async (): Promise<string> => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", folder);
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || `Presigned URL request failed (${res.status})`);
+      const res = await fetch("/api/r2/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server upload failed (${res.status})`);
+      }
+
+      const data = await res.json();
+      setUploadingFiles((prev) =>
+        prev.map((item) =>
+          item.id === fileItem.id
+            ? { ...item, progress: 100, url: data.publicUrl }
+            : item
+        )
+      );
+      return data.publicUrl;
+    };
+
+    try {
+      // Step 1: Request presigned URL
+      const res = await fetch("/api/r2/presigned-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+          folder,
+        }),
+      });
+
+      if (!res.ok) {
+        // Fall back to server upload route
+        return await uploadViaServer();
+      }
+
+      const { uploadUrl, publicUrl } = await res.json();
+
+      // Step 2: Upload file binary directly to Cloudflare R2 with XHR progress listener
+      return await new Promise<string>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", uploadUrl, true);
+        xhr.setRequestHeader("Content-Type", file.type);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            setUploadingFiles((prev) =>
+              prev.map((item) =>
+                item.id === fileItem.id ? { ...item, progress: percent } : item
+              )
+            );
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            setUploadingFiles((prev) =>
+              prev.map((item) =>
+                item.id === fileItem.id
+                  ? { ...item, progress: 100, url: publicUrl }
+                  : item
+              )
+            );
+            resolve(publicUrl);
+          } else {
+            // Non-200 status -> try server fallback
+            uploadViaServer().then(resolve).catch(reject);
+          }
+        };
+
+        xhr.onerror = () => {
+          // Browser Network / CORS error -> fallback seamlessly to server route
+          uploadViaServer().then(resolve).catch(reject);
+        };
+
+        xhr.send(file);
+      });
+    } catch (err) {
+      return await uploadViaServer();
     }
-
-    const { uploadUrl, publicUrl } = await res.json();
-
-    // Step 2: Upload file binary directly to Cloudflare R2 with progress listener
-    return new Promise<string>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("PUT", uploadUrl, true);
-      xhr.setRequestHeader("Content-Type", file.type);
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setUploadingFiles((prev) =>
-            prev.map((item) =>
-              item.id === fileItem.id ? { ...item, progress: percent } : item
-            )
-          );
-        }
-      };
-
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          setUploadingFiles((prev) =>
-            prev.map((item) =>
-              item.id === fileItem.id
-                ? { ...item, progress: 100, url: publicUrl }
-                : item
-            )
-          );
-          resolve(publicUrl);
-        } else {
-          reject(new Error(`Upload failed with status ${xhr.status}`));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error("Network error during file upload"));
-      xhr.send(file);
-    });
   };
 
   const handleFiles = async (files: FileList | File[]) => {
