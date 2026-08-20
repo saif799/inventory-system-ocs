@@ -12,7 +12,7 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { GroupedProduct } from "@/app/(inventory)/page";
+import { GroupedProduct } from "@/app/admin/(admin)/page";
 
 interface BringBackDialogProps {
   product: GroupedProduct;
@@ -102,7 +102,9 @@ export default function BringBackDialog({
               <Button
                 key={size.inventoryId}
                 variant={
-                  selectedInventoryId === size.inventoryId ? "default" : "outline"
+                  selectedInventoryId === size.inventoryId
+                    ? "default"
+                    : "outline"
                 }
                 onClick={() => {
                   setSelectedInventoryId(size.inventoryId);
@@ -113,7 +115,9 @@ export default function BringBackDialog({
                 className="w-full min-h-14 text-base flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-4 px-4"
               >
                 <span>{size.size}</span>
-                <span className="text-sm opacity-70">(Lended: {size.quantity})</span>
+                <span className="text-sm opacity-70">
+                  (Lended: {size.quantity})
+                </span>
               </Button>
             ))}
           </div>

@@ -1,0 +1,40 @@
+import { NextResponse } from "next/server";
+import { txClient } from "@/lib/db";
+import { storefrontSectionItems } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+
+type Params = { params: Promise<{ sectionId: string }> };
+
+/**
+ * PUT /api/admin/storefront/sections/[sectionId]/items
+ * Replaces the section's whole pick list in one transaction — idempotent,
+ * covers add/remove/reorder in a single call. Body: { shoeIds: string[] }
+ * (already in the desired display order).
+ */
+export async function PUT(request: Request, { params }: Params) {
+  const { sectionId } = await params;
+  try {
+    const body = await request.json();
+    const shoeIds: string[] = Array.isArray(body?.shoeIds) ? body.shoeIds : [];
+
+    await txClient().transaction(async (tx) => {
+      await tx.delete(storefrontSectionItems).where(eq(storefrontSectionItems.sectionId, sectionId));
+      if (shoeIds.length > 0) {
+        await tx.insert(storefrontSectionItems).values(
+          shoeIds.map((shoeId, index) => ({
+            sectionId,
+            shoeId,
+            sortOrder: index,
+          })),
+        );
+      }
+    });
+
+    revalidatePath("/");
+    revalidatePath("/admin/storefront");
+    return NextResponse.json({ success: true, count: shoeIds.length });
+  } catch (error: any) {
+    return NextResponse.json({ error: error?.message }, { status: 500 });
+  }
+}

@@ -132,8 +132,8 @@ export async function POST(request: Request) {
       },
     );
 
-    revalidatePath("/");
-    revalidatePath(`/${borrowerId}`);
+    revalidatePath("/admin");
+    revalidatePath(`/admin/${borrowerId}`);
     return Response.json({
       success: true,
       borrowerId,

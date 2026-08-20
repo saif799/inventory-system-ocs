@@ -20,7 +20,7 @@ import { InferSelectModel } from "drizzle-orm";
 import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
 import { Input } from "./ui/input";
-import { GroupedProduct } from "@/app/(inventory)/page";
+import { GroupedProduct } from "@/app/admin/(admin)/page";
 import MultipleItemsOrder from "./multipleItemsOrder";
 import printShoeLabels from "@/lib/print";
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
@@ -165,7 +165,7 @@ export default function Listings({
     if (value) {
       params.set("ProductName", value);
     } else {
-      params.delete("ProductName", value);
+      params.delete("ProductName");
     }
 
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);

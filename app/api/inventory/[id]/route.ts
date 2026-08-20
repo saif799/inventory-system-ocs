@@ -24,7 +24,7 @@ export async function PATCH(
       if (!updated) {
         return Response.json({ error: "Item not found" }, { status: 404 });
       }
-      revalidatePath("/");
+      revalidatePath("/admin");
       return Response.json(updated);
     }
 
@@ -37,7 +37,7 @@ export async function PATCH(
       if (!updated) {
         return Response.json({ error: "Item not found" }, { status: 404 });
       }
-      revalidatePath("/");
+      revalidatePath("/admin");
       return Response.json(updated);
     }
 

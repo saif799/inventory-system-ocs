@@ -22,7 +22,7 @@ import EditInventoryDialog from "./EditInventoryDialog";
 import StoreSaleDialog from "./StoreSaleDialog";
 import LendInventoryDialog from "./lendInventory";
 import BringBackDialog from "./bringBackDialog";
-import { GroupedProduct } from "@/app/(inventory)/page";
+import { GroupedProduct } from "@/app/admin/(admin)/page";
 import { Button, buttonVariants } from "./ui/button";
 import {
   Handshake,
@@ -33,10 +33,7 @@ import {
   Undo2,
 } from "lucide-react";
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { HexColorPicker } from "react-colorful";
-import { Input } from "./ui/input";
-import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 interface ProductCardProps {
   product: GroupedProduct;
@@ -45,11 +42,10 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({
-  product: { modelId, modelName, color, sizes, shoeId, hexCode },
+  product: { modelId, modelName, color, sizes, shoeId },
   selectedShoes,
   selectshoe,
 }: ProductCardProps) {
-  const router = useRouter();
   const params = useParams<{ lenderId?: string }>();
   const lenderId = params?.lenderId;
   const isBorrowerView = Boolean(lenderId);
@@ -57,40 +53,6 @@ export default function ProductCard({
   const [isEditInventoryOpen, setIsEditInventoryOpen] = useState(false);
   const [isLendInventoryOpen, setIsLendInventoryOpen] = useState(false);
   const [isBringBackOpen, setIsBringBackOpen] = useState(false);
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
-  const [localHexCode, setLocalHexCode] = useState(hexCode || "#FFFFFF");
-  const [isSavingHexCode, setIsSavingHexCode] = useState(false);
-
-  const handleHexCodeSave = async () => {
-    const formattedHex = localHexCode.trim().toUpperCase();
-
-    if (!/^#([0-9A-F]{6})$/.test(formattedHex)) {
-      toast.error("Please use a valid hex code like #A1B2C3.");
-      return;
-    }
-
-    setIsSavingHexCode(true);
-    try {
-      const response = await fetch(`/api/shoes/${shoeId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hexCode: formattedHex }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save shoe color.");
-      }
-
-      toast.success("Shoe color updated.");
-      router.refresh();
-      setIsColorPickerOpen(false);
-    } catch (error) {
-      console.error("Failed to update shoe hex color:", error);
-      toast.error("Could not update shoe color.");
-    } finally {
-      setIsSavingHexCode(false);
-    }
-  };
   return (
     <div
       onClick={() => selectshoe(shoeId, modelName + color + sizes[0].size)}
@@ -113,42 +75,6 @@ export default function ProductCard({
           <p className="mt-1 text-sm text-gray-600">
             <span className="font-medium text-gray-800">{color}</span>
           </p>
-          <div className="mt-2" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              onClick={() => setIsColorPickerOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <span
-                className="inline-block h-4 w-4 rounded-full border border-gray-300"
-                style={{ backgroundColor: localHexCode }}
-              />
-              {localHexCode.toUpperCase()}
-            </button>
-            {isColorPickerOpen && (
-              <div className="mt-2 space-y-2 rounded-md border border-gray-200 bg-white p-2 shadow-md">
-                <HexColorPicker
-                  color={localHexCode}
-                  onChange={setLocalHexCode}
-                />
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={localHexCode.toUpperCase()}
-                    onChange={(e) => setLocalHexCode(e.target.value)}
-                    className="h-8 text-xs"
-                    maxLength={7}
-                  />
-                  <Button
-                    size="sm"
-                    onClick={handleHexCodeSave}
-                    disabled={isSavingHexCode}
-                  >
-                    {isSavingHexCode ? "Saving..." : "Save"}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
         <div className="text-right">
           <p className="text-sm font-medium text-gray-800">Size</p>
@@ -195,7 +121,7 @@ export default function ProductCard({
               </DialogHeader>
               <div className="w-full">
                 <SendOrderForm
-                  shoe={{ shoeId, modelId, modelName, color, hexCode, sizes }}
+                  shoe={{ shoeId, modelId, modelName, color, sizes }}
                   borrowerId={isBorrowerView ? lenderId : undefined}
                 />
               </div>
@@ -227,7 +153,6 @@ export default function ProductCard({
                         modelId,
                         modelName,
                         color,
-                        hexCode,
                         sizes,
                         shoeId,
                       }}
@@ -254,7 +179,6 @@ export default function ProductCard({
                           modelId,
                           modelName,
                           color,
-                          hexCode,
                           sizes,
                           shoeId,
                         }}
@@ -281,7 +205,6 @@ export default function ProductCard({
                           modelId,
                           modelName,
                           color,
-                          hexCode,
                           sizes,
                           shoeId,
                         }}
@@ -306,13 +229,23 @@ export default function ProductCard({
                           modelId,
                           modelName,
                           color,
-                          hexCode,
                           sizes,
                           shoeId,
                         }}
                         setIsEditInventoryOpen={setIsEditInventoryOpen}
                       />
                     </Dialog>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={`/admin/products/${shoeId}/edit`}
+                      className="flex items-center gap-1 cursor-pointer"
+                    >
+                      <Package className="h-3 w-3" /> Edit Product (Pricing
+                      &amp; Images)
+                    </a>
                   </DropdownMenuItem>
                 </>
               )}

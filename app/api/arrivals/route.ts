@@ -3,6 +3,7 @@ import {
   arrivalItems,
   arrivals,
   shoeInventory,
+  shoeModels,
   shoes,
 } from "@/lib/schema";
 import { flagNotifier } from "@/lib/notifier";
@@ -14,9 +15,12 @@ type NewLine = {
   mode: "new";
   modelId: string;
   color: string;
-  hexCode?: string;
   sizes: string[];
   quantity: number;
+  /** Storefront base price in DZD (optional; defaults to 0 if omitted) */
+  basePrice?: number;
+  /** Optional compare-at/original price in DZD for strikethrough display */
+  compareAtPrice?: number | null;
 };
 
 type ExistingLine = {
@@ -85,8 +89,11 @@ export async function POST(request: Request) {
       id: string;
       modelId: string;
       color: string;
-      hexCode: string;
     }[] = [];
+    const modelPriceUpdates = new Map<
+      string,
+      { basePrice?: number; compareAtPrice?: number | null }
+    >();
     const inventoryInserts: {
       id: string;
       shoeId: string;
@@ -123,8 +130,13 @@ export async function POST(request: Request) {
           id: shoeId,
           modelId: line.modelId,
           color: line.color.trim(),
-          hexCode: line.hexCode?.trim() || "#FFFFFF",
         });
+        if (typeof line.basePrice === "number" || line.compareAtPrice !== undefined) {
+          modelPriceUpdates.set(line.modelId, {
+            ...(typeof line.basePrice === "number" ? { basePrice: line.basePrice } : {}),
+            ...(line.compareAtPrice !== undefined ? { compareAtPrice: line.compareAtPrice ?? null } : {}),
+          });
+        }
         for (const size of sizes) {
           const invId = crypto.randomUUID();
           inventoryInserts.push({ id: invId, shoeId, size, quantity });
@@ -184,6 +196,11 @@ export async function POST(request: Request) {
       db.insert(arrivals).values({ id: arrivalId, reference, note }),
     ];
     if (shoeInserts.length) writes.push(db.insert(shoes).values(shoeInserts));
+    for (const [modelId, update] of modelPriceUpdates) {
+      writes.push(
+        db.update(shoeModels).set(update).where(eq(shoeModels.id, modelId)),
+      );
+    }
     if (inventoryInserts.length)
       writes.push(db.insert(shoeInventory).values(inventoryInserts));
     for (const inc of inventoryIncrements) {
@@ -211,9 +228,9 @@ export async function POST(request: Request) {
       );
     }
 
-    revalidatePath("/");
-    revalidatePath("/arrivals");
-    revalidatePath("/add-shoes");
+    revalidatePath("/admin");
+    revalidatePath("/admin/arrivals");
+    revalidatePath("/admin/add-shoes");
     return Response.json({ success: true, arrivalId });
   } catch (error) {
     console.error("Failed to save arrival:", error);

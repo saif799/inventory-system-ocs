@@ -17,7 +17,7 @@ import {
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SelectGroup } from "./ui/customSelect";
-import { GroupedProduct } from "@/app/(inventory)/page";
+import { GroupedProduct } from "@/app/admin/(admin)/page";
 import { Checkbox } from "./ui/checkbox";
 
 type DeliveryProviderName = "dhd" | "yalidine";

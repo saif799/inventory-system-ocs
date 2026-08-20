@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GroupedProduct } from "@/app/(inventory)/page";
+import { GroupedProduct } from "@/app/admin/(admin)/page";
 
 type Borrower = {
   id: string;
@@ -47,9 +47,9 @@ export default function LendInventoryDialog({
   const [quantity, setQuantity] = useState(1);
   const [borrowerName, setBorrowerName] = useState("");
   const [borrowers, setBorrowers] = useState<Borrower[]>([]);
-  const [lentByInventoryId, setLentByInventoryId] = useState<Record<string, number>>(
-    {},
-  );
+  const [lentByInventoryId, setLentByInventoryId] = useState<
+    Record<string, number>
+  >({});
   const [isLoadingBorrowers, setIsLoadingBorrowers] = useState(false);
   const [isLoadingLentSummary, setIsLoadingLentSummary] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -232,7 +232,9 @@ export default function LendInventoryDialog({
                     className="w-full min-h-14 text-base flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-4 px-4"
                   >
                     <span>{size.size}</span>
-                    <span className="text-sm opacity-70">(Qty: {size.quantity})</span>
+                    <span className="text-sm opacity-70">
+                      (Qty: {size.quantity})
+                    </span>
                   </Button>
                 ))}
               </div>
@@ -267,8 +269,9 @@ export default function LendInventoryDialog({
               />
               {selectedSizeData && (
                 <p className="text-xs text-gray-500">
-                  Max available to lend for this size: {selectedSizeData.lendableQuantity}
-                  {" "}({selectedSizeData.lentQuantity} lended out of{" "}
+                  Max available to lend for this size:{" "}
+                  {selectedSizeData.lendableQuantity} (
+                  {selectedSizeData.lentQuantity} lended out of{" "}
                   {selectedSizeData.quantity} total)
                 </p>
               )}

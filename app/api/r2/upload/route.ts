@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getR2Client } from "@/lib/r2";
+import { buildR2PublicUrl, getR2Client } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
     }
 
     const bucketName = process.env.R2_BUCKET_NAME;
-    const publicUrlBase = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
 
     if (!bucketName) {
       return NextResponse.json(
@@ -68,10 +67,9 @@ export async function POST(request: Request) {
       })
     );
 
-    const cleanBase = (publicUrlBase || "").replace(/\/+$/, "");
-    const publicUrl = cleanBase
-      ? `${cleanBase}/${key}`
-      : `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${bucketName}/${key}`;
+    // Always the public base URL. The S3 API endpoint used for the PutObject above
+    // cannot serve public GETs, so it must never leak into a stored/rendered src.
+    const publicUrl = buildR2PublicUrl(key);
 
     return NextResponse.json({
       success: true,

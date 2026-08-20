@@ -12,7 +12,7 @@ export async function decreaseQuantity(id: string) {
       .set({ quantity: sql`GREATEST(0, ${shoeInventory.quantity} - 1)` })
       .where(eq(shoeInventory.id, id));
 
-    revalidatePath("/");
+    revalidatePath("/admin");
   } catch (error) {
     console.error("Error decreasing quantity:", error);
   }

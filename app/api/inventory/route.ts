@@ -69,8 +69,8 @@ export async function POST(request: Request) {
         .returning();
     }
 
-    revalidatePath("/");
-    revalidatePath("/add-shoes");
+    revalidatePath("/admin");
+    revalidatePath("/admin/add-shoes");
     return Response.json([existingInserted, newInserted]);
   } catch (error) {
     return Response.json(

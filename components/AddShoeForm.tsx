@@ -28,13 +28,14 @@ type ShoesResponseType = {
   id: string;
   modelName: string;
   color: string;
-  hexCode: string;
   modelId: string;
 };
 
 type modelType = {
   id: string;
   modelName: string;
+  basePrice: number;
+  compareAtPrice: number | null;
 };
 
 // A staged line in the current arrivage (cart). Carries both what we render and
@@ -45,11 +46,14 @@ type CartLine = {
   mode: "new" | "existing";
   modelName: string;
   color: string;
-  hexCode?: string;
   sizes: string[];
   quantity: number;
   modelId?: string;
   shoeId?: string;
+  /** Storefront base price (DZD) — only applicable for mode=new */
+  basePrice?: number;
+  /** Optional compare-at price (DZD) — only applicable for mode=new */
+  compareAtPrice?: number | null;
 };
 
 export default function AddShoeForm({
@@ -85,6 +89,8 @@ export default function AddShoeForm({
     color: "",
     size: "",
     quantity: "1",
+    basePrice: "0",
+    compareAtPrice: "",
   });
 
   useEffect(() => {
@@ -164,7 +170,6 @@ export default function AddShoeForm({
           mode: "existing",
           modelName: valueSelected.modelName,
           color: valueSelected.color,
-          hexCode: valueSelected.hexCode,
           sizes,
           quantity,
           shoeId: valueSelected.id,
@@ -189,6 +194,10 @@ export default function AddShoeForm({
           sizes,
           quantity,
           modelId: formData.modelId,
+          basePrice: Number(formData.basePrice) || 0,
+          compareAtPrice: formData.compareAtPrice
+            ? Number(formData.compareAtPrice)
+            : null,
         },
       ]);
     }
@@ -199,6 +208,8 @@ export default function AddShoeForm({
       color: "",
       size: "",
       quantity: "1",
+      basePrice: "0",
+      compareAtPrice: "",
     }));
   };
 
@@ -223,6 +234,8 @@ export default function AddShoeForm({
             color: l.color,
             sizes: l.sizes,
             quantity: l.quantity,
+            basePrice: l.basePrice ?? 0,
+            compareAtPrice: l.compareAtPrice ?? null,
           }
         : {
             mode: "existing" as const,
@@ -381,6 +394,9 @@ export default function AddShoeForm({
                               setFormData({
                                 ...formData,
                                 modelId: model.id,
+                                basePrice: String(model.basePrice),
+                                compareAtPrice:
+                                  model.compareAtPrice != null ? String(model.compareAtPrice) : "",
                               });
                             }}
                           >
@@ -462,6 +478,37 @@ export default function AddShoeForm({
           />
         </div>
 
+        {mode === "new" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="basePrice">Model Price (DA)</Label>
+              <Input
+                id="basePrice"
+                type="number"
+                min={0}
+                placeholder="e.g., 4500"
+                value={formData.basePrice}
+                onChange={(e) =>
+                  setFormData({ ...formData, basePrice: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="compareAtPrice">Model Compare-At Price (DA) — optional</Label>
+              <Input
+                id="compareAtPrice"
+                type="number"
+                min={0}
+                placeholder="e.g., 5000"
+                value={formData.compareAtPrice}
+                onChange={(e) =>
+                  setFormData({ ...formData, compareAtPrice: e.target.value })
+                }
+              />
+            </div>
+          </div>
+        )}
+
         <Button
           type="submit"
           variant="outline"
@@ -493,7 +540,6 @@ export default function AddShoeForm({
                     id={line.shoeId ?? line.modelId ?? line.key}
                     modelName={line.modelName}
                     color={line.color}
-                    hexCode={line.hexCode}
                     quantity={line.quantity}
                     sizes={line.sizes}
                     onRemove={() => removeLine(line.key)}

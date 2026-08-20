@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -21,6 +21,67 @@ export function getR2Client() {
   });
 }
 
+/**
+ * Base URL that serves R2 objects publicly over plain HTTP GET.
+ *
+ * This is deliberately NOT the S3 API endpoint (`<accountId>.r2.cloudflarestorage.com`):
+ * that endpoint only answers authenticated, SigV4-signed S3 requests, so a browser
+ * `<img src>` pointed at it always renders a broken image. The S3 endpoint stays
+ * confined to `getR2Client()` (upload / delete / presign).
+ *
+ * Configure with a custom domain bound to the bucket (preferred — `r2.dev` is
+ * rate-limited and documented by Cloudflare as development-only):
+ *   R2_PUBLIC_URL=https://cdn.example.com
+ * or, as a stopgap, the bucket's public dev URL:
+ *   R2_PUBLIC_URL=https://pub-<hash>.r2.dev
+ *
+ * Swapping r2.dev for a custom domain later is a one-line change to this env var
+ * plus a re-run of `npx tsx lib/scripts/fixR2ImageUrls.ts` to rewrite stored rows.
+ */
+export function getR2PublicBaseUrl(): string {
+  const raw = process.env.R2_PUBLIC_URL ?? process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+
+  if (!raw || !raw.trim()) {
+    throw new Error(
+      "R2_PUBLIC_URL is not configured. Set it to the bucket's public base URL " +
+        "(a custom domain, or https://pub-<hash>.r2.dev) — not the S3 API endpoint."
+    );
+  }
+
+  const base = raw.trim().replace(/\/+$/, "");
+
+  if (base.includes("<") || base.includes(">")) {
+    throw new Error(
+      `R2_PUBLIC_URL still contains a placeholder ("${base}"). Replace it with the ` +
+        "real public base URL from the Cloudflare dashboard (R2 > your bucket > Settings > Public access)."
+    );
+  }
+
+  let hostname: string;
+  try {
+    hostname = new URL(base).hostname;
+  } catch {
+    throw new Error(`R2_PUBLIC_URL is not a valid absolute URL: "${base}"`);
+  }
+
+  if (hostname.endsWith(".r2.cloudflarestorage.com")) {
+    throw new Error(
+      `R2_PUBLIC_URL points at the S3 API endpoint ("${base}"). That endpoint only ` +
+        "serves authenticated S3 requests and cannot be used as an <img> src. Use the " +
+        "bucket's public custom domain or its https://pub-<hash>.r2.dev URL instead."
+    );
+  }
+
+  return base;
+}
+
+/** Builds the browser-facing URL for an R2 object key. */
+export function buildR2PublicUrl(key: string): string {
+  const cleanKey = key.replace(/^\/+/, "");
+  const encoded = cleanKey.split("/").map(encodeURIComponent).join("/");
+  return `${getR2PublicBaseUrl()}/${encoded}`;
+}
+
 export interface PresignedUrlParams {
   filename: string;
   contentType: string;
@@ -41,7 +102,6 @@ export async function getPresignedUploadUrl({
   expiresInSeconds = 900, // 15 minutes
 }: PresignedUrlParams): Promise<PresignedUrlResponse> {
   const bucketName = process.env.R2_BUCKET_NAME;
-  const publicUrlBase = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
 
   if (!bucketName) {
     throw new Error("R2_BUCKET_NAME is not configured in environment variables");
@@ -64,12 +124,26 @@ export async function getPresignedUploadUrl({
     expiresIn: expiresInSeconds,
   });
 
-  const cleanBase = (publicUrlBase || "").replace(/\/+$/, "");
-  const publicUrl = cleanBase ? `${cleanBase}/${key}` : uploadUrl.split("?")[0];
+  // Built from the public base URL only. Never derived from `uploadUrl`: stripping
+  // the query off a presigned URL yields the S3 API endpoint, which browsers cannot GET.
+  const publicUrl = buildR2PublicUrl(key);
 
   return {
     uploadUrl,
     key,
     publicUrl,
   };
+}
+
+/**
+ * Physically deletes an object from the Cloudflare R2 bucket.
+ * Requires the API key to have DeleteObject permission.
+ */
+export async function deleteR2Object(key: string): Promise<void> {
+  const bucketName = process.env.R2_BUCKET_NAME;
+  if (!bucketName) {
+    throw new Error("R2_BUCKET_NAME is not configured in environment variables");
+  }
+  const client = getR2Client();
+  await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: key }));
 }

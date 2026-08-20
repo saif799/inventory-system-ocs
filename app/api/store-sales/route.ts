@@ -34,7 +34,8 @@ export async function POST(request: Request) {
       return row;
     });
 
-    revalidatePath("/");
+    revalidatePath("/admin");
+    revalidatePath("/admin/orders");
     return Response.json({ success: true, updated });
   } catch (error) {
     console.error("Failed to create store sale:", error);
@@ -86,8 +87,8 @@ export async function DELETE(request: Request) {
       }
     });
 
-    revalidatePath("/");
-    revalidatePath("/orders");
+    revalidatePath("/admin");
+    revalidatePath("/admin/orders");
     return Response.json({ success: true });
   } catch (error) {
     console.error("Failed to revert store sale:", error);

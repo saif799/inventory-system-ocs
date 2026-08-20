@@ -199,12 +199,12 @@ export async function POST(request: Request) {
       }
     });
 
-    revalidatePath("/");
-    revalidatePath("/orders");
-    revalidatePath("/add-shoes");
-    if (borrowerId) revalidatePath(`/${borrowerId}`);
+    revalidatePath("/admin");
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin/add-shoes");
+    if (borrowerId) revalidatePath(`/admin/${borrowerId}`);
 
-    return Response.json({ message: "Order created successfully" });
+    return Response.json({ message: "Order created successfully", orderId: tracking });
   } catch (error) {
     return Response.json(
       { error: `Failed to create order ${error}` },
@@ -295,10 +295,10 @@ export async function DELETE(request: Request) {
       }
     });
 
-    revalidatePath("/");
-    revalidatePath("/orders");
-    revalidatePath("/add-shoes");
-    if (order.borrowerId) revalidatePath(`/${order.borrowerId}`);
+    revalidatePath("/admin");
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin/add-shoes");
+    if (order.borrowerId) revalidatePath(`/admin/${order.borrowerId}`);
 
     return Response.json({ message: "Order deleted successfully" });
   } catch (error) {

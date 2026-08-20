@@ -26,7 +26,6 @@ export async function GET() {
         quantity: shoeInventory.quantity,
         shoeId: shoes.id,
         color: shoes.color,
-        hexCode: shoes.hexCode,
         modelName: shoeModels.modelName,
         held: sql<number>`SUM(${LendedShoes.quantity})`,
       })
@@ -43,7 +42,6 @@ export async function GET() {
         shoeInventory.quantity,
         shoes.id,
         shoes.color,
-        shoes.hexCode,
         shoeModels.modelName,
       )
       .having(
@@ -65,7 +63,6 @@ export async function GET() {
         quantity: shoeInventory.quantity,
         shoeId: shoes.id,
         color: shoes.color,
-        hexCode: shoes.hexCode,
         modelName: shoeModels.modelName,
       })
       .from(shoeInventory)

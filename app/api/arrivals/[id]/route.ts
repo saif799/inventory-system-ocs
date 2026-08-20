@@ -34,7 +34,6 @@ export async function GET(
         currentStock: shoeInventory.quantity,
         shoeId: shoes.id,
         color: shoes.color,
-        hexCode: shoes.hexCode,
         modelName: shoeModels.modelName,
       })
       .from(arrivalItems)

@@ -21,7 +21,6 @@ export async function GET() {
         quantity: shoeInventory.quantity,
         shoeId: shoes.id,
         color: shoes.color,
-        hexCode: shoes.hexCode,
         modelName: shoeModels.modelName,
         orderId: ImageNotifierTable.orderId,
         customerName: ordersTable.nom_client,
@@ -61,7 +60,7 @@ export async function DELETE(request: Request) {
       .where(inArray(ImageNotifierTable.id, ids))
       .returning({ id: ImageNotifierTable.id });
 
-    revalidatePath("/notifier");
+    revalidatePath("/admin/notifier");
     return Response.json({ success: true, deleted: deleted.length });
   } catch (error) {
     console.error("Error bulk deleting notifiers:", error);

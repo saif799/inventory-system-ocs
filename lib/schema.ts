@@ -13,6 +13,9 @@ import {
 export const shoeModels = pgTable("shoe_models", {
   id: uuid().primaryKey().defaultRandom(),
   modelName: varchar("model_name").notNull(),
+  // Storefront pricing (DZD) — the base of the 3-level resolution chain.
+  basePrice: integer("base_price").notNull().default(0),
+  compareAtPrice: integer("compare_at_price"),
 });
 
 export const shoes = pgTable("shoes", {
@@ -21,8 +24,10 @@ export const shoes = pgTable("shoes", {
     .notNull()
     .references(() => shoeModels.id),
   color: varchar("color").notNull(),
-  hexCode: varchar("hex_code").notNull().default("#FFFFFF"),
   // barcode moved to inventory (size-specific)
+  // Optional colour-level overrides of the model's price. Null = inherit model.
+  priceOverride: integer("price_override"),
+  compareAtPriceOverride: integer("compare_at_price_override"),
 });
 
 export const ordersTable = pgTable("orders", {
@@ -63,6 +68,8 @@ export const shoeInventory = pgTable("shoe_inventory", {
     .references(() => shoes.id),
   size: varchar("size").notNull(),
   quantity: integer("quantity").notNull().default(0),
+  // Optional size-specific price override (DZD). Null = use shoe basePrice.
+  priceOverride: integer("price_override"),
   createdAt: date("created_at").notNull().defaultNow(),
 });
 
@@ -234,3 +241,57 @@ export const yalidineCommunes = pgTable("yalidine_communes", {
   syncedAt: timestamp("synced_at", { withTimezone: true }),
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Storefront: shoe image gallery stored in Cloudflare R2.
+// Each row represents one uploaded image for a shoe color variant (shoeId).
+// ─────────────────────────────────────────────────────────────────────────────
+export const shoeImages = pgTable("shoe_images", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  shoeId: varchar("shoe_id")
+    .notNull()
+    .references(() => shoes.id, { onDelete: "cascade" }),
+  /** R2 object key (e.g. products/shoes/<shoeId>/<uuid>-filename.jpg) */
+  cloudflareImageId: varchar("cloudflare_image_id").notNull(),
+  /** Cached public CDN URL */
+  url: varchar("url").notNull(),
+  /** Accessibility / SEO alt text */
+  altText: varchar("alt_text"),
+  /** Integer sequence for carousel display order */
+  sortOrder: integer("sort_order").notNull().default(0),
+  /** Whether this is the hero thumbnail shown on catalog cards */
+  isPrimary: boolean("is_primary").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Storefront: admin-curated homepage product carousels ("Suggestions", "Offres").
+// The hero itself is static (hardcoded), so there is no hero table.
+// ─────────────────────────────────────────────────────────────────────────────
+export const storefrontSections = pgTable("storefront_sections", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: varchar("title").notNull(),
+  subtitle: varchar("subtitle"),
+  ctaHref: varchar("cta_href"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const storefrontSectionItems = pgTable(
+  "storefront_section_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    sectionId: uuid("section_id")
+      .notNull()
+      .references(() => storefrontSections.id, { onDelete: "cascade" }),
+    shoeId: varchar("shoe_id")
+      .notNull()
+      .references(() => shoes.id, { onDelete: "cascade" }),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique("storefront_section_items_section_shoe_unique").on(t.sectionId, t.shoeId),
+  ],
+);

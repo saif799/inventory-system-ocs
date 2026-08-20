@@ -27,7 +27,8 @@ export async function POST(request: Request) {
       .values({ modelName })
       .returning();
 
-    revalidatePath("/");
+    revalidatePath("/admin");
+    revalidatePath("/admin/add-shoes");
 
     return Response.json(inserted);
   } catch (error) {

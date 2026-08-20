@@ -57,8 +57,8 @@ export async function PATCH(
       return Response.json({ error: "Borrower not found" }, { status: 404 });
     }
 
-    revalidatePath("/borrowers");
-    revalidatePath(`/${id}`);
+    revalidatePath("/admin/borrowers");
+    revalidatePath(`/admin/${id}`);
     return Response.json(updated);
   } catch (error) {
     console.error("Failed to rename borrower", error);
@@ -110,7 +110,7 @@ export async function DELETE(
       return Response.json({ error: "Borrower not found" }, { status: 404 });
     }
 
-    revalidatePath("/borrowers");
+    revalidatePath("/admin/borrowers");
     return Response.json({ success: true });
   } catch (error) {
     console.error("Failed to delete borrower", error);

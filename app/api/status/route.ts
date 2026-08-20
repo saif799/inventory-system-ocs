@@ -139,9 +139,9 @@ export async function GET() {
       }),
     );
 
-    revalidatePath("/");
-    revalidatePath("/orders");
-    revalidatePath("/add-shoes");
+    revalidatePath("/admin");
+    revalidatePath("/admin/orders");
+    revalidatePath("/admin/add-shoes");
 
     return Response.json({ groupedStatuses }, { status: 200 });
   } catch (error) {

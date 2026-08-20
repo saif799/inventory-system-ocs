@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@aws-sdk/client-rds-data':
         specifier: latest
-        version: 3.1112.0
+        version: 3.1113.0
       '@aws-sdk/client-s3':
         specifier: ^3.1112.0
         version: 3.1112.0
@@ -19,7 +19,7 @@ importers:
         version: 3.1112.0
       '@cloudflare/workers-types':
         specifier: latest
-        version: 5.20260818.1
+        version: 5.20260819.1
       '@electric-sql/pglite':
         specifier: latest
         version: 0.5.5
@@ -121,7 +121,7 @@ importers:
         version: 17.2.3
       drizzle-orm:
         specifier: ^0.44.7
-        version: 0.44.7(10dbf8b0aab3024867ecd0cb5ef88d54)
+        version: 0.44.7(32d77d956a133ad7f09dd50cc087883c)
       expo-sqlite:
         specifier: latest
         version: 57.0.1(expo@54.0.20(@babel/core@7.28.5)(bufferutil@4.0.9)(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.0))(react@19.2.0))(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.0))(react@19.2.0)
@@ -167,9 +167,6 @@ importers:
       react-barcode:
         specifier: latest
         version: 1.6.1(react@19.2.0)
-      react-colorful:
-        specifier: ^5.6.1
-        version: 5.6.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-dom:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
@@ -193,7 +190,7 @@ importers:
         version: 1.0.7(tailwindcss@4.1.16)
       uuid:
         specifier: latest
-        version: 14.0.1
+        version: 14.0.2
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -253,8 +250,8 @@ packages:
     resolution: {integrity: sha512-VCpnmyHQ1IH49ni3LXnQj7DPr7rmcJmzYeiCkYdCcfgNtkvOj38cdcL9lapBWoItZWFACJPFJlymqC7/gem3Gw==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-rds-data@3.1112.0':
-    resolution: {integrity: sha512-JWEuEIpBwMsUtw+2YtelCC+jJWTXvBaBJtKwesjdb2V7ED+cKGHX/9oipIiPGXPKgW5jzOV9sGh6cl24ZQ+5sw==}
+  '@aws-sdk/client-rds-data@3.1113.0':
+    resolution: {integrity: sha512-X2D/s3OfofDy+nIRKaPaCI6g5E3X39lGQN5tbzmFBrDrSHCrRonLjTlmnvXKySopdFksXFCHR7L/IAWOM3ok4Q==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-s3@3.1112.0':
@@ -826,8 +823,8 @@ packages:
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
-  '@cloudflare/workers-types@5.20260818.1':
-    resolution: {integrity: sha512-a89taQDbqb7Ni+xAVSsiOSd5wQPcbBJBnZgIG3EujVdDcdQkGVwab3xa2e9z29uqtMQb/P2gYDeDcNXcBRSWQQ==}
+  '@cloudflare/workers-types@5.20260819.1':
+    resolution: {integrity: sha512-nUoWrl+16WfocHgXAARAvpQ7dLMF4tSmTvvgLLg5clYhP2j8CYerZ2KC8agnlWHqOAKp45B3F+LcsjNZrZyiRA==}
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -840,11 +837,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild/aix-ppc64@0.25.11':
     resolution: {integrity: sha512-Xt1dOL13m8u0WE8iplx9Ibbm+hFAO0GsU2P34UNoDGvZYkY8ifSiy6Zuc1lYxfG7svWE2fzqCUmFp5HCn51gJg==}
@@ -4368,12 +4365,6 @@ packages:
     peerDependencies:
       react: 16 - 19
 
-  react-colorful@5.6.1:
-    resolution: {integrity: sha512-1exovf0uGTGyq5mXQT0zgQ80uvj2PCwvF8zY1RN9/vbJVSjSo3fsB/4L3ObbF7u70NduSiK4xu4Y6q1MHoUGEw==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-
   react-devtools-core@6.1.5:
     resolution: {integrity: sha512-ePrwPfxAnB+7hgnEr8vpKxL9cmnp7F322t8oqcPshbIQQhDKgFDW4tjhF2wjVbdXF9O/nyuy3sQWd9JGpiLPvA==}
 
@@ -4938,8 +4929,8 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@14.0.1:
-    resolution: {integrity: sha512-6ZxzVpzDXDa3bJWaHilVayA+BH/1zmxCJoVgvmqJnid/gPoKHxUrS/aC/T6LGQtNHT+XHG9fXPJB4d+IrU30Ew==}
+  uuid@14.0.2:
+    resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
     hasBin: true
 
   uuid@7.0.3:
@@ -5152,7 +5143,7 @@ snapshots:
       '@smithy/types': 4.17.2
       tslib: 2.8.1
 
-  '@aws-sdk/client-rds-data@3.1112.0':
+  '@aws-sdk/client-rds-data@3.1113.0':
     dependencies:
       '@aws-sdk/core': 3.977.8
       '@aws-sdk/credential-provider-node': 3.972.80
@@ -5934,7 +5925,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@cloudflare/workers-types@5.20260818.1': {}
+  '@cloudflare/workers-types@5.20260819.1': {}
 
   '@drizzle-team/brocli@0.10.2': {}
 
@@ -8151,10 +8142,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.7(10dbf8b0aab3024867ecd0cb5ef88d54):
+  drizzle-orm@0.44.7(32d77d956a133ad7f09dd50cc087883c):
     optionalDependencies:
-      '@aws-sdk/client-rds-data': 3.1112.0
-      '@cloudflare/workers-types': 5.20260818.1
+      '@aws-sdk/client-rds-data': 3.1113.0
+      '@cloudflare/workers-types': 5.20260819.1
       '@electric-sql/pglite': 0.5.5
       '@libsql/client': 0.17.4(bufferutil@4.0.9)
       '@libsql/client-wasm': 0.17.4
@@ -9697,11 +9688,6 @@ snapshots:
       prop-types: 15.8.1
       react: 19.2.0
 
-  react-colorful@5.6.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
-    dependencies:
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-
   react-devtools-core@6.1.5(bufferutil@4.0.9):
     dependencies:
       shell-quote: 1.8.3
@@ -10309,7 +10295,7 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@14.0.1: {}
+  uuid@14.0.2: {}
 
   uuid@7.0.3: {}
 

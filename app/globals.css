@@ -123,3 +123,254 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ═════════════════════════════════════════════════════════════════════════
+ * STOREFRONT THEME
+ *
+ * One token set, one component tree. Storefront components reference ONLY
+ * these --sf-* variables — never a raw Tailwind colour, never a dark branch
+ * (the storefront is light-only, per the design system).
+ *
+ * Source of truth: designRefrence/DESIGN_SYSTEM.md (the Legenwear system).
+ * Monospace everywhere, flat, near-shadowless, white ground, near-black ink,
+ * and a single purple-900 accent RESERVED for prices and active state.
+ *
+ * The tokens live on :root (inert until referenced) so that Radix portals —
+ * select menus, drawers — can read them even though they mount on <body>,
+ * outside the [data-storefront] subtree. Only the *application* of the theme
+ * is scoped, so /admin keeps its own shadcn look untouched.
+ * ═════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Ground & ink ─────────────────────────────────────────────────── */
+  --sf-bg: #ffffff;           /* page ground — white everywhere            */
+  --sf-surface: #fafafa;      /* image plate / skeleton fill               */
+  --sf-text: #09090b;         /* default text (foreground)                 */
+  --sf-ink: #18181b;          /* primary: button fills, selected chips     */
+  --sf-ink-fg: #fafafa;       /* text on ink                               */
+  --sf-muted: #6f6f71;        /* secondary text — brand, metadata          */
+  --sf-placeholder: #71717a;  /* placeholder / muted-foreground            */
+  --sf-line: #e4e4e7;         /* every default border                      */
+  --sf-hover: #f4f4f5;        /* ghost / outline hover surface             */
+
+  /* Glass chrome — the nav bar and its panels, the system's only
+   * translucent surfaces. Written out rather than mixed from --sf-bg /
+   * --sf-line at use site: color-mix() with a var() operand silently drops
+   * the whole declaration in some engines, taking the surface with it.
+   * Keep these in step with the two tokens above.                          */
+  --sf-glass: rgb(255 255 255 / 0.62);      /* --sf-bg   at 62%            */
+  --sf-glass-line: rgb(228 228 231 / 0.6);  /* --sf-line at 60%            */
+
+  /* ── The one chromatic accent: prices + active state. Nothing else. ── */
+  --sf-accent: #581c87;       /* purple-900                                */
+  --sf-accent-fg: #ffffff;
+
+  /* ── Footer slab (charcoal, not pure black) ───────────────────────── */
+  --sf-footer: #1f2123;
+  --sf-footer-fg: #ffffff;
+  --sf-footer-muted: #d1d5db;
+
+  --sf-danger: #ef4444;
+
+  /* ── Geometry ─────────────────────────────────────────────────────── */
+  --sf-radius: 0.375rem;      /* 6px — chrome (buttons, inputs)            */
+  --sf-radius-sm: 0.25rem;    /* 4px — size chips, thumbnails              */
+  --sf-radius-media: 0;       /* product imagery is SQUARE                 */
+  --sf-media-ratio: 1 / 1;
+  --sf-nav-h: 4rem;           /* 64px — every sticky offset derives here   */
+  --sf-nav-offset: var(--sf-nav-h); /* how far sticky chrome must clear the
+                                 nav *right now* — StoreHeader zeroes this
+                                 while the bar is retracted, so sub-headers
+                                 ride up with it instead of leaving a gap  */
+  --sf-grid-gap: 0.75rem;
+
+  /* ── The one expressive shadow: wide, zero-offset, low-opacity glow ─ */
+  --sf-glow: 0 0 45px rgba(0, 0, 0, 0.2);
+  --sf-glow-soft: 0 0 45px rgba(0, 0, 0, 0.16);
+
+  /* ── Type ─────────────────────────────────────────────────────────── */
+  --sf-font: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sf-font-display: var(--sf-font);
+  --sf-font-body: var(--sf-font);
+  --sf-display-tracking: normal;
+  --sf-display-case: none;
+}
+
+/* Applying the theme is scoped; defining it (above) is not. */
+[data-storefront],
+.sf-portal {
+  font-family: var(--sf-font);
+  color: var(--sf-text);
+}
+[data-storefront] {
+  background-color: var(--sf-bg);
+}
+
+/* ── Typography utilities ───────────────────────────────────────────────
+ * There is only one typeface, so these exist to keep case/tracking policy in
+ * one place rather than to switch fonts. */
+.sf-heading {
+  font-family: var(--sf-font-display);
+  text-transform: var(--sf-display-case);
+  letter-spacing: var(--sf-display-tracking);
+}
+.sf-body {
+  font-family: var(--sf-font-body);
+}
+
+.sf-scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sf-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sticky offsets all derive from the one nav height. */
+.sf-below-nav {
+  top: var(--sf-nav-offset);
+}
+
+/* ── Glass chrome ───────────────────────────────────────────────────────
+ * The nav bar and its two panels are the only translucent surfaces in the
+ * system: the page ground held at ~62% over a wide backdrop blur, carrying
+ * the standard --sf-line hairline. Written once here so the bar, the search
+ * drawer and the mobile sheet cannot drift apart, and in plain CSS so the
+ * translucency does not ride on Tailwind's opacity-modifier syntax.
+ *
+ * Progressive enhancement, deliberately: without backdrop-filter the surface
+ * stays fully opaque rather than letting content bleed through unreadably.
+ * Apply it only when the bar is NOT transparent — these rules are unlayered
+ * and would otherwise outrank `bg-transparent`. */
+.sf-glass {
+  background-color: var(--sf-bg);
+  border-color: var(--sf-line);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sf-glass {
+    background-color: var(--sf-glass);
+    border-color: var(--sf-glass-line);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+  }
+}
+
+/* ── Shared recipes ─────────────────────────────────────────────────────
+ * Used by the size chips (product page + filter rail) so the two can never
+ * drift apart. Flat, square-ish, ink when selected. */
+.sf-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sf-radius-sm);
+  border: 1px solid var(--sf-line);
+  background-color: var(--sf-bg);
+  color: var(--sf-text);
+  box-shadow: none;
+  transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+.sf-chip:hover:not(:disabled) {
+  background-color: var(--sf-hover);
+}
+.sf-chip[data-active='true'] {
+  border-color: transparent;
+  background-color: var(--sf-ink);
+  color: var(--sf-ink-fg);
+}
+.sf-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* The floating white circular control — the system's one flourish. */
+.sf-float {
+  background-color: #ffffff;
+  border-radius: 9999px;
+  color: var(--sf-text);
+  filter: drop-shadow(var(--sf-glow));
+}
+.sf-float:disabled {
+  opacity: 0.3;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+ * Scoped shadcn overrides.
+ *
+ * The storefront reuses components/ui/* with the admin dashboard. Rather than
+ * fork every primitive, these rules re-skin them to the design system ONLY
+ * inside [data-storefront] — flat, 1px --sf-line borders, a tight 1px black
+ * focus ring instead of shadcn's 3px soft ring, and no dark-mode branch.
+ * /admin is completely unaffected.
+ * ═════════════════════════════════════════════════════════════════════════ */
+
+[data-storefront] [data-slot='input'],
+[data-storefront] [data-slot='select-trigger'] {
+  border-color: var(--sf-line);
+  border-radius: var(--sf-radius);
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--sf-text);
+  font-family: var(--sf-font);
+}
+
+[data-storefront] [data-slot='input']::placeholder {
+  color: var(--sf-placeholder);
+}
+[data-storefront] [data-slot='select-value'][data-placeholder],
+[data-storefront] [data-slot='select-trigger'] [data-placeholder] {
+  color: var(--sf-placeholder);
+}
+
+/* Focus: 1px, near-black, tight — never a glow, never blue. */
+[data-storefront] [data-slot='input']:focus-visible,
+[data-storefront] [data-slot='select-trigger']:focus-visible {
+  outline: none;
+  border-color: var(--sf-text);
+  box-shadow: 0 0 0 1px var(--sf-text);
+}
+
+/* Portalled surfaces mount on <body>, so they are targeted by the .sf-portal
+ * class the storefront call sites pass, not by descendant scoping. */
+.sf-portal[data-slot='select-content'],
+.sf-portal[data-slot='popover-content'],
+.sf-portal[data-slot='drawer-content'] {
+  border-color: var(--sf-line);
+  background-color: var(--sf-bg);
+  color: var(--sf-text);
+  font-family: var(--sf-font);
+}
+.sf-portal[data-slot='select-content'],
+.sf-portal[data-slot='popover-content'] {
+  border-radius: var(--sf-radius);
+}
+.sf-portal [data-slot='select-item'] {
+  border-radius: var(--sf-radius-sm);
+}
+.sf-portal [data-slot='select-item'][data-highlighted] {
+  background-color: var(--sf-hover);
+  color: var(--sf-text);
+}
+
+[data-storefront] [data-slot='button'] {
+  border-radius: var(--sf-radius);
+  font-family: var(--sf-font);
+  box-shadow: none;
+}
+[data-storefront] [data-slot='button']:focus-visible {
+  border-color: var(--sf-text);
+  box-shadow: 0 0 0 1px var(--sf-text);
+}
+
+/* Accordion (product FAQ + filter groups): separation is a single bottom
+ * border and nothing else. */
+[data-storefront] [data-slot='accordion-item'] {
+  border-color: var(--sf-line);
+}
+[data-storefront] [data-slot='accordion-trigger'] {
+  font-family: var(--sf-font);
+  color: var(--sf-text);
+}
+
+/* Chip / float recipes are also used inside portals (the mobile filter
+ * drawer), so they must not be scoped to the storefront subtree either. */

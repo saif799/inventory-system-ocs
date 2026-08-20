@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { GroupedProduct } from "@/app/(inventory)/page";
+import { GroupedProduct } from "@/app/admin/(admin)/page";
 
 import { ChevronsUpDown } from "lucide-react";
 

@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import SizeButton from "./SizeButton";
-import { Dispatch, SetStateAction, useState, type ChangeEvent } from "react";
+import { Dispatch, SetStateAction, useMemo, type ChangeEvent } from "react";
 import { Input } from "./ui/input";
 import { Filter, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-type FilterParams = {
+export type FilterParams = {
   models: string[];
   sizes: number[];
   minPrice?: string | null;
@@ -22,21 +22,55 @@ type FilterParams = {
   ProductName?: string;
 };
 
+type FilterLabels = {
+  filters?: string;
+  model?: string;
+  size?: string;
+  bounds?: string;
+  minPlaceholder?: string;
+  maxPlaceholder?: string;
+};
+
 export default function FilterTool({
   models,
   sizes,
   filterTool,
   setfilterTool,
+  boundsMode = "quantity",
+  labels,
+  accentClassName = "text-purple-900",
+  accentHex = "#581c87",
+  syncUrl = true,
+  className,
 }: {
   models: string[];
   sizes: number[];
   filterTool: FilterParams;
   setfilterTool: Dispatch<SetStateAction<FilterParams>>;
+  /** "quantity" (admin, default) filters on stock counts; "price" (storefront) on resolved price. */
+  boundsMode?: "quantity" | "price";
+  labels?: FilterLabels;
+  accentClassName?: string;
+  accentHex?: string;
+  /** When false, filter changes don't touch the URL (caller owns navigation). */
+  syncUrl?: boolean;
+  className?: string;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
- 
+
+  const resolvedLabels = {
+    filters: labels?.filters ?? "Filters",
+    model: labels?.model ?? "Model",
+    size: labels?.size ?? "Size",
+    bounds: labels?.bounds ?? (boundsMode === "price" ? "Price" : "Quantity"),
+    minPlaceholder: labels?.minPlaceholder ?? (boundsMode === "price" ? "min price" : "min quantity"),
+    maxPlaceholder: labels?.maxPlaceholder ?? (boundsMode === "price" ? "max price" : "max quantity"),
+  };
+
+  const sortedModels = useMemo(() => [...models].sort((a, b) => a.localeCompare(b)), [models]);
+
   function clearQueryString() {
     const params = new URLSearchParams(searchParams);
 
@@ -69,6 +103,7 @@ export default function FilterTool({
       models: Check,
     }));
 
+    if (!syncUrl) return;
     const params = new URLSearchParams(window.location.search);
 
     if (newValue) {
@@ -91,6 +126,7 @@ export default function FilterTool({
       sizes: Check,
     }));
 
+    if (!syncUrl) return;
     const params = new URLSearchParams(window.location.search);
 
     if (newValue) {
@@ -102,13 +138,14 @@ export default function FilterTool({
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
-  function updatePrice(name: string, value: number) {
+  function updatePrice(name: string, value: number | null) {
+    if (!syncUrl) return;
     const params = new URLSearchParams(window.location.search);
 
-    if (value) {
+    if (value != null) {
       params.set(name, value.toString());
     } else {
-      params.delete(name, value.toString());
+      params.delete(name);
     }
 
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
@@ -120,7 +157,7 @@ export default function FilterTool({
       ...prev,
       minPrice: !isNaN(numValue) ? numValue.toString() : "",
     }));
-    updatePrice("minPrice", !isNaN(numValue) ? numValue : 0);
+    updatePrice("minPrice", !isNaN(numValue) ? numValue : null);
   }
 
   function maxPriceCtrl(e: ChangeEvent<HTMLInputElement>) {
@@ -129,39 +166,28 @@ export default function FilterTool({
       ...prev,
       maxPrice: !isNaN(numValue) ? numValue.toString() : "",
     }));
-    updatePrice("maxPrice", !isNaN(numValue) ? numValue : Infinity);
+    updatePrice("maxPrice", !isNaN(numValue) ? numValue : null);
   }
 
+  const hasActiveFilters =
+    filterTool.models.length > 0 || filterTool.sizes.length > 0 || !!(filterTool.maxPrice ?? filterTool.minPrice);
+
   return (
-    <div className="px-5 lg:sticky lg:top-[73px] lg:px-0 overflow-y-scroll">
+    <div className={className ?? "px-5 lg:sticky lg:top-[73px] lg:px-0 overflow-y-scroll"}>
       <div className="hidden w-full items-center justify-between pb-4 lg:flex">
-        <h3 className="w-full text-left text-xl font-medium">Filters</h3>
+        <h3 className="w-full text-left text-xl font-medium">{resolvedLabels.filters}</h3>
         <div className="flex items-center space-x-2">
-          {(filterTool.models.length > 0 ||
-            filterTool.sizes.length > 0 ||
-            (filterTool.maxPrice ?? filterTool.minPrice)) && (
+          {hasActiveFilters && (
             <X
               strokeWidth={1.8}
-              className="cursor-pointer text-purple-900"
+              className={cn("cursor-pointer", accentClassName)}
               onClick={() => {
-                router.push(pathname + "?" + clearQueryString(), {
-                  scroll: false,
-                });
+                const next = clearQueryString();
+                if (syncUrl) router.push(pathname + "?" + next, { scroll: false });
               }}
             />
           )}
-          <Filter
-            className="size-6"
-            color={
-              filterTool.models.length > 0 ||
-              filterTool.sizes.length > 0 ||
-              filterTool.maxPrice ||
-              filterTool.minPrice
-                ? "#581c87"
-                : "#aaa"
-            }
-            strokeWidth={2}
-          />
+          <Filter className="size-6" color={hasActiveFilters ? accentHex : "#aaa"} strokeWidth={2} />
         </div>
       </div>
 
@@ -170,33 +196,28 @@ export default function FilterTool({
           <AccordionTrigger
             className={cn(
               "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
-              filterTool.models.length > 0 ? "font-medium text-purple-900" : ""
+              filterTool.models.length > 0 ? cn("font-medium", accentClassName) : "",
             )}
           >
-            <p>Model</p>
+            <p>{resolvedLabels.model}</p>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 overflow-y-scroll">
-            <div
-              className="relative h-[50vh] w-full overflow-y-auto pr-3"
-              // scrollHideDelay={1000}
-            >
-              {models
-                .sort((a, b) => a.localeCompare(b))
-                .map((m) => (
-                  <div
-                    key={m}
-                    className="flex cursor-pointer items-center space-x-2 pl-3 hover:font-medium"
-                  >
-                    <Checkbox
-                      id={m}
-                      checked={filterTool.models.includes(m)}
-                      onCheckedChange={() => selectModelFilterS(m)}
-                    />
-                    <label htmlFor={m} className="text-base">
-                      {m}
-                    </label>
-                  </div>
-                ))}
+            <div className="relative h-[50vh] w-full overflow-y-auto pr-3">
+              {sortedModels.map((m) => (
+                <div
+                  key={m}
+                  className="flex cursor-pointer items-center space-x-2 pl-3 hover:font-medium"
+                >
+                  <Checkbox
+                    id={m}
+                    checked={filterTool.models.includes(m)}
+                    onCheckedChange={() => selectModelFilterS(m)}
+                  />
+                  <label htmlFor={m} className="text-base">
+                    {m}
+                  </label>
+                </div>
+              ))}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -204,10 +225,10 @@ export default function FilterTool({
           <AccordionTrigger
             className={cn(
               "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
-              filterTool.sizes.length > 0 ? "font-medium text-purple-900" : ""
+              filterTool.sizes.length > 0 ? cn("font-medium", accentClassName) : "",
             )}
           >
-            <p>Size</p>
+            <p>{resolvedLabels.size}</p>
           </AccordionTrigger>
           <AccordionContent className="flex flex-wrap items-center gap-2">
             {sizes.map((s) => (
@@ -221,30 +242,25 @@ export default function FilterTool({
             ))}
           </AccordionContent>
         </AccordionItem>
-        <AccordionItem value="quantity">
+        <AccordionItem value="bounds">
           <AccordionTrigger
             className={cn(
               "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
-              filterTool.minPrice || filterTool.maxPrice
-                ? "font-medium text-purple-900"
-                : ""
+              filterTool.minPrice || filterTool.maxPrice ? cn("font-medium", accentClassName) : "",
             )}
-            value={"open"}
           >
-            <p>Quantity</p>
+            <p>{resolvedLabels.bounds}</p>
           </AccordionTrigger>
           <AccordionContent className="flex flex-wrap items-center gap-2">
             <div className="flex flex-row items-center gap-4 px-1 py-1">
               <div className="w-full grow">
                 <Input
-                  value={
-                    filterTool.minPrice ? parseFloat(filterTool.minPrice) : 0
-                  }
-                  id="minQuantity"
-                  name="minQuantity"
+                  value={filterTool.minPrice ?? ""}
+                  id="minBound"
+                  name="minBound"
                   type="number"
                   className="h-12 w-full rounded-lg border border-gray-300 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="min quantity"
+                  placeholder={resolvedLabels.minPlaceholder}
                   onChange={minPriceCtrl}
                   min="0"
                 />
@@ -252,16 +268,12 @@ export default function FilterTool({
               <div className="my-0 w-5 border-t-[3px] border-black"></div>
               <div className="w-full grow">
                 <Input
-                  value={
-                    filterTool.maxPrice
-                      ? parseFloat(filterTool.maxPrice)
-                      : Infinity
-                  }
-                  id="maxQuantity"
-                  name="maxQuantity"
+                  value={filterTool.maxPrice ?? ""}
+                  id="maxBound"
+                  name="maxBound"
                   type="number"
                   className="h-12 w-full rounded-lg border border-gray-300 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="max quantity"
+                  placeholder={resolvedLabels.maxPlaceholder}
                   onChange={maxPriceCtrl}
                   min="0"
                 />

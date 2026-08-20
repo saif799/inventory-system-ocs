@@ -83,9 +83,9 @@ export async function POST(request: Request) {
       return record;
     });
 
-    revalidatePath("/");
-    revalidatePath(`/${borrowerId}`);
-    revalidatePath("/borrowers");
+    revalidatePath("/admin");
+    revalidatePath(`/admin/${borrowerId}`);
+    revalidatePath("/admin/borrowers");
 
     return Response.json({ success: true, returnedRecord });
   } catch (error) {
