@@ -97,19 +97,33 @@ export async function GET() {
       });
     }
 
-    // changing the status of the orders in the db (only rows whose id matches)
-    await Promise.all(
-      Object.keys(groupedStatuses).map(async (externalStatus) => {
-        await db
+    // changing the status of the orders in the db (only rows whose id matches).
+    // The `ne` skips parcels already sitting on that status: providers return
+    // every parcel every time, so without it this rewrites the whole table on
+    // each sync and callers can't tell what actually moved.
+    const updated = await Promise.all(
+      Object.keys(groupedStatuses).map(async (statusName) => {
+        const statusId = statusNameToId[statusName];
+        if (!statusId) return [];
+        return db
           .update(ordersTable)
-          .set({ statusId: statusNameToId[externalStatus] })
-          .where(inArray(ordersTable.id, groupedStatuses[externalStatus]));
+          .set({ statusId })
+          .where(
+            and(
+              inArray(ordersTable.id, groupedStatuses[statusName]),
+              ne(ordersTable.statusId, statusId),
+            ),
+          )
+          .returning({ id: ordersTable.id });
       }),
     );
 
     revalidateStockPaths();
 
-    return Response.json({ groupedStatuses }, { status: 200 });
+    return Response.json(
+      { groupedStatuses, updatedCount: updated.flat().length },
+      { status: 200 },
+    );
   } catch (error) {
     console.log("failed with this error ", error);
     return Response.json({ error: "Failed to fetch models" }, { status: 500 });

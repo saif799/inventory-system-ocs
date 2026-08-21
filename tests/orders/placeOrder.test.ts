@@ -12,7 +12,10 @@ import {
 } from "@/lib/schema";
 import { applyMovement, type MovementInput } from "@/lib/stock/movement";
 import { placeOrder, type OrderDraft } from "@/lib/orders/placeOrder";
-import { READY_TO_SHIP_STATUS_ID } from "@/lib/orders/status";
+import {
+  READY_TO_SHIP_STATUS_ID,
+  READY_TO_SHIP_STATUS_NAME,
+} from "@/lib/orders/status";
 import { createTestDb, type TestDb } from "../testDb";
 import type { Executor } from "@/lib/db";
 import type { DeliveryProvider } from "@/lib/delivery";
@@ -81,7 +84,7 @@ beforeEach(async () => {
   // always has it seeded, so a fresh test DB needs the row too.
   await db
     .insert(stautsGroupsTable)
-    .values({ id: READY_TO_SHIP_STATUS_ID, name: "prete_a_expedier" });
+    .values({ id: READY_TO_SHIP_STATUS_ID, name: READY_TO_SHIP_STATUS_NAME });
 });
 
 describe("placeOrder: validation", () => {

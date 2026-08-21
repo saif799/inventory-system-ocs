@@ -1,69 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { InferSelectModel } from "drizzle-orm";
 import { Package, Store } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { stautsGroupsTable } from "@/lib/schema";
-import { DataTable } from "./data-table";
-import { OrderType } from "./columns";
-import { StoreSalesTable, StoreSaleRow } from "./StoreSalesTable";
+import { useTableParams } from "./useTableParams";
+import type { Tab } from "./params";
 
-type Tab = "online" | "store";
-
-interface OrdersTabsProps {
-  columns: ColumnDef<OrderType, unknown>[];
-  orders: OrderType[];
-  statuses: InferSelectModel<typeof stautsGroupsTable>[];
-  storeSales: StoreSaleRow[];
-}
-
-export function OrdersTabs({
-  columns,
-  orders,
-  statuses,
-  storeSales,
-}: OrdersTabsProps) {
-  const [activeTab, setActiveTab] = useState<Tab>("online");
+/**
+ * Both tabs share one unprefixed set of URL params, so switching tabs clears
+ * them rather than restoring whatever the other tab was last filtered by.
+ */
+export function OrdersTabs({ activeTab }: { activeTab: Tab }) {
+  const { replaceAllParams } = useTableParams();
   const isOnline = activeTab === "online";
 
   return (
-    <div>
-      <div className="mb-4 inline-flex rounded-lg border p-1 bg-muted/40">
-        <Button
-          variant={isOnline ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("online")}
-          className="gap-2"
-        >
-          <Package className="h-4 w-4" />
-          Online orders
-          <Badge variant={isOnline ? "secondary" : "outline"}>
-            {orders.length}
-          </Badge>
-        </Button>
-        <Button
-          variant={!isOnline ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("store")}
-          className="gap-2"
-        >
-          <Store className="h-4 w-4" />
-          Store sales
-          <Badge variant={!isOnline ? "secondary" : "outline"}>
-            {storeSales.length}
-          </Badge>
-        </Button>
-      </div>
-
-      {isOnline ? (
-        <DataTable columns={columns} data={orders} Statuses={statuses} />
-      ) : (
-        <StoreSalesTable data={storeSales} />
-      )}
+    <div className="mb-4 inline-flex rounded-lg border bg-muted/40 p-1">
+      <Button
+        variant={isOnline ? "default" : "ghost"}
+        size="sm"
+        onClick={() => replaceAllParams({})}
+        className="gap-2"
+      >
+        <Package className="h-4 w-4" />
+        Online orders
+      </Button>
+      <Button
+        variant={!isOnline ? "default" : "ghost"}
+        size="sm"
+        onClick={() => replaceAllParams({ tab: "store" })}
+        className="gap-2"
+      >
+        <Store className="h-4 w-4" />
+        Store sales
+      </Button>
     </div>
   );
 }

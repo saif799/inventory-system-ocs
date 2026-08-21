@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Download, Search, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -15,6 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { useTableParams } from "./useTableParams";
+import type { DateMode } from "./params";
 
 export type StoreSaleRow = {
   id: string;
@@ -27,16 +31,17 @@ export type StoreSaleRow = {
   modelName: string;
 };
 
-type DateMode = "all" | "today" | "custom";
-
-const PAGE_SIZE = 10;
-
-function isSameDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+interface StoreSalesTableProps {
+  data: StoreSaleRow[];
+  /** Rows matching the current filters, not the row count of this page. */
+  total: number;
+  page: number;
+  pageCount: number;
+  query: string;
+  dateMode: DateMode;
+  from: string;
+  to: string;
+  soldToday: number;
 }
 
 function formatDateTime(value: string | Date) {
@@ -50,51 +55,29 @@ function formatDateTime(value: string | Date) {
   });
 }
 
-export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
-  const [rows, setRows] = useState<StoreSaleRow[]>(data);
-  const [search, setSearch] = useState("");
-  const [dateMode, setDateMode] = useState<DateMode>("all");
-  const [customFrom, setCustomFrom] = useState("");
-  const [customTo, setCustomTo] = useState("");
-  const [pageIndex, setPageIndex] = useState(0);
+export function StoreSalesTable({
+  data,
+  total,
+  page,
+  pageCount,
+  query,
+  dateMode,
+  from,
+  to,
+  soldToday,
+}: StoreSalesTableProps) {
+  const router = useRouter();
+  const { isPending, setParams } = useTableParams();
+  const [search, setSearch] = useState(query);
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  const soldToday = useMemo(() => {
-    const now = new Date();
-    return rows.filter((r) => isSameDay(new Date(r.createdAt), now)).length;
-  }, [rows]);
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    const fromTime = customFrom ? new Date(`${customFrom}T00:00:00`).getTime() : null;
-    const toTime = customTo ? new Date(`${customTo}T23:59:59.999`).getTime() : null;
-    const now = new Date();
-
-    return rows.filter((r) => {
-      if (q) {
-        const haystack = `${r.modelName} ${r.color}`.toLowerCase();
-        if (!haystack.includes(q)) return false;
-      }
-
-      const created = new Date(r.createdAt);
-      if (dateMode === "today" && !isSameDay(created, now)) return false;
-      if (dateMode === "custom") {
-        const t = created.getTime();
-        if (fromTime !== null && t < fromTime) return false;
-        if (toTime !== null && t > toTime) return false;
-      }
-      return true;
-    });
-  }, [rows, search, dateMode, customFrom, customTo]);
-
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePageIndex = Math.min(pageIndex, pageCount - 1);
-  const pageRows = filtered.slice(
-    safePageIndex * PAGE_SIZE,
-    safePageIndex * PAGE_SIZE + PAGE_SIZE
-  );
-
-  const resetPage = () => setPageIndex(0);
+  useEffect(() => {
+    if (search === query) return;
+    const timer = setTimeout(() => {
+      setParams({ q: search || null, page: null }, "replace");
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, query, setParams]);
 
   const handleRevert = async (row: StoreSaleRow) => {
     if (
@@ -116,8 +99,10 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || "Failed to revert sale");
       }
-      setRows((prev) => prev.filter((r) => r.id !== row.id));
       toast.success("Sale reverted — stock restored");
+      // The removed row lived on a server-rendered page, so refetch rather than
+      // splicing local state — the pager and counts have to move with it.
+      router.refresh();
     } catch (error) {
       toast.error((error as Error).message || "Failed to revert sale");
     } finally {
@@ -125,10 +110,11 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
     }
   };
 
+  /** Exports the rows on screen only — the rest of the result set is in the database. */
   const exportCsv = () => {
     const header = ["Model", "Color", "Size", "Stock", "Sold"];
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
-    const lines = filtered.map((r) =>
+    const lines = data.map((r) =>
       [
         r.modelName,
         r.color,
@@ -144,10 +130,14 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `store-sales-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `store-sales-page-${page}-${new Date()
+      .toISOString()
+      .slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const isFiltered = query !== "" || dateMode !== "all";
 
   return (
     <div>
@@ -158,24 +148,26 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
             <Input
               placeholder="Search model or color..."
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                resetPage();
-              }}
-              className="pl-8 max-w-sm"
+              onChange={(event) => setSearch(event.target.value)}
+              className="max-w-sm pl-8"
             />
           </div>
 
-          <div className="flex items-center gap-1 rounded-lg border p-1 bg-muted/40 w-fit">
+          <div className="flex w-fit items-center gap-1 rounded-lg border bg-muted/40 p-1">
             {(["all", "today", "custom"] as DateMode[]).map((mode) => (
               <Button
                 key={mode}
                 variant={dateMode === mode ? "default" : "ghost"}
                 size="sm"
-                onClick={() => {
-                  setDateMode(mode);
-                  resetPage();
-                }}
+                onClick={() =>
+                  setParams({
+                    date: mode === "all" ? null : mode,
+                    // The range only means anything in custom mode.
+                    from: mode === "custom" ? from || null : null,
+                    to: mode === "custom" ? to || null : null,
+                    page: null,
+                  })
+                }
                 className="capitalize"
               >
                 {mode}
@@ -187,21 +179,19 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
             <div className="flex items-center gap-2">
               <Input
                 type="date"
-                value={customFrom}
-                onChange={(e) => {
-                  setCustomFrom(e.target.value);
-                  resetPage();
-                }}
+                value={from}
+                onChange={(event) =>
+                  setParams({ from: event.target.value || null, page: null })
+                }
                 className="w-auto"
               />
-              <span className="text-muted-foreground text-sm">to</span>
+              <span className="text-sm text-muted-foreground">to</span>
               <Input
                 type="date"
-                value={customTo}
-                onChange={(e) => {
-                  setCustomTo(e.target.value);
-                  resetPage();
-                }}
+                value={to}
+                onChange={(event) =>
+                  setParams({ to: event.target.value || null, page: null })
+                }
                 className="w-auto"
               />
             </div>
@@ -209,20 +199,21 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground whitespace-nowrap">
+          <p className="whitespace-nowrap text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{soldToday}</span> sold
-            today · <span className="font-medium text-foreground">{filtered.length}</span>{" "}
+            today · <span className="font-medium text-foreground">{total}</span>{" "}
             in view
           </p>
           <Button
             variant="outline"
             size="sm"
             onClick={exportCsv}
-            disabled={filtered.length === 0}
+            disabled={data.length === 0}
             className="gap-2"
+            title="Exports the rows on this page"
           >
             <Download className="h-4 w-4" />
-            CSV
+            CSV (page)
           </Button>
         </div>
       </div>
@@ -238,17 +229,22 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {pageRows.length ? (
-              pageRows.map((row) => (
+          <TableBody
+            className={cn(
+              "transition-opacity",
+              isPending && "pointer-events-none opacity-50"
+            )}
+          >
+            {data.length ? (
+              data.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <div className="min-w-0">
-                        <div className="font-medium truncate">
+                        <div className="truncate font-medium">
                           {row.modelName}
                         </div>
-                        <div className="text-xs text-muted-foreground truncate">
+                        <div className="truncate text-xs text-muted-foreground">
                           {row.color}
                         </div>
                       </div>
@@ -256,7 +252,9 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
                   </TableCell>
                   <TableCell>{row.size}</TableCell>
                   <TableCell>
-                    <Badge variant={row.quantity === 0 ? "destructive" : "outline"}>
+                    <Badge
+                      variant={row.quantity === 0 ? "destructive" : "outline"}
+                    >
                       {row.quantity} in stock
                     </Badge>
                   </TableCell>
@@ -279,8 +277,35 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No store sales.
+                <TableCell colSpan={5} className="h-32 text-center">
+                  <p className="text-sm font-medium">No store sales match.</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {query ? `Nothing matching "${query}"` : "Nothing recorded"}
+                    {dateMode === "today"
+                      ? " today."
+                      : dateMode === "custom"
+                        ? " in this date range."
+                        : "."}
+                  </p>
+                  {isFiltered && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => {
+                        setSearch("");
+                        setParams({
+                          q: null,
+                          date: null,
+                          from: null,
+                          to: null,
+                          page: null,
+                        });
+                      }}
+                    >
+                      Show all store sales
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             )}
@@ -288,23 +313,23 @@ export function StoreSalesTable({ data }: { data: StoreSaleRow[] }) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end gap-3 py-4">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-          disabled={safePageIndex === 0}
+          onClick={() => setParams({ page: String(page - 1) })}
+          disabled={page <= 1 || isPending}
         >
           Previous
         </Button>
-        <p className="text-sm text-gray-800">
-          Page {safePageIndex + 1} of {pageCount}
+        <p className="text-sm">
+          Page {page} of {pageCount}
         </p>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setPageIndex((p) => Math.min(pageCount - 1, p + 1))}
-          disabled={safePageIndex >= pageCount - 1}
+          onClick={() => setParams({ page: String(page + 1) })}
+          disabled={page >= pageCount || isPending}
         >
           Next
         </Button>

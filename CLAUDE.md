@@ -23,7 +23,7 @@ npx tsx lib/seed/seedDeliveryData.ts   # one-shot seed of delivery coverage tabl
 npx tsx lib/scripts/fixR2ImageUrls.ts   # dry-run rewrite of shoe_images.url onto R2_PUBLIC_URL (--apply to write)
 ```
 
-There is no test framework and no test script in this repo.
+Tests are Vitest (`pnpm test` -> `vitest run`), living in `tests/` against a PGlite test DB ([tests/testDb.ts](tests/testDb.ts)). Coverage is partial: `placeOrder`, `lib/stock/movement`, storefront products, and a smoke test.
 
 **Gotcha:** `next.config.mjs` sets `eslint.ignoreDuringBuilds` and `typescript.ignoreBuildErrors` — a green `pnpm build` proves nothing about types. Run `npx tsc --noEmit` after changes.
 
@@ -37,7 +37,7 @@ Next.js 16 App Router + React 19, Tailwind v4, shadcn/ui (new-york, `components/
 
 Decided in [docs/adr/0001-storefront-routing-and-pricing-model.md](docs/adr/0001-storefront-routing-and-pricing-model.md):
 
-- **`app/(storefront)/`** — public customer store at `/`. Catalog, product page, checkout, order confirmation. Checkout is restricted to the DHD provider and creates orders with `status: "prete_a_expedier"`. Storefront-only helpers live in `lib/storefront/` and `components/storefront/`.
+- **`app/(storefront)/`** — public customer store at `/`. Catalog, product page, checkout, order confirmation. Checkout is restricted to the DHD provider and creates orders with the ready-to-ship `statusId` (whose row is named `prete a expedier` — with spaces; the underscored form is a courier `external_statuses` value, not the internal name). Storefront-only helpers live in `lib/storefront/` and `components/storefront/`.
 - **`app/admin/(admin)/`** — internal inventory dashboard under `/admin/*` (products, add-shoes, arrivals, orders, analytics, notifier, borrowers, rebalance, settings, `[lenderId]` borrower detail). The route list lives in [components/navBar.tsx](components/navBar.tsx).
 - **`app/api/`** — REST routes used by client components of both apps. Admin-only mutations (product/model edits, image management, storefront section CMS) are namespaced under `app/api/admin/`; everything else is shared.
 - [middleware.ts](middleware.ts) tags every non-admin request with `x-ocs-storefront` so the root layout can pick `lang="fr"` for the storefront vs `lang="en"` for `/admin` — easy to miss since it's not visible from either route tree.
