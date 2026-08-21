@@ -2,8 +2,9 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useDeliveryCoverage } from "@/lib/delivery/useDeliveryCoverage";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,42 +52,6 @@ export default function SendOrderForm({
     size: string;
   }>(shoe.sizes[0]);
 
-  // Dynamic coverage state from API
-  const [wilayasList, setWilayasList] = useState<
-    { wilayaId: number; name: string }[]
-  >([]);
-  const [communesList, setCommunesList] = useState<any[]>([]);
-  const [tarifInfo, setTarifInfo] = useState<{
-    livraison?: string;
-    stopdesk?: string;
-    echange?: string;
-    stopdeskEchange?: string;
-  } | null>(null);
-
-  // Fetch wilaya list whenever provider changes
-  useEffect(() => {
-    let isMounted = true;
-    async function loadWilayas() {
-      try {
-        const res = await fetch(
-          `/api/coverage?list=wilayas&provider=${provider}`,
-        );
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && data.wilayas) {
-            setWilayasList(data.wilayas);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load wilayas:", err);
-      }
-    }
-    loadWilayas();
-    return () => {
-      isMounted = false;
-    };
-  }, [provider]);
-
   const AvailableSources = [
     { code: "i", value: "instagram" },
     { code: "f", value: "facebook" },
@@ -110,45 +75,11 @@ export default function SendOrderForm({
     stop_desk: 1,
   });
 
-  // Fetch communes & tarif whenever code_wilaya or provider changes
-  useEffect(() => {
-    if (!formData.code_wilaya) {
-      setCommunesList([]);
-      setTarifInfo(null);
-      return;
-    }
-    let isMounted = true;
-    async function loadCoverage() {
-      try {
-        const res = await fetch(
-          `/api/coverage?wilaya_id=${formData.code_wilaya}&provider=${provider}`,
-        );
-        if (res.ok) {
-          const data = await res.json();
-          console.log(data);
-
-          if (provider === "yalidine" && data.tarif?.expressDesk) {
-            console.log(
-              "Yalidine express desk price for wilaya",
-              formData.code_wilaya,
-              "is",
-              data.tarif.expressDesk,
-            );
-          }
-          if (isMounted) {
-            setCommunesList(data.communes || []);
-            setTarifInfo(data.tarif || null);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load communes/tarif:", err);
-      }
-    }
-    loadCoverage();
-    return () => {
-      isMounted = false;
-    };
-  }, [formData.code_wilaya, provider]);
+  const { wilayas: wilayasList, communeNames, fee, hasTarif } = useDeliveryCoverage(
+    provider,
+    formData.code_wilaya,
+    formData.stop_desk as 0 | 1,
+  );
 
   const handleSubmitToApi = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -398,31 +329,19 @@ export default function SendOrderForm({
               <SelectContent className="w-[200px] p-0">
                 <SelectGroup>
                   {formData.code_wilaya &&
-                    (() => {
-                      const filtered = isYalidine
-                        ? communesList
-                            .filter((c: any) => c.stopdeskId != null)
-                            .map((c: any) => c.name)
-                        : communesList
-                            .filter((c: any) =>
-                              formData.stop_desk ? c.hasStopDesk : true,
-                            )
-                            .map((c: any) => c.nom || c.name);
-
-                      return filtered.map((name: string) => (
-                        <SelectItem
-                          key={name}
-                          value={name}
-                          className={
-                            formData.commune === name
-                              ? "text-green-400"
-                              : "text-right"
-                          }
-                        >
-                          {name}
-                        </SelectItem>
-                      ));
-                    })()}
+                    communeNames.map((name) => (
+                      <SelectItem
+                        key={name}
+                        value={name}
+                        className={
+                          formData.commune === name
+                            ? "text-green-400"
+                            : "text-right"
+                        }
+                      >
+                        {name}
+                      </SelectItem>
+                    ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -446,26 +365,11 @@ export default function SendOrderForm({
           <div className="space-y-2 w-full">
             <div className="flex items-center justify-between ">
               <Label htmlFor="montant">Amount </Label>
-              {formData.code_wilaya && !isYalidine && tarifInfo && (
+              {formData.code_wilaya && hasTarif && (
                 <span className="text-xs font-semibold text-orange-700">
-                  {formData.stop_desk === 1
-                    ? tarifInfo.stopdesk
-                    : tarifInfo.livraison}
-                  DA
+                  {fee} DA
                 </span>
               )}
-              {formData.code_wilaya &&
-                isYalidine &&
-                (() => {
-                  const price = communesList.find(
-                    (c: any) => c.expressDesk != null,
-                  )?.expressDesk;
-                  return price != null ? (
-                    <span className="text-xs font-semibold text-orange-700">
-                      {price} DA
-                    </span>
-                  ) : null;
-                })()}
             </div>
             <Input
               id="montant"

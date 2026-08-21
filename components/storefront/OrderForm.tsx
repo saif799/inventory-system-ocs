@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { SelectGroup } from "@/components/ui/customSelect";
 import { formatDA } from "@/lib/format";
-import { useDhdCoverage } from "@/lib/storefront/useDhdCoverage";
+import { useDeliveryCoverage } from "@/lib/delivery/useDeliveryCoverage";
 import type { OrderDraft } from "@/lib/orders/placeOrder";
 
 type SizeOption = {
@@ -49,7 +49,11 @@ export default function OrderForm({
   const [commune, setCommune] = useState("");
   const [stopDesk, setStopDesk] = useState<0 | 1>(0);
 
-  const { wilayas, communeNames, fee, hasTarif } = useDhdCoverage(codeWilaya, stopDesk);
+  const { wilayas, communeNames, fee, hasTarif } = useDeliveryCoverage(
+    "dhd",
+    codeWilaya,
+    stopDesk,
+  );
 
   const productPrice = selectedSize?.resolvedPrice ?? 0;
   const total = productPrice + fee;

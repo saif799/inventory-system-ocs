@@ -16,9 +16,7 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import communesByWilaya from "@/communes.json";
-import wilayas from "@/wilayas.json";
-import Tarifs from "@/tarifs.json";
+import { useDeliveryCoverage } from "@/lib/delivery/useDeliveryCoverage";
 import { SelectGroup } from "./ui/customSelect";
 import {
   Dialog,
@@ -98,6 +96,12 @@ export default function MultipleItemsOrder({
     type: 1,
     stop_desk: 1,
   });
+
+  const { wilayas, communeNames, fee, hasTarif } = useDeliveryCoverage(
+    "dhd",
+    formData.code_wilaya,
+    formData.stop_desk as 0 | 1,
+  );
 
   const handleSubmitToApi = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -303,15 +307,15 @@ export default function MultipleItemsOrder({
                     <SelectGroup>
                       {wilayas.map((s) => (
                         <SelectItem
-                          key={s.wilaya_id}
-                          value={String(s.wilaya_id)}
+                          key={s.wilayaId}
+                          value={String(s.wilayaId)}
                           className={
-                            formData.code_wilaya === String(s.wilaya_id)
+                            formData.code_wilaya === String(s.wilayaId)
                               ? "text-green-400"
                               : "text-right"
                           }
                         >
-                          {s.wilaya_id} - {s.wilaya_name}
+                          {s.wilayaId} - {s.name}
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -337,31 +341,19 @@ export default function MultipleItemsOrder({
                   <SelectContent className="w-[200px] p-0">
                     <SelectGroup>
                       {formData.code_wilaya &&
-                        (() => {
-                          const communesForWilaya = (
-                            communesByWilaya as Record<
-                              string,
-                              { nom: string; has_stop_desk: number }[]
-                            >
-                          )[formData.code_wilaya];
-                          return communesForWilaya
-                            ?.filter((c) =>
-                              formData.stop_desk ? c.has_stop_desk : true,
-                            )
-                            .map((c) => (
-                              <SelectItem
-                                key={c.nom}
-                                value={c.nom}
-                                className={
-                                  formData.commune === c.nom
-                                    ? "text-green-400"
-                                    : "text-right"
-                                }
-                              >
-                                {c.nom}
-                              </SelectItem>
-                            ));
-                        })()}
+                        communeNames.map((name) => (
+                          <SelectItem
+                            key={name}
+                            value={name}
+                            className={
+                              formData.commune === name
+                                ? "text-green-400"
+                                : "text-right"
+                            }
+                          >
+                            {name}
+                          </SelectItem>
+                        ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -385,16 +377,9 @@ export default function MultipleItemsOrder({
               <div className="space-y-2 w-full">
                 <div className="flex items-center justify-between ">
                   <Label htmlFor="montant">Amount </Label>
-                  {formData.code_wilaya && (
+                  {formData.code_wilaya && hasTarif && (
                     <span className=" text-xs font-semibold text-orange-700">
-                      {formData.stop_desk === 1
-                        ? Tarifs.livraison.find(
-                            (t) => t.wilaya_id === Number(formData.code_wilaya),
-                          )?.tarif_stopdesk
-                        : Tarifs.livraison.find(
-                            (t) => t.wilaya_id === Number(formData.code_wilaya),
-                          )?.tarif}
-                      DA
+                      {fee} DA
                     </span>
                   )}
                 </div>
