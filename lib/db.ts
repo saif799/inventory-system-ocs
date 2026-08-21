@@ -9,8 +9,27 @@ import ws from "ws";
 // transactions) only for the handful of write paths that need atomicity.
 neonConfig.webSocketConstructor = ws;
 
-const sql = neon(process.env.DATABASE_URL!);
-export const db = drizzle(sql);
+// Lazily construct the neon-http client on first query rather than at
+// module import time: dev-server recompiles (Turbopack) can evaluate this
+// module before Next has finished loading `.env`, which throws "No database
+// connection string was provided to `neon()`" even though DATABASE_URL is
+// set. Same class of bug as the R2 client fix (see lib/r2.ts).
+let _db: ReturnType<typeof drizzle> | undefined;
+function getDb() {
+  if (!_db) {
+    _db = drizzle(neon(process.env.DATABASE_URL!));
+  }
+  return _db;
+}
+
+export const db: ReturnType<typeof drizzle> = new Proxy(
+  {} as ReturnType<typeof drizzle>,
+  {
+    get(_target, prop, receiver) {
+      return Reflect.get(getDb(), prop, receiver);
+    },
+  },
+);
 
 let poolDb: ReturnType<typeof drizzleWs> | null = null;
 
