@@ -17,11 +17,11 @@ import {
 import { sql } from "drizzle-orm";
 import wilayas from "@/wilayas.json";
 import { CHART_PALETTE } from "@/lib/format";
-
-// Status group ids (from status_groups_table; see lib/helpers.ts).
-export const DELIVERED_STATUS_ID = "830826fd-80f5-4a29-829b-6421264c7695"; // "Livre"
-export const RETURNED_STATUS_ID = "e4983321-f0c7-452d-8b36-68d42dfb7be4"; // "retour"
-export const CANCELED_STATUS_ID = "e01a36c1-087c-46ab-aa4c-12b1a5186bf1"; // "Cancel"
+import {
+  DELIVERED_STATUS_ID,
+  RETURNED_STATUS_ID,
+  CANCELED_STATUS_ID,
+} from "@/lib/orders/status";
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",

@@ -1,15 +1,10 @@
 import { db, txClient } from "@/lib/db";
-import {
-  LendedShoes,
-  orderItems,
-  ordersTable,
-  shoeInventory,
-  stautsGroupsTable,
-} from "@/lib/schema";
-import { flagNotifier } from "@/lib/notifier";
+import { ordersTable, orderItems } from "@/lib/schema";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
+import { getAllStatusGroups, buildNameToIdMap } from "@/lib/orders/status";
 import { DELIVERY_PROVIDERS } from "@/lib/delivery";
-import { and, eq, inArray, ne, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, eq, inArray, ne } from "drizzle-orm";
 
 export async function GET() {
   try {
@@ -37,13 +32,8 @@ export async function GET() {
       )
     ).flat();
 
-    // get all statuses from the db and map their names to ids
-    const dbStatuses = await db.select().from(stautsGroupsTable);
-
-    const statusNameToId: Record<string, string> = {};
-    dbStatuses.forEach((s) => {
-      statusNameToId[s.name] = s.id;
-    });
+    const dbStatuses = await getAllStatusGroups();
+    const statusNameToId = buildNameToIdMap(dbStatuses);
 
     // group the (provider) parcels by our internal status name
     const groupedStatuses: Record<string, Array<string>> = {};
@@ -72,23 +62,13 @@ export async function GET() {
       );
 
     if (ordersToReturn.length > 0) {
-      const borrowerByOrder = new Map(
-        ordersToReturn.map((o) => [o.orderId, o.borrowerId] as const),
-      );
-
-      const itemsToreturn = await db
+      const itemsToReturn = await db
         .select({
           shoeInventoryId: orderItems.shoeInventoryId,
           orderId: orderItems.orderId,
           quantity: orderItems.quantity,
-          // current stock BEFORE we add the returned units back
-          prevQuantity: shoeInventory.quantity,
         })
         .from(orderItems)
-        .innerJoin(
-          shoeInventory,
-          eq(orderItems.shoeInventoryId, shoeInventory.id),
-        )
         .where(
           inArray(
             orderItems.orderId,
@@ -97,34 +77,22 @@ export async function GET() {
         );
 
       await txClient().transaction(async (tx) => {
-        for (const item of itemsToreturn) {
-          await tx
-            .update(shoeInventory)
-            .set({
-              quantity: sql`${shoeInventory.quantity} + ${item.quantity}`,
-            })
-            .where(eq(shoeInventory.id, item.shoeInventoryId));
+        for (const order of ordersToReturn) {
+          const items = itemsToReturn
+            .filter((it) => it.orderId === order.orderId)
+            .map((it) => ({ inventoryId: it.shoeInventoryId, quantity: it.quantity }));
 
-          // If the returned order was placed by a borrower, hand the units back
-          // to that borrower's held stock too.
-          const borrowerId = borrowerByOrder.get(item.orderId);
-          if (borrowerId) {
-            await tx.insert(LendedShoes).values({
-              borrowerId,
-              shoeInventoryId: item.shoeInventoryId,
-              quantity: item.quantity,
-            });
-          }
+          if (items.length === 0) continue;
 
-          // gallery add-back only for variants that were out of stock before
-          if (item.prevQuantity === 0) {
-            await flagNotifier(
-              item.shoeInventoryId,
-              "restock",
-              item.orderId,
-              tx,
-            );
-          }
+          await applyMovement(
+            {
+              reason: "retour",
+              items,
+              borrowerId: order.borrowerId ?? undefined,
+              orderId: order.orderId,
+            },
+            tx,
+          );
         }
       });
     }
@@ -139,9 +107,7 @@ export async function GET() {
       }),
     );
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/orders");
-    revalidatePath("/admin/add-shoes");
+    revalidateStockPaths();
 
     return Response.json({ groupedStatuses }, { status: 200 });
   } catch (error) {

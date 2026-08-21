@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { GroupedProduct } from "@/app/admin/(admin)/page";
+import { storeHeldStock } from "@/lib/stock/availability";
 
 type Borrower = {
   id: string;
@@ -58,7 +59,7 @@ export default function LendInventoryDialog({
     () =>
       sizes.map((s) => {
         const lentQuantity = lentByInventoryId[s.inventoryId] ?? 0;
-        const lendableQuantity = Math.max(0, s.quantity - lentQuantity);
+        const lendableQuantity = storeHeldStock(s.quantity, lentQuantity);
         return {
           ...s,
           lentQuantity,

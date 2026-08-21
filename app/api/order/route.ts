@@ -1,15 +1,10 @@
 import { db, txClient } from "@/lib/db";
-import {
-  LendedShoes,
-  orderItems,
-  ordersTable,
-  shoeInventory,
-  shoeModels,
-} from "@/lib/schema";
-import { flagNotifier } from "@/lib/notifier";
+import { LendedShoes, orderItems, ordersTable, shoeModels } from "@/lib/schema";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
+import { CANCELED_STATUS_ID } from "@/lib/orders/status";
 import { getProvider } from "@/lib/delivery";
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -91,12 +86,20 @@ export async function POST(request: Request) {
 
     const provider = getProvider(providerName);
 
-    // Distinct inventory ids (parity with the existing decrement-by-distinct
-    // behaviour) — one unit per selected variant.
-    const inventoryIds: string[] = Array.from(new Set(selectedSizeShoeId));
+    // Honour line multiplicity: the same variant selected twice is one
+    // orderItems row with quantity = n, and stock moves by n — not n rows of
+    // quantity 1 each, which used to restore a phantom unit on retour.
+    const countsByInventoryId = new Map<string, number>();
+    for (const id of selectedSizeShoeId as string[]) {
+      countsByInventoryId.set(id, (countsByInventoryId.get(id) ?? 0) + 1);
+    }
+    const items = Array.from(countsByInventoryId, ([inventoryId, quantity]) => ({
+      inventoryId,
+      quantity,
+    }));
 
-    // For a borrower-placed order, make sure the borrower actually holds each
-    // selected variant before we let them sell it.
+    // For a borrower-placed order, make sure the borrower actually holds
+    // enough of each selected variant before we let them sell it.
     if (borrowerId) {
       const holdings = await db
         .select({
@@ -107,13 +110,18 @@ export async function POST(request: Request) {
         .where(
           and(
             eq(LendedShoes.borrowerId, borrowerId),
-            inArray(LendedShoes.shoeInventoryId, inventoryIds),
+            inArray(
+              LendedShoes.shoeInventoryId,
+              items.map((i) => i.inventoryId),
+            ),
           ),
         )
         .groupBy(LendedShoes.shoeInventoryId);
 
       const heldMap = new Map(holdings.map((h) => [h.inventoryId, Number(h.held)]));
-      const missing = inventoryIds.filter((id) => (heldMap.get(id) ?? 0) < 1);
+      const missing = items.filter(
+        (item) => (heldMap.get(item.inventoryId) ?? 0) < item.quantity,
+      );
       if (missing.length > 0) {
         return Response.json(
           { error: "This borrower does not hold one or more selected items." },
@@ -168,41 +176,25 @@ export async function POST(request: Request) {
       });
 
       await tx.insert(orderItems).values(
-        selectedSizeShoeId.map((shoeId: string) => ({
+        items.map((item) => ({
           orderId: tracking,
-          shoeInventoryId: shoeId,
-        }))
+          shoeInventoryId: item.inventoryId,
+          quantity: item.quantity,
+        })),
       );
 
-      for (const inventoryId of inventoryIds) {
-        const [row] = await tx
-          .update(shoeInventory)
-          .set({ quantity: sql`GREATEST(0, ${shoeInventory.quantity} - 1)` })
-          .where(eq(shoeInventory.id, inventoryId))
-          .returning({ id: shoeInventory.id, quantity: shoeInventory.quantity });
-
-        // A borrower-placed order is drawn from the borrower's own held stock:
-        // also record a -1 lend row so their holdings drop while the owner's
-        // sellable store is left unchanged.
-        if (borrowerId) {
-          await tx.insert(LendedShoes).values({
-            borrowerId,
-            shoeInventoryId: inventoryId,
-            quantity: -1,
-          });
-        }
-
-        // Gallery: variant just hit total 0 -> remove its photo.
-        if (row?.quantity === 0) {
-          await flagNotifier(inventoryId, "remove", undefined, tx);
-        }
-      }
+      await applyMovement(
+        {
+          reason: borrowerId ? "borrower-sale" : "sale",
+          items,
+          borrowerId: borrowerId ?? undefined,
+          orderId: tracking,
+        },
+        tx,
+      );
     });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/orders");
-    revalidatePath("/admin/add-shoes");
-    if (borrowerId) revalidatePath(`/admin/${borrowerId}`);
+    revalidateStockPaths(borrowerId ?? undefined);
 
     return Response.json({ message: "Order created successfully", orderId: tracking });
   } catch (error) {
@@ -254,51 +246,32 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Read the order's variants WITH their current (pre-increment) stock so we
-    // can tell which ones are coming back from being out of stock.
     const items = await db
-      .selectDistinct({
-        id: shoeInventory.id,
-        quantity: shoeInventory.quantity,
+      .select({
+        inventoryId: orderItems.shoeInventoryId,
+        quantity: orderItems.quantity,
       })
       .from(orderItems)
-      .innerJoin(shoeInventory, eq(orderItems.shoeInventoryId, shoeInventory.id))
       .where(eq(orderItems.orderId, orderId));
 
     await txClient().transaction(async (tx) => {
-      // set status to canceled
       await tx
         .update(ordersTable)
-        .set({ statusId: "e01a36c1-087c-46ab-aa4c-12b1a5186bf1" })
+        .set({ statusId: CANCELED_STATUS_ID })
         .where(eq(ordersTable.id, orderId));
 
-      for (const item of items) {
-        // Reverse the stock decrement done at creation.
-        await tx
-          .update(shoeInventory)
-          .set({ quantity: sql`${shoeInventory.quantity} + 1` })
-          .where(eq(shoeInventory.id, item.id));
-
-        // If it was a borrower order, also give the unit back to the borrower.
-        if (order.borrowerId) {
-          await tx.insert(LendedShoes).values({
-            borrowerId: order.borrowerId,
-            shoeInventoryId: item.id,
-            quantity: 1,
-          });
-        }
-
-        // Gallery add-back only for variants that were out of stock before.
-        if (item.quantity === 0) {
-          await flagNotifier(item.id, "restock", orderId, tx);
-        }
-      }
+      await applyMovement(
+        {
+          reason: "cancel",
+          items,
+          borrowerId: order.borrowerId ?? undefined,
+          orderId,
+        },
+        tx,
+      );
     });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/orders");
-    revalidatePath("/admin/add-shoes");
-    if (order.borrowerId) revalidatePath(`/admin/${order.borrowerId}`);
+    revalidateStockPaths(order.borrowerId ?? undefined);
 
     return Response.json({ message: "Order deleted successfully" });
   } catch (error) {

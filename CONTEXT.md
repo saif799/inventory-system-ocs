@@ -38,3 +38,23 @@ The public direct-purchase workflow allowing a customer to select an available s
 
 ### Order Confirmation
 The post-checkout summary view presented to the customer upon successful order placement, displaying the unique order ID/reference, ordered item summary, delivery address, and total cost breakdown.
+
+## Stock & Location
+
+### Physical Quantity (`shoeInventory.quantity`)
+Total units of one size-variant owned, wherever they physically sit — at the store or with a Borrower. This is what is sellable, and what the storefront, the admin listing and the Shoe Image Gallery flags all read. See ADR-0003.
+
+### Storage Location
+Where a unit of stock physically sits: the store itself, or a Borrower. A Borrower holding stock has not bought it — Physical Quantity is unaffected by where a unit sits.
+
+### Store-Held Stock
+Physical Quantity minus everything currently at a Borrower (`storeHeldStock` / `storeHeldStockSql` in `lib/stock/availability.ts`). Governs what can be handed to a Borrower and what `/admin/rebalance` chases. **Never** governs sellability — that's Physical Quantity's job alone. See ADR-0003.
+
+### Holdings
+The units of one size-variant currently at one Borrower's location, computed live as `SUM(lended_shoes.quantity)` for that borrower+variant. `lended_shoes` is an append-only ledger of *where a pair sits*, not a stored balance — lending inserts `+n`, returning inserts `-n`, and a borrower-placed sale inserts `-1`.
+
+### Stock Movement
+Any change to Physical Quantity or Storage Location, always carrying a reason (`sale`, `borrower-sale`, `cancel`, `retour`, `arrival`, `lend`, `return`, or `correction`). The single owner of every Stock Movement is `applyMovement` in `lib/stock/movement.ts` — see ADR-0004.
+
+### Échange
+An order `type` (`type = 2`) representing a customer exchange. Today it is handled identically to a `sale` on the outgoing side — it decrements stock like any other sale — and the incoming pair the customer sends back is reconciled by hand outside the system. The intended behaviour (decrement the outgoing variant, increment the incoming one, atomically) is **not implemented**. Tracked separately in [#13](https://github.com/saif799/inventory-system-ocs/issues/13) — do not conflate an Échange's stock effect with a `retour` when reading order-status code.

@@ -1,20 +1,37 @@
 "use server";
 
-import { db } from "@/lib/db";
+import { db, txClient } from "@/lib/db";
 import { shoeInventory } from "@/lib/schema";
-import { eq, sql } from "drizzle-orm";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+
+async function decreaseByOne(id: string) {
+  const [current] = await db
+    .select({ quantity: shoeInventory.quantity })
+    .from(shoeInventory)
+    .where(eq(shoeInventory.id, id))
+    .limit(1);
+  if (!current) return;
+
+  const { updated } = await txClient().transaction((tx) =>
+    applyMovement(
+      {
+        reason: "correction",
+        items: [{ inventoryId: id, newQuantity: current.quantity - 1 }],
+      },
+      tx,
+    ),
+  );
+  if (!updated[0]) return;
+  revalidateStockPaths();
+}
 
 export async function decreaseQuantityAction(formData: FormData) {
   const id = String(formData.get("id") || "");
   if (!id) return;
-  const [updated] = await db
-    .update(shoeInventory)
-    .set({ quantity: sql`GREATEST(0, ${shoeInventory.quantity} - 1)` })
-    .where(eq(shoeInventory.id, id))
-    .returning();
-  if (!updated) return;
-  revalidatePath("/admin");
+  await decreaseByOne(id);
 }
 
 export async function deleteItemAction(formData: FormData) {
@@ -28,12 +45,5 @@ export async function scanBarcodeAction(formData: FormData) {
   const barcode = String(formData.get("barcode") || "").trim();
   if (!barcode) return;
   // NOTE: Adjust lookup once barcode field is defined in schema
-  const id = barcode;
-  const [updated] = await db
-    .update(shoeInventory)
-    .set({ quantity: sql`GREATEST(0, ${shoeInventory.quantity} - 1)` })
-    .where(eq(shoeInventory.id, id))
-    .returning();
-  if (!updated) return;
-  revalidatePath("/admin");
+  await decreaseByOne(barcode);
 }

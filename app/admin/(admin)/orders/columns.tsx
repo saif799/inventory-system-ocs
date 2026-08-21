@@ -17,12 +17,15 @@ import { Badge } from "@/components/ui/badge";
 
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { ordersTable } from "@/lib/schema";
+import { READY_TO_SHIP_STATUS_NAME } from "@/lib/orders/status";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { markAsLivre, markAsRetour } from "@/lib/helpers";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export type OrderType = InferSelectModel<typeof ordersTable>;
+export type OrderType = InferSelectModel<typeof ordersTable> & {
+  statusName: string | null;
+};
 
 export const columnsOrder: ColumnDef<OrderType>[] = [
   {
@@ -110,22 +113,17 @@ export const columnsOrder: ColumnDef<OrderType>[] = [
     filterFn: "equals",
   },
 
-  //todo edit this later to be not visible by default
-  // todo make sure to unisntall the badge compoent
   {
-    accessorKey: "statusId",
+    accessorKey: "statusName",
     header: "Status",
 
     cell: ({ row }) => {
+      const name = row.getValue("statusName") as string | null;
       return (
         <Badge
-          variant={
-            row.getValue("statusId") === "prete_a_expedier"
-              ? "onDelivery"
-              : "outline"
-          }
+          variant={name === READY_TO_SHIP_STATUS_NAME ? "onDelivery" : "outline"}
         >
-          {row.getValue("statusId")}
+          {name ?? "Unknown"}
         </Badge>
       );
     },

@@ -1,8 +1,8 @@
 import { db, txClient } from "@/lib/db";
-import { LendedShoes, shoeInventory } from "@/lib/schema";
-import { flagNotifier } from "@/lib/notifier";
+import { LendedShoes } from "@/lib/schema";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
 import { and, eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 type BringBackRequest = {
   borrowerId?: string;
@@ -47,47 +47,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Compute sellable availability (across ALL borrowers) BEFORE this return.
-    const [stock] = await db
-      .select({ quantity: shoeInventory.quantity })
-      .from(shoeInventory)
-      .where(eq(shoeInventory.id, inventoryId))
-      .limit(1);
-
-    const [globalLent] = await db
-      .select({
-        lent: sql<number>`COALESCE(SUM(${LendedShoes.quantity}), 0)`,
-      })
-      .from(LendedShoes)
-      .where(eq(LendedShoes.shoeInventoryId, inventoryId));
-
-    const availableBefore =
-      Number(stock?.quantity ?? 0) - Number(globalLent?.lent ?? 0);
-
-    const returnedRecord = await txClient().transaction(async (tx) => {
-      const [record] = await tx
-        .insert(LendedShoes)
-        .values({
+    await txClient().transaction(async (tx) => {
+      await applyMovement(
+        {
+          reason: "return",
+          items: [{ inventoryId, quantity: safeQuantity }],
           borrowerId,
-          shoeInventoryId: inventoryId,
-          quantity: -safeQuantity,
-        })
-        .returning();
-
-      // Bringing shoes back frees up sellable stock. Flag add-back only when the
-      // variant was fully unavailable before and now has at least one free unit.
-      if (availableBefore <= 0 && availableBefore + safeQuantity > 0) {
-        await flagNotifier(inventoryId, "restock", undefined, tx);
-      }
-
-      return record;
+        },
+        tx,
+      );
     });
 
-    revalidatePath("/admin");
-    revalidatePath(`/admin/${borrowerId}`);
-    revalidatePath("/admin/borrowers");
+    revalidateStockPaths(borrowerId);
 
-    return Response.json({ success: true, returnedRecord });
+    return Response.json({ success: true });
   } catch (error) {
     console.error("Failed to bring back inventory:", error);
     return Response.json(

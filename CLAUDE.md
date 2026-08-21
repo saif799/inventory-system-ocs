@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+when reporting information to me be extremly concise and sacrafice grammar for the sake of concision.
+
 ## Commands
 
 Package manager is **pnpm** (`pnpm-lock.yaml`, `pnpm-workspace.yaml`).

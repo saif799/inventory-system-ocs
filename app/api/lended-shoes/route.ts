@@ -1,8 +1,9 @@
 import { db, txClient } from "@/lib/db";
 import { LendedShoes, borrower, shoeInventory } from "@/lib/schema";
-import { flagNotifier } from "@/lib/notifier";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
+import { storeHeldStock } from "@/lib/stock/availability";
 import { eq, inArray, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 type LendRequest = {
   inventoryId?: string;
@@ -84,7 +85,7 @@ export async function POST(request: Request) {
       .where(eq(LendedShoes.shoeInventoryId, inventoryId));
 
     const alreadyLent = Number(lentSummary?.lentQuantity ?? 0);
-    const remainingToLend = Math.max(0, inventoryItem.quantity - alreadyLent);
+    const remainingToLend = storeHeldStock(inventoryItem.quantity, alreadyLent);
 
     if (safeQuantity > remainingToLend) {
       return Response.json(
@@ -95,49 +96,38 @@ export async function POST(request: Request) {
       );
     }
 
-    const { borrowerId, lentRecord } = await txClient().transaction(
-      async (tx) => {
-        const [existingBorrower] = await tx
-          .select()
-          .from(borrower)
-          .where(sql`LOWER(${borrower.name}) = LOWER(${cleanBorrowerName})`)
-          .limit(1);
+    const borrowerId = await txClient().transaction(async (tx) => {
+      const [existingBorrower] = await tx
+        .select()
+        .from(borrower)
+        .where(sql`LOWER(${borrower.name}) = LOWER(${cleanBorrowerName})`)
+        .limit(1);
 
-        let bId = existingBorrower?.id;
-        if (!bId) {
-          const [createdBorrower] = await tx
-            .insert(borrower)
-            .values({ name: cleanBorrowerName })
-            .returning();
-          bId = createdBorrower.id;
-        }
-
-        const [record] = await tx
-          .insert(LendedShoes)
-          .values({
-            shoeInventoryId: inventoryId,
-            borrowerId: bId,
-            quantity: safeQuantity,
-          })
+      let bId = existingBorrower?.id;
+      if (!bId) {
+        const [createdBorrower] = await tx
+          .insert(borrower)
+          .values({ name: cleanBorrowerName })
           .returning();
+        bId = createdBorrower.id;
+      }
 
-        // Lending doesn't change physical stock, but it reduces what's available
-        // to sell. Flag for gallery removal only when this lend uses up the last
-        // available unit (nothing left to sell after it).
-        if (remainingToLend - safeQuantity === 0) {
-          await flagNotifier(inventoryId, "remove", undefined, tx);
-        }
+      await applyMovement(
+        {
+          reason: "lend",
+          items: [{ inventoryId, quantity: safeQuantity }],
+          borrowerId: bId,
+        },
+        tx,
+      );
 
-        return { borrowerId: bId, lentRecord: record };
-      },
-    );
+      return bId;
+    });
 
-    revalidatePath("/admin");
-    revalidatePath(`/admin/${borrowerId}`);
+    revalidateStockPaths(borrowerId);
     return Response.json({
       success: true,
       borrowerId,
-      lentRecord,
       inventory: inventoryItem,
     });
   } catch (error) {

@@ -6,6 +6,7 @@ import {
   shoes,
   shoeModels,
 } from "@/lib/schema";
+import { storeHeldStockSql, totalLentSql } from "@/lib/stock/availability";
 import { and, eq, sql } from "drizzle-orm";
 
 /**
@@ -47,11 +48,7 @@ export async function GET() {
       .having(
         and(
           sql`SUM(${LendedShoes.quantity}) > 0`,
-          sql`${shoeInventory.quantity} - (
-            SELECT COALESCE(SUM(ls2.quantity), 0)
-            FROM lended_shoes ls2
-            WHERE ls2.shoe_inventory_id = ${shoeInventory.id}
-          ) <= 0`,
+          sql`${storeHeldStockSql(shoeInventory.id)} <= 0`,
         ),
       );
 
@@ -71,11 +68,7 @@ export async function GET() {
       .where(
         and(
           sql`${shoeInventory.quantity} > 1`,
-          sql`COALESCE((
-            SELECT SUM(ls.quantity)
-            FROM lended_shoes ls
-            WHERE ls.shoe_inventory_id = ${shoeInventory.id}
-          ), 0) = 0`,
+          sql`${totalLentSql(shoeInventory.id)} = 0`,
         ),
       )
       .orderBy(shoeModels.modelName, shoes.color, shoeInventory.size);

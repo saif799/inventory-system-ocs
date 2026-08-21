@@ -1,8 +1,8 @@
 import { db, txClient } from "@/lib/db";
-import { shoeInventory, storeSales } from "@/lib/schema";
-import { flagNotifier } from "@/lib/notifier";
-import { eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { storeSales } from "@/lib/schema";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
+import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
@@ -13,29 +13,21 @@ export async function POST(request: Request) {
     }
 
     const updated = await txClient().transaction(async (tx) => {
-      // Decrease quantity and create the sale record atomically.
-      const [row] = await tx
-        .update(shoeInventory)
-        .set({ quantity: sql`GREATEST(0, ${shoeInventory.quantity} - 1)` })
-        .where(eq(shoeInventory.id, inventoryId))
-        .returning();
-
-      if (!row) {
-        throw new Error("Failed to update inventory");
-      }
+      const { updated } = await applyMovement(
+        { reason: "sale", items: [{ inventoryId, quantity: 1 }] },
+        tx,
+      );
 
       await tx.insert(storeSales).values({ shoeInventoryId: inventoryId });
 
-      // Only flag the gallery when this sale emptied the variant's stock.
-      if (row.quantity === 0) {
-        await flagNotifier(inventoryId, "remove", undefined, tx);
-      }
-
-      return row;
+      return updated[0];
     });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/orders");
+    if (!updated) {
+      throw new Error("Failed to update inventory");
+    }
+
+    revalidateStockPaths();
     return Response.json({ success: true, updated });
   } catch (error) {
     console.error("Failed to create store sale:", error);
@@ -65,30 +57,15 @@ export async function DELETE(request: Request) {
       return Response.json({ error: "Sale not found" }, { status: 404 });
     }
 
-    // Read stock BEFORE adding the unit back so we know if it was out of stock.
-    const [inventoryItem] = await db
-      .select({ quantity: shoeInventory.quantity })
-      .from(shoeInventory)
-      .where(eq(shoeInventory.id, sale.inventoryId))
-      .limit(1);
-
-    const priorQuantity = inventoryItem?.quantity ?? 0;
-
     await txClient().transaction(async (tx) => {
-      await tx
-        .update(shoeInventory)
-        .set({ quantity: sql`${shoeInventory.quantity} + 1` })
-        .where(eq(shoeInventory.id, sale.inventoryId));
+      await applyMovement(
+        { reason: "cancel", items: [{ inventoryId: sale.inventoryId, quantity: 1 }] },
+        tx,
+      );
       await tx.delete(storeSales).where(eq(storeSales.id, id));
-
-      // Only flag add-back when this revert brings the variant back from 0 stock.
-      if (priorQuantity === 0) {
-        await flagNotifier(sale.inventoryId, "restock", undefined, tx);
-      }
     });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/orders");
+    revalidateStockPaths();
     return Response.json({ success: true });
   } catch (error) {
     console.error("Failed to revert store sale:", error);

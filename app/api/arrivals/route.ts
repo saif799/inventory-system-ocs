@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db, txClient } from "@/lib/db";
 import {
   arrivalItems,
   arrivals,
@@ -6,10 +6,10 @@ import {
   shoeModels,
   shoes,
 } from "@/lib/schema";
-import { flagNotifier } from "@/lib/notifier";
+import { applyMovement } from "@/lib/stock/movement";
+import { revalidateStockPaths } from "@/lib/stock/revalidate";
 import { generateShortId } from "@/lib/generateId";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 type NewLine = {
   mode: "new";
@@ -83,8 +83,7 @@ export async function POST(request: Request) {
       return Response.json({ error: "No lines to save" }, { status: 400 });
     }
 
-    // Writes we'll commit atomically, plus the arrival_items snapshot rows and
-    // the restock flags we run afterwards.
+    // Writes we'll commit atomically, plus the arrival_items snapshot rows.
     const shoeInserts: {
       id: string;
       modelId: string;
@@ -105,7 +104,6 @@ export async function POST(request: Request) {
       shoeInventoryId: string;
       quantity: number;
     }[] = [];
-    const restockFlags: string[] = [];
 
     for (const line of lines) {
       const sizes = normalizeSizes(line.sizes);
@@ -171,8 +169,6 @@ export async function POST(request: Request) {
           if (match) {
             inventoryIncrements.push({ id: match.id, add: quantity });
             itemInserts.push({ shoeInventoryId: match.id, quantity });
-            // A size that was sold out and is now back -> gallery re-sync.
-            if (match.quantity === 0) restockFlags.push(match.id);
           } else {
             const invId = crypto.randomUUID();
             inventoryInserts.push({
@@ -191,46 +187,38 @@ export async function POST(request: Request) {
 
     // Order matters: parents (arrival, shoes, inventory) before children
     // (arrival_items). All ids are pre-generated so children can reference
-    // freshly-inserted rows inside the same batch/transaction.
-    const writes: unknown[] = [
-      db.insert(arrivals).values({ id: arrivalId, reference, note }),
-    ];
-    if (shoeInserts.length) writes.push(db.insert(shoes).values(shoeInserts));
-    for (const [modelId, update] of modelPriceUpdates) {
-      writes.push(
-        db.update(shoeModels).set(update).where(eq(shoeModels.id, modelId)),
-      );
-    }
-    if (inventoryInserts.length)
-      writes.push(db.insert(shoeInventory).values(inventoryInserts));
-    for (const inc of inventoryIncrements) {
-      writes.push(
-        db
-          .update(shoeInventory)
-          .set({ quantity: sql`${shoeInventory.quantity} + ${inc.add}` })
-          .where(eq(shoeInventory.id, inc.id)),
-      );
-    }
-    writes.push(
-      db
-        .insert(arrivalItems)
-        .values(itemInserts.map((it) => ({ ...it, arrivalId }))),
-    );
+    // freshly-inserted rows inside the same transaction. Existing-variant
+    // increments go through applyMovement so the restock notifier flag lands
+    // in the same transaction as the stock change.
+    await txClient().transaction(async (tx) => {
+      await tx.insert(arrivals).values({ id: arrivalId, reference, note });
 
-    // neon-http runs db.batch([...]) as a single server-side transaction.
-    await db.batch(
-      writes as unknown as Parameters<typeof db.batch>[0],
-    );
+      if (shoeInserts.length) await tx.insert(shoes).values(shoeInserts);
 
-    if (restockFlags.length) {
-      await Promise.all(
-        [...new Set(restockFlags)].map((id) => flagNotifier(id, "restock")),
-      );
-    }
+      for (const [modelId, update] of modelPriceUpdates) {
+        await tx.update(shoeModels).set(update).where(eq(shoeModels.id, modelId));
+      }
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/arrivals");
-    revalidatePath("/admin/add-shoes");
+      if (inventoryInserts.length)
+        await tx.insert(shoeInventory).values(inventoryInserts);
+
+      if (inventoryIncrements.length) {
+        await applyMovement(
+          {
+            reason: "arrival",
+            items: inventoryIncrements.map((inc) => ({
+              inventoryId: inc.id,
+              quantity: inc.add,
+            })),
+          },
+          tx,
+        );
+      }
+
+      await tx.insert(arrivalItems).values(itemInserts.map((it) => ({ ...it, arrivalId })));
+    });
+
+    revalidateStockPaths();
     return Response.json({ success: true, arrivalId });
   } catch (error) {
     console.error("Failed to save arrival:", error);

@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/select";
 import { InferSelectModel } from "drizzle-orm";
 import { stautsGroupsTable } from "@/lib/schema";
+import { READY_TO_SHIP_STATUS_NAME } from "@/lib/orders/status";
 import { RefreshCcw } from "lucide-react";
 import { OrderType } from "./columns";
 
@@ -68,12 +69,12 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
-    { id: "statusId", value: "404332b3-998f-498f-a325-3e4ecf6c3bbb" },
+    { id: "statusName", value: READY_TO_SHIP_STATUS_NAME },
   ]);
   const [rowSelection, setRowSelection] = useState({});
   const [filterUsing, setFilterUsing] = useState<OrderKeys>("nom_client");
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    statusId: false,
+    statusName: false,
     telephone: false,
   });
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -168,9 +169,9 @@ export function DataTable<TData, TValue>({
             </SelectContent>
           </Select>
           <Select
-            defaultValue="404332b3-998f-498f-a325-3e4ecf6c3bbb"
+            defaultValue={READY_TO_SHIP_STATUS_NAME}
             onValueChange={(value) => {
-              table.getColumn("statusId")?.setFilterValue(value);
+              table.getColumn("statusName")?.setFilterValue(value);
             }}
           >
             <SelectTrigger className="w-[180px]">
@@ -181,7 +182,7 @@ export function DataTable<TData, TValue>({
                 <SelectLabel>Statuses</SelectLabel>
                 {Statuses.map((column) => {
                   return (
-                    <SelectItem value={column.id} key={column.id}>
+                    <SelectItem value={column.name} key={column.id}>
                       {column.name}
                     </SelectItem>
                   );

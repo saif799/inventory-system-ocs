@@ -10,7 +10,8 @@
     "migrate": "drizzle-kit migrate",
     "studio": "drizzle-kit studio",
     "generate": "drizzle-kit generate",
-    "push": "drizzle-kit push"
+    "push": "drizzle-kit push",
+    "test": "vitest run"
   },
   "dependencies": {
     "@aws-sdk/client-rds-data": "latest",
@@ -84,10 +85,12 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/ws": "^8.18.1",
+    "@vitest/coverage-v8": "^4.1.11",
     "drizzle-kit": "^0.31.6",
     "postcss": "^8.5.6",
     "tailwindcss": "4.1.16",
     "tsx": "^4.20.6",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.1.11"
   }
 }

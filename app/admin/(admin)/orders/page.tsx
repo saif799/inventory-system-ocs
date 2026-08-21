@@ -9,14 +9,20 @@ import {
   stautsGroupsTable,
   storeSales,
 } from "@/lib/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 
 export default async function DemoPage() {
   const dbStatus = await db.select().from(stautsGroupsTable);
 
+  // Joined so the table can render/filter by a readable status name instead
+  // of the raw status_id, which survives a reseed that changes identifiers.
   const orders = await db
-    .select()
+    .select({
+      ...getTableColumns(ordersTable),
+      statusName: stautsGroupsTable.name,
+    })
     .from(ordersTable)
+    .leftJoin(stautsGroupsTable, eq(stautsGroupsTable.id, ordersTable.statusId))
     .orderBy(desc(ordersTable.createdAt));
 
   const storeSaleRows = await db
