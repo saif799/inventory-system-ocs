@@ -51,7 +51,6 @@ export const ordersTable = pgTable("orders", {
   // Null for normal owner orders.
   borrowerId: uuid("borrower_id").references(() => borrower.id),
   stop_desk: integer("stop_desk").notNull(),
-  status: varchar("status").notNull().default("prete_a_expedier"),
   statusId: uuid("status_id")
     .notNull()
     .references(() => stautsGroupsTable.id)
