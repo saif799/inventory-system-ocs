@@ -61,7 +61,7 @@ Any write that touches stock **and** another table (order rows, lend rows, notif
 `shoeModels` (a style, e.g. "Air Force 1", carries `basePrice`/`compareAtPrice`) → `shoes` (a **color variant**, `varchar` PK that doubles as the printed barcode value, carries optional `priceOverride`/`compareAtPriceOverride`) → `shoeInventory` (one row per **size**, holds `quantity` and optional `priceOverride`). `shoeInventory.id` is the unit of stock everything else points at. Pricing lives on the model since [ADR-0002](docs/adr/0002-model-level-pricing.md); see Pricing & money below.
 
 - **`ordersTable`** — PK is the **delivery provider's tracking number**, not a generated id. `provider` says which company shipped it; `statusId` FKs `status_groups_table` (note the misspelled export `stautsGroupsTable`); `borrowerId` is set when a borrower placed the sale from their own held stock.
-- **`status_groups_table`** — maps our internal status names to arrays of `external_statuses` strings returned by providers. Several status group **UUIDs are hardcoded** in code (`lib/analytics.ts` exports `DELIVERED_STATUS_ID`/`RETURNED_STATUS_ID`/`CANCELED_STATUS_ID`; the cancel id is also inlined in `app/api/order/route.ts`, and `ordersTable.statusId` has a hardcoded default).
+- **`status_groups_table`** — maps our internal status names to arrays of `external_statuses` strings returned by providers. Status ids are resolved from names (and back) through [lib/orders/status.ts](lib/orders/status.ts), the single place they're defined; `ordersTable.statusId` still carries a hardcoded default and `ordersTable.status` is a legacy varchar column that duplicates `statusId` and is slated for removal (see [ADR-0004](docs/adr/0004-all-stock-movement-goes-through-lib-stock.md) tranche, issue #9 — not yet dropped, since it needs a database branch taken first).
 - **`borrower` / `LendedShoes`** — an append-only signed ledger, not a balance. Lending inserts `+n`, returning inserts a row, and a borrower-placed order inserts `-1`. Holdings are always `SUM(quantity)`. Owner↔borrower rebalancing is computed live in `GET /api/rebalance` — there is no stored table.
 - **`arrivals` / `arrivalItems`** — an "arrivage" (received shipment). `arrivalItems.quantity` is an immutable snapshot of what arrived, deliberately not kept in sync with live `shoeInventory.quantity`.
 - **`shoeImages`** — R2 gallery per color variant; `isPrimary` is the catalog thumbnail, `sortOrder` the carousel order.
@@ -70,11 +70,11 @@ Any write that touches stock **and** another table (order rows, lend rows, notif
 
 ### Stock invariants
 
-These rules are enforced by hand across `app/api/order/route.ts`, `app/api/status/route.ts`, and the lend/store-sale routes — keep them consistent when adding a path that moves stock:
+[lib/stock/movement.ts](lib/stock/movement.ts) exports `applyMovement`, the single entry point for every Stock Movement — no route, server action, or script writes `shoeInventory.quantity`, `LendedShoes`, or `ImageNotifierTable` directly (see [ADR-0004](docs/adr/0004-all-stock-movement-goes-through-lib-stock.md)). It takes a discriminated union keyed on `reason` (`sale`, `borrower-sale`, `cancel`, `retour`, `arrival`, `lend`, `return`, `correction`) and an optional `exec` to enlist in a caller's transaction.
 
-1. Selling decrements **one unit per distinct `shoeInventory.id`** with `GREATEST(0, quantity - 1)`; cancel/retour adds it back.
-2. A borrower-placed order also inserts a `-1` `LendedShoes` row (and `+1` on cancel/retour), so the borrower's holdings drop while the owner's store count is untouched.
-3. `flagNotifier` is called **only when a variant crosses the zero boundary** — `"remove"` when stock just hit 0, `"restock"` when it was 0 before the increment. Call sites decide; [lib/notifier.ts](lib/notifier.ts) then keeps at most one pending action per variant and nets out opposite flags.
+1. Selling decrements **one unit per distinct `shoeInventory.id`**, floored at zero; cancel/retour adds it back exactly.
+2. A borrower-placed order also inserts a `-1` `LendedShoes` row (and `+1` on cancel/retour), so the borrower's holdings drop while the owner's store count is untouched. `lend`/`return` move `LendedShoes` only — they never touch `shoeInventory.quantity` (a Borrower is a Storage Location, not a sale — see [ADR-0003](docs/adr/0003-borrower-ledger-is-a-location-ledger.md)).
+3. The gallery notifier (folded into the same module) fires **only when Physical Quantity (`shoeInventory.quantity`) crosses the zero boundary** — `"remove"` when stock just hit 0, `"restock"` when it was 0 before the increment. Never key a gallery decision off Store-Held Stock (`lib/stock/availability.ts`); that governs lending, not sellability.
 
 ### Delivery providers
 

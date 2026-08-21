@@ -8,22 +8,26 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 async function decreaseByOne(id: string) {
-  const [current] = await db
-    .select({ quantity: shoeInventory.quantity })
-    .from(shoeInventory)
-    .where(eq(shoeInventory.id, id))
-    .limit(1);
-  if (!current) return;
+  // Read and write share one transaction with a row lock, so two concurrent
+  // decrements on the same variant (double-click, fast double scan) can't
+  // both read the same starting quantity and lose an update.
+  const { updated } = await txClient().transaction(async (tx) => {
+    const [current] = await tx
+      .select({ quantity: shoeInventory.quantity })
+      .from(shoeInventory)
+      .where(eq(shoeInventory.id, id))
+      .for("update")
+      .limit(1);
+    if (!current) return { updated: [] };
 
-  const { updated } = await txClient().transaction((tx) =>
-    applyMovement(
+    return applyMovement(
       {
         reason: "correction",
         items: [{ inventoryId: id, newQuantity: current.quantity - 1 }],
       },
       tx,
-    ),
-  );
+    );
+  });
   if (!updated[0]) return;
   revalidateStockPaths();
 }
