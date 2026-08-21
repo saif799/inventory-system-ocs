@@ -29,6 +29,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { GroupedProduct } from "@/app/admin/(admin)/page";
+import type { OrderDraft, OrderFormFields } from "@/lib/orders/placeOrder";
 
 import { ChevronsUpDown } from "lucide-react";
 
@@ -46,19 +47,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-// Types for the new order API
-type OrderFormData = {
-  nom_client: string;
-  telephone: string;
-  telephone_2: string | null;
-  adresse: string;
-  commune: string;
-  code_wilaya: string;
-  montant: string;
-  remarque: string | null;
-  type: number;
-  stop_desk: number;
-};
+// The fields this form collects, tied to the shared OrderDraft shape so a
+// field rename there fails typecheck here instead of breaking silently.
+type OrderFormData = OrderFormFields;
 
 interface ProductCardProps {
   product: GroupedProduct;
@@ -124,17 +115,23 @@ export default function MultipleItemsOrder({
           shoe.shoe.modelName + " " + shoe.shoe.color + " " + shoe.selectedSize,
       )} ${source}`;
 
+      const payload: OrderDraft = {
+        ...formData,
+        source,
+        produit,
+        // This form has no delivery-company or borrower picker: always the
+        // owner's stock via DHD, same as before this was made explicit.
+        provider: "dhd",
+        borrowerId: null,
+        selectedSizeShoeId: selectedShoes.map((s) => s.inventoryId),
+      };
+
       const res = await fetch("/api/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          source,
-          produit,
-          selectedSizeShoeId: selectedShoes.map((s) => s.inventoryId),
-        }), // send formData fields at top-level, not wrapped
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setSuccess("Order created successfully!");

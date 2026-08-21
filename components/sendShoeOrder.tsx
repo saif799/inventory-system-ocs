@@ -19,23 +19,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SelectGroup } from "./ui/customSelect";
 import { GroupedProduct } from "@/app/admin/(admin)/page";
 import { Checkbox } from "./ui/checkbox";
+import type { OrderDraft, OrderFormFields } from "@/lib/orders/placeOrder";
+import type { DeliveryProviderName } from "@/lib/delivery";
 
-type DeliveryProviderName = "dhd" | "yalidine";
-
-// Types for the new order API
-type OrderFormData = {
-  nom_client: string;
-  telephone: string;
-  telephone_2: string | null;
-  adresse: string;
-  commune: string;
-  code_wilaya: string;
-  montant: string;
-  remarque: string | null;
-  type: number;
-  stop_desk: number;
-  freeshipping?: boolean;
-};
+// The fields this form collects, tied to the shared OrderDraft shape so a
+// field rename there fails typecheck here instead of breaking silently.
+type OrderFormData = OrderFormFields & { freeshipping?: boolean };
 
 export default function SendOrderForm({
   onSuccess,
@@ -169,19 +158,21 @@ export default function SendOrderForm({
     try {
       const produit = `${shoe.modelName} ${shoe.color} ${selectedSize.size} ${source}`;
 
+      const payload: OrderDraft = {
+        ...formData,
+        source,
+        produit,
+        provider,
+        borrowerId: borrowerId ?? null,
+        selectedSizeShoeId: [selectedSize.inventoryId],
+      };
+
       const res = await fetch("/api/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          source,
-          produit,
-          provider,
-          borrowerId: borrowerId ?? null,
-          selectedSizeShoeId: [selectedSize.inventoryId],
-        }), // send formData fields at top-level, not wrapped
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setSuccess("Order created successfully!");

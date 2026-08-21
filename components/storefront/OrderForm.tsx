@@ -13,6 +13,7 @@ import {
 import { SelectGroup } from "@/components/ui/customSelect";
 import { formatDA } from "@/lib/format";
 import { useDhdCoverage } from "@/lib/storefront/useDhdCoverage";
+import type { OrderDraft } from "@/lib/orders/placeOrder";
 
 type SizeOption = {
   inventoryId: string;
@@ -95,27 +96,28 @@ export default function OrderForm({
     setLoading(true);
     try {
       const produit = `${modelName} ${color} ${selectedSize.size}`;
+      const payload: OrderDraft = {
+        nom_client: nomClient.trim(),
+        telephone: telephone.trim(),
+        telephone_2: null,
+        // Address is never asked on the storefront — the owner confirms it by phone.
+        adresse: "ville",
+        commune,
+        code_wilaya: codeWilaya,
+        montant: String(total),
+        remarque: null,
+        type: 1,
+        stop_desk: stopDesk,
+        source: "storefront",
+        provider: "dhd",
+        produit,
+        selectedSizeShoeId: [selectedSize.inventoryId],
+        borrowerId: null,
+      };
       const res = await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nom_client: nomClient.trim(),
-          telephone: telephone.trim(),
-          telephone_2: null,
-          // Address is never asked on the storefront — the owner confirms it by phone.
-          adresse: "ville",
-          commune,
-          code_wilaya: codeWilaya,
-          montant: String(total),
-          remarque: null,
-          type: 1,
-          stop_desk: stopDesk,
-          source: "storefront",
-          provider: "dhd",
-          produit,
-          selectedSizeShoeId: [selectedSize.inventoryId],
-          borrowerId: null,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();

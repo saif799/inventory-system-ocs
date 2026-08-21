@@ -9,6 +9,11 @@ export default defineConfig({
     env: {
       DATABASE_URL: "postgres://test:test@localhost:5432/test",
     },
+    // Each test spins up its own PGlite instance (createTestDb); with several
+    // suites' files running in parallel that schema push can take well past
+    // the 5s/10s defaults under CPU contention.
+    testTimeout: 30000,
+    hookTimeout: 30000,
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
