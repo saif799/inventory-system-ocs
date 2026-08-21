@@ -1,7 +1,16 @@
-import { db } from "@/lib/db";
+import { db, type Executor } from "@/lib/db";
 import { shoes, shoeInventory, shoeModels, shoeImages } from "@/lib/schema";
-import { eq, gt, inArray, asc, sql } from "drizzle-orm";
+import { eq, gt, inArray, asc, sql, and, or, gte, lte, ilike, type SQL } from "drizzle-orm";
 import { resolveProductPrice, resolveCompareAtPrice } from "@/lib/helpers";
+
+/** Search text, model/size membership and a price range — all resolved in SQL. */
+export type StorefrontProductFilters = {
+  search?: string;
+  modelIds?: string[];
+  sizes?: string[];
+  minPrice?: number;
+  maxPrice?: number;
+};
 
 export type StorefrontProductSize = {
   inventoryId: string;
@@ -53,8 +62,92 @@ type Row = {
   createdAt: string;
 };
 
-function baseSelect() {
-  return db
+/** The resolved unit price, `size override -> color override -> model base`, computed in SQL. */
+const resolvedPriceSql = sql<number>`COALESCE(${shoeInventory.priceOverride}, ${shoes.priceOverride}, ${shoeModels.basePrice})`;
+
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, (ch) => `\\${ch}`);
+}
+
+/** shoeIds with a row matching one of `sizes` — existence, not aggregation. */
+function sizeQualifyingShoeIds(e: typeof db, sizes: string[], includeOutOfStock: boolean) {
+  return e
+    .select({ shoeId: shoes.id })
+    .from(shoes)
+    .innerJoin(shoeInventory, eq(shoes.id, shoeInventory.shoeId))
+    .where(
+      and(
+        includeOutOfStock ? undefined : gt(shoeInventory.quantity, 0),
+        inArray(shoeInventory.size, sizes),
+      ),
+    );
+}
+
+/**
+ * shoeIds whose minimum resolved price across ALL qualifying sizes falls in
+ * range. Must aggregate over every size, not just ones matching other
+ * filters, so this stays a separate qualifying set rather than folding into
+ * a single row-level WHERE.
+ */
+function priceQualifyingShoeIds(
+  e: typeof db,
+  minPrice: number | undefined,
+  maxPrice: number | undefined,
+  includeOutOfStock: boolean,
+) {
+  return e
+    .select({ shoeId: shoes.id })
+    .from(shoes)
+    .innerJoin(shoeInventory, eq(shoes.id, shoeInventory.shoeId))
+    .innerJoin(shoeModels, eq(shoes.modelId, shoeModels.id))
+    .where(includeOutOfStock ? undefined : gt(shoeInventory.quantity, 0))
+    .groupBy(shoes.id)
+    .having(
+      and(
+        minPrice != null ? gte(sql`MIN(${resolvedPriceSql})`, minPrice) : undefined,
+        maxPrice != null ? lte(sql`MIN(${resolvedPriceSql})`, maxPrice) : undefined,
+      ),
+    );
+}
+
+/**
+ * Row-level conditions (search, model) apply directly since modelName/color
+ * are constant per shoe; size/price need the qualifying-set subqueries above
+ * since they aggregate across a shoe's sizes. `includeOutOfStock` is threaded
+ * through so these subqueries stay consistent with the main query's own
+ * quantity condition.
+ */
+function buildFilterConditions(
+  e: typeof db,
+  filters: StorefrontProductFilters,
+  includeOutOfStock: boolean,
+) {
+  const conditions: (SQL | undefined)[] = [];
+
+  if (filters.search) {
+    const pattern = `%${escapeLikePattern(filters.search)}%`;
+    conditions.push(or(ilike(shoeModels.modelName, pattern), ilike(shoes.color, pattern)));
+  }
+  if (filters.modelIds && filters.modelIds.length > 0) {
+    conditions.push(inArray(shoes.modelId, filters.modelIds));
+  }
+  if (filters.sizes && filters.sizes.length > 0) {
+    conditions.push(inArray(shoes.id, sizeQualifyingShoeIds(e, filters.sizes, includeOutOfStock)));
+  }
+  if (filters.minPrice != null || filters.maxPrice != null) {
+    conditions.push(
+      inArray(
+        shoes.id,
+        priceQualifyingShoeIds(e, filters.minPrice, filters.maxPrice, includeOutOfStock),
+      ),
+    );
+  }
+
+  return conditions;
+}
+
+function baseSelect(e: typeof db = db) {
+  return e
     .select({
       inventoryId: shoeInventory.id,
       shoeId: shoes.id,
@@ -83,11 +176,11 @@ function numericSizeCompare(a: string, b: string): number {
   return a.localeCompare(b);
 }
 
-async function fetchImagesByShoeId(shoeIds: string[]) {
+async function fetchImagesByShoeId(shoeIds: string[], e: typeof db = db) {
   const map = new Map<string, { url: string; altText: string | null }[]>();
   if (shoeIds.length === 0) return map;
 
-  const images = await db
+  const images = await e
     .select({
       shoeId: shoeImages.shoeId,
       url: shoeImages.url,
@@ -150,8 +243,8 @@ function groupRows(rows: Row[]): Map<string, StorefrontProduct> {
   return grouped;
 }
 
-async function attachPrimaryImages(grouped: Map<string, StorefrontProduct>) {
-  const imageMap = await fetchImagesByShoeId([...grouped.keys()]);
+async function attachPrimaryImages(grouped: Map<string, StorefrontProduct>, e: typeof db = db) {
+  const imageMap = await fetchImagesByShoeId([...grouped.keys()], e);
   for (const [shoeId, product] of grouped) {
     const imgs = imageMap.get(shoeId);
     if (imgs && imgs.length > 0) {
@@ -169,16 +262,24 @@ async function attachPrimaryImages(grouped: Map<string, StorefrontProduct>) {
 export async function getStorefrontProducts(opts?: {
   includeUnpriced?: boolean;
   includeOutOfStock?: boolean;
+  filters?: StorefrontProductFilters;
+  exec?: Executor;
 }): Promise<StorefrontProduct[]> {
   const includeOutOfStock = opts?.includeOutOfStock ?? false;
   const includeUnpriced = opts?.includeUnpriced ?? false;
+  const e = (opts?.exec ?? db) as typeof db;
 
-  const rows = await baseSelect()
-    .where(includeOutOfStock ? undefined : gt(shoeInventory.quantity, 0))
+  const rows = await baseSelect(e)
+    .where(
+      and(
+        includeOutOfStock ? undefined : gt(shoeInventory.quantity, 0),
+        ...buildFilterConditions(e, opts?.filters ?? {}, includeOutOfStock),
+      ),
+    )
     .orderBy(asc(shoes.id), asc(shoeInventory.size));
 
   const grouped = groupRows(rows as Row[]);
-  await attachPrimaryImages(grouped);
+  await attachPrimaryImages(grouped, e);
 
   let products = Array.from(grouped.values());
   if (!includeUnpriced) products = products.filter((p) => p.minPrice > 0);
@@ -192,15 +293,19 @@ export async function getStorefrontProducts(opts?: {
 }
 
 /** Fetches a specific set of products, preserving the order of `shoeIds`. */
-export async function getStorefrontProductsByIds(shoeIds: string[]): Promise<StorefrontProduct[]> {
+export async function getStorefrontProductsByIds(
+  shoeIds: string[],
+  exec: Executor = db,
+): Promise<StorefrontProduct[]> {
   if (shoeIds.length === 0) return [];
+  const e = exec as typeof db;
 
-  const rows = await baseSelect()
+  const rows = await baseSelect(e)
     .where(inArray(shoes.id, shoeIds))
     .orderBy(asc(shoes.id), asc(shoeInventory.size));
 
   const grouped = groupRows(rows as Row[]);
-  await attachPrimaryImages(grouped);
+  await attachPrimaryImages(grouped, e);
 
   return shoeIds
     .map((id) => grouped.get(id))
@@ -209,15 +314,17 @@ export async function getStorefrontProductsByIds(shoeIds: string[]): Promise<Sto
 
 export async function getStorefrontProductDetail(
   shoeId: string,
+  exec: Executor = db,
 ): Promise<StorefrontProductDetail | null> {
-  const rows = (await baseSelect()
+  const e = exec as typeof db;
+  const rows = (await baseSelect(e)
     .where(eq(shoes.id, shoeId))
     .orderBy(asc(shoeInventory.size))) as Row[];
 
   if (rows.length === 0) return null;
 
   const first = rows[0];
-  const images = (await fetchImagesByShoeId([shoeId])).get(shoeId) ?? [];
+  const images = (await fetchImagesByShoeId([shoeId], e)).get(shoeId) ?? [];
 
   const sizes = rows
     .map((row) => ({

@@ -1,4 +1,4 @@
-import { getStorefrontProducts } from "@/lib/storefront/products";
+import { getStorefrontProducts, type StorefrontProductFilters } from "@/lib/storefront/products";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -12,6 +12,7 @@ export const revalidate = 0;
  *   size      - filter by available size (comma-separated)
  *   minPrice  - minimum resolved price
  *   maxPrice  - maximum resolved price
+ * All filtering is resolved in SQL by getStorefrontProducts.
  */
 export async function GET(request: Request) {
   try {
@@ -22,36 +23,15 @@ export async function GET(request: Request) {
     const minPriceParam = searchParams.get("minPrice");
     const maxPriceParam = searchParams.get("maxPrice");
 
-    const modelIds = modelIdParam ? modelIdParam.split(",").filter(Boolean) : [];
-    const sizes = sizeParam ? sizeParam.split(",").filter(Boolean) : [];
+    const filters: StorefrontProductFilters = {
+      search: q || undefined,
+      modelIds: modelIdParam ? modelIdParam.split(",").filter(Boolean) : undefined,
+      sizes: sizeParam ? sizeParam.split(",").filter(Boolean) : undefined,
+      minPrice: minPriceParam ? Number(minPriceParam) : undefined,
+      maxPrice: maxPriceParam ? Number(maxPriceParam) : undefined,
+    };
 
-    let products = await getStorefrontProducts();
-
-    if (q) {
-      const lower = q.toLowerCase();
-      products = products.filter(
-        (p) =>
-          p.modelName.toLowerCase().includes(lower) || p.color.toLowerCase().includes(lower),
-      );
-    }
-
-    if (modelIds.length > 0) {
-      products = products.filter((p) => modelIds.includes(p.modelId));
-    }
-
-    if (sizes.length > 0) {
-      products = products.filter((p) => p.sizes.some((s) => sizes.includes(s.size) && s.quantity > 0));
-    }
-
-    if (minPriceParam) {
-      const min = Number(minPriceParam);
-      products = products.filter((p) => p.minPrice >= min);
-    }
-
-    if (maxPriceParam) {
-      const max = Number(maxPriceParam);
-      products = products.filter((p) => p.minPrice <= max);
-    }
+    const products = await getStorefrontProducts({ filters });
 
     return Response.json(products);
   } catch (error) {
