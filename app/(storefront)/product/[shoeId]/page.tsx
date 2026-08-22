@@ -49,6 +49,18 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
+/** The system's one Volt highlight — see Hero.tsx — reused for the eyebrow. */
+function AuthenticBadge() {
+  return (
+    <span
+      className="sf-body text-[11px] font-medium uppercase tracking-[0.08em] text-(--sf-highlight-fg)"
+      style={{ borderRadius: "var(--sf-radius-sm)", backgroundColor: "var(--sf-highlight)", padding: "4px 6px" }}
+    >
+      100% authentique
+    </span>
+  );
+}
+
 export default async function ProductPage({ params }: Props) {
   const { shoeId } = await params;
   const product = await getStorefrontProductDetail(shoeId);
@@ -96,16 +108,19 @@ export default async function ProductPage({ params }: Props) {
 
       {/* Title + price above the gallery on mobile, beside it on desktop. */}
       <div className="mb-4 lg:hidden">
-        <h1 className="sf-heading text-lg font-medium text-(--sf-text)">{productName}</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <AuthenticBadge />
+          <span className="sf-body text-xs font-normal uppercase tracking-[0.12em] text-(--sf-muted)">
+            {product.modelName.toUpperCase()}
+          </span>
+        </div>
+        <h1 className="sf-heading mt-2 text-lg font-medium text-(--sf-text)">{productName}</h1>
         <ProductPrice
           price={product.price}
           compareAtPrice={product.compareAtPrice}
           size="md"
           className="mt-2"
         />
-        <p className="sf-body mt-2 text-xs text-(--sf-muted)">
-          {DELIVERY.labelFr} · Paiement à la livraison
-        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[60%_1fr] lg:gap-12">
@@ -113,9 +128,12 @@ export default async function ProductPage({ params }: Props) {
 
         <div className="flex flex-col gap-5">
           <div className="hidden lg:block">
-            <p className="sf-body text-sm text-(--sf-muted)">
-              {product.modelName.toUpperCase()}
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <AuthenticBadge />
+              <span className="sf-body text-sm text-(--sf-muted)">
+                {product.modelName.toUpperCase()}
+              </span>
+            </div>
             <h1 className="sf-heading mt-2 text-2xl font-medium text-(--sf-text)">
               {productName}
             </h1>
@@ -125,10 +143,33 @@ export default async function ProductPage({ params }: Props) {
               size="lg"
               className="mt-3"
             />
-            <p className="sf-body mt-3 text-sm text-(--sf-muted)">
-              {DELIVERY.labelFr} · Paiement à la livraison
-            </p>
           </div>
+
+          {/* Livraison / Paiement / Référence — the same three facts the mock
+              put in a definition list rather than a single line of prose, so
+              the shoeId (Référence) is actually visible on the page. */}
+          <dl className="m-0 flex flex-col border-t border-(--sf-line)">
+            <div className="flex items-center justify-between gap-4 border-b border-(--sf-line) py-2.5">
+              <dt className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
+                Livraison
+              </dt>
+              <dd className="sf-body m-0 text-sm text-(--sf-text)">
+                {DELIVERY.minHours}–{DELIVERY.maxHours}h · {DELIVERY.wilayas} wilayas
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 border-b border-(--sf-line) py-2.5">
+              <dt className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
+                Paiement
+              </dt>
+              <dd className="sf-body m-0 text-sm text-(--sf-text)">À la livraison</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 border-b border-(--sf-line) py-2.5">
+              <dt className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
+                Référence
+              </dt>
+              <dd className="sf-body m-0 text-sm text-(--sf-text)">{product.shoeId}</dd>
+            </div>
+          </dl>
 
           {/* The only prose on the page that describes the product itself.
               Without it a crawler sees a name, a price and a size picker —

@@ -38,7 +38,10 @@ export default async function ProductsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:py-8 lg:px-8">
-      <h1 className="sf-heading text-xl font-medium text-(--sf-text) md:text-3xl">
+      <p className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
+        Accueil / Produits
+      </p>
+      <h1 className="sf-heading mt-3 text-xl font-medium text-(--sf-text) md:mt-4 md:text-3xl">
         Chaussures de basketball authentiques
       </h1>
       {/* One sentence of indexable copy under the H1. The listing itself is

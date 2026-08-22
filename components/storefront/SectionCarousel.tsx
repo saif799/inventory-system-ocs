@@ -47,7 +47,7 @@ export default function SectionCarousel({
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
-      <div className="mb-5 flex items-end justify-between gap-4">
+      <div className="mb-6 flex items-end justify-between gap-4 border-b border-(--sf-line) pb-4">
         <div>
           <h2 className="sf-heading text-xl font-medium text-(--sf-text) md:text-2xl">
             {title}
@@ -59,7 +59,7 @@ export default function SectionCarousel({
         {ctaHref && (
           <Link
             href={ctaHref}
-            className="sf-body shrink-0 text-sm text-(--sf-muted) transition-colors hover:font-medium hover:text-(--sf-text)"
+            className="sf-body shrink-0 text-xs font-medium uppercase tracking-[0.12em] text-(--sf-accent) transition-opacity hover:opacity-75"
           >
             Tout voir
           </Link>

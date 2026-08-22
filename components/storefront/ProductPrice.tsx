@@ -59,7 +59,7 @@ export default function ProductPrice({
             {formatDZD(compareAtPrice)}
           </span>
           {discountPct > 0 && (
-            <span className="sf-heading rounded-(--sf-radius-sm) bg-(--sf-accent) px-1.5 py-0.5 text-[11px] font-medium text-(--sf-accent-fg)">
+            <span className="sf-body rounded-(--sf-radius-sm) bg-(--sf-highlight) px-1.5 py-0.5 text-[11px] font-medium text-(--sf-highlight-fg)">
               −{discountPct}%
             </span>
           )}

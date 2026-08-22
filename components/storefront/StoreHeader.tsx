@@ -134,10 +134,10 @@ export default function StoreHeader() {
 
   const linkClassName = (href: string) =>
     cn(
-      "px-3 py-2 text-sm transition-colors",
+      "sf-body border-b px-3 py-2 text-xs font-medium uppercase tracking-[0.12em] transition-colors",
       pathname === href
-        ? "font-medium text-(--sf-text)"
-        : "font-normal text-(--sf-muted) hover:font-medium hover:text-(--sf-text)",
+        ? "border-(--sf-accent) text-(--sf-text)"
+        : "border-transparent text-(--sf-muted) hover:text-(--sf-text)",
     );
 
   return (
@@ -157,7 +157,7 @@ export default function StoreHeader() {
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="sf-heading shrink-0 text-lg font-medium text-(--sf-text) transition-colors"
+          className="sf-heading shrink-0 text-lg font-medium tracking-[0.12em] text-(--sf-text) transition-colors"
         >
           OCS
         </Link>

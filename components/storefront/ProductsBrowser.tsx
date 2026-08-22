@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { SlidersHorizontal, ArrowDownUp } from "lucide-react";
+import { SlidersHorizontal, ArrowDownUp, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StorefrontProduct } from "@/lib/storefront/products";
 
@@ -134,12 +134,16 @@ export default function ProductsBrowser({
 
   return (
     <div className="w-full">
-      <div className="py-4">
+      <div className="relative py-4 max-w-md">
+        <Search
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-(--sf-muted)"
+          strokeWidth={1.5}
+        />
         <Input
           defaultValue={filterParams.ProductName ?? ""}
           placeholder="Rechercher un modèle ou une couleur…"
           aria-label="Rechercher un modèle ou une couleur"
-          className="h-12 w-full max-w-md"
+          className="h-12 w-full pl-9"
           onChange={(e) => updateSearch(e.target.value)}
         />
       </div>
@@ -155,6 +159,8 @@ export default function ProductsBrowser({
             labels={FRENCH_LABELS}
             accentClassName="text-(--sf-accent)"
             accentHex="var(--sf-accent)"
+            mutedHex="var(--sf-muted)"
+            variant="storefront"
             className=""
           />
         </div>
@@ -216,6 +222,8 @@ export default function ProductsBrowser({
                       labels={FRENCH_LABELS}
                       accentClassName="text-(--sf-accent)"
                       accentHex="var(--sf-accent)"
+                      mutedHex="var(--sf-muted)"
+                      variant="storefront"
                       className="px-2"
                     />
                   </div>

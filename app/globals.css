@@ -132,8 +132,9 @@
  * (the storefront is light-only, per the design system).
  *
  * Source of truth: designRefrence/DESIGN_SYSTEM.md (the Legenwear system).
- * Monospace everywhere, flat, near-shadowless, white ground, near-black ink,
- * and a single purple-900 accent RESERVED for prices and active state.
+ * Monospace everywhere, flat, near-shadowless, tinted-white ground, near-black
+ * ink, a Pine accent RESERVED for prices/links/active state, and a Volt
+ * highlight reserved for the "100% authentique" and discount badges only.
  *
  * The tokens live on :root (inert until referenced) so that Radix portals —
  * select menus, drawers — can read them even though they mount on <body>,
@@ -143,32 +144,38 @@
 
 :root {
   /* ── Ground & ink ─────────────────────────────────────────────────── */
-  --sf-bg: #ffffff;           /* page ground — white everywhere            */
-  --sf-surface: #fafafa;      /* image plate / skeleton fill               */
-  --sf-text: #09090b;         /* default text (foreground)                 */
-  --sf-ink: #18181b;          /* primary: button fills, selected chips     */
-  --sf-ink-fg: #fafafa;       /* text on ink                               */
-  --sf-muted: #6f6f71;        /* secondary text — brand, metadata          */
-  --sf-placeholder: #71717a;  /* placeholder / muted-foreground            */
-  --sf-line: #e4e4e7;         /* every default border                      */
-  --sf-hover: #f4f4f5;        /* ghost / outline hover surface             */
+  --sf-bg: #fbfefc;           /* page ground — tinted near-white           */
+  --sf-surface: #f6f9f7;      /* image plate / skeleton fill / band fill   */
+  --sf-text: #0a110e;         /* default text (foreground)                 */
+  --sf-ink: #151d19;          /* primary: button fills, selected chips     */
+  --sf-ink-fg: #fbfefc;       /* text on ink                               */
+  --sf-muted: #6e7772;        /* secondary text — brand, metadata          */
+  --sf-placeholder: #6e7772;  /* placeholder / muted-foreground            */
+  --sf-line: #dbe1dd;         /* every default border                      */
+  --sf-hover: #f0f4f1;        /* ghost / outline hover surface             */
 
   /* Glass chrome — the nav bar and its panels, the system's only
    * translucent surfaces. Written out rather than mixed from --sf-bg /
    * --sf-line at use site: color-mix() with a var() operand silently drops
    * the whole declaration in some engines, taking the surface with it.
    * Keep these in step with the two tokens above.                          */
-  --sf-glass: rgb(255 255 255 / 0.62);      /* --sf-bg   at 62%            */
-  --sf-glass-line: rgb(228 228 231 / 0.6);  /* --sf-line at 60%            */
+  --sf-glass: rgb(251 254 252 / 0.62);      /* --sf-bg   at 62%            */
+  --sf-glass-line: rgb(219 225 221 / 0.6);  /* --sf-line at 60%            */
 
-  /* ── The one chromatic accent: prices + active state. Nothing else. ── */
-  --sf-accent: #581c87;       /* purple-900                                */
+  /* ── The one chromatic accent: prices, links, active state. ─────────── */
+  --sf-accent: #155e41;       /* Pine                                      */
   --sf-accent-fg: #ffffff;
 
+  /* ── Volt: the one high-visibility highlight, used sparingly for the
+   * "100% authentique" eyebrow and the discount badge. Never for text,
+   * links or anything the accent already owns. ───────────────────────── */
+  --sf-highlight: #a9fb64;
+  --sf-highlight-fg: #0c170a;
+
   /* ── Footer slab (charcoal, not pure black) ───────────────────────── */
-  --sf-footer: #1f2123;
-  --sf-footer-fg: #ffffff;
-  --sf-footer-muted: #d1d5db;
+  --sf-footer: #1b221f;
+  --sf-footer-fg: #fbfefc;
+  --sf-footer-muted: #b5bdb8;
 
   --sf-danger: #ef4444;
 
@@ -382,6 +389,23 @@
   box-shadow: none;
 }
 [data-storefront] [data-slot='button']:focus-visible {
+  border-color: var(--sf-text);
+  box-shadow: 0 0 0 1px var(--sf-text);
+}
+
+/* Filter rail model checkboxes: token hairline, ink fill when checked (the
+ * shadcn default already renders near-black on check, so only the border and
+ * focus ring need retinting here). */
+[data-storefront] [data-slot='checkbox'] {
+  border-color: var(--sf-line);
+  box-shadow: none;
+}
+[data-storefront] [data-slot='checkbox'][data-state='checked'] {
+  background-color: var(--sf-ink);
+  border-color: var(--sf-ink);
+  color: var(--sf-ink-fg);
+}
+[data-storefront] [data-slot='checkbox']:focus-visible {
   border-color: var(--sf-text);
   box-shadow: 0 0 0 1px var(--sf-text);
 }

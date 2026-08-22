@@ -8,9 +8,9 @@ import type { StorefrontProduct } from "@/lib/storefront/products";
  * Design system §5. No border, no shadow, no background, no radius — a square
  * image that zooms on hover, then a three-line text block:
  *
- *   1. title   — font-medium, steps up once at md:
- *   2. variant — text-sm, muted, ALWAYS UPPERCASE
- *   3. price   — font-medium, accent purple, suffixed " DA"
+ *   1. variant — text-sm, muted, ALWAYS UPPERCASE
+ *   2. title   — font-medium, steps up once at md:
+ *   3. price   — font-medium, accent Pine, suffixed " DA"
  */
 export default function ProductCard({
   product,
@@ -21,40 +21,31 @@ export default function ProductCard({
   className?: string;
   priority?: boolean;
 }) {
-  const onSale = product.compareAtPrice != null && product.compareAtPrice > product.minPrice;
-
   return (
     <Link
       href={`/product/${product.shoeId}`}
-      className={cn("group flex min-w-44 flex-col gap-5 py-2", className)}
+      className={cn("group flex min-w-44 flex-col gap-4 py-2", className)}
     >
-      <div className="relative">
-        <ProductMedia
-          imageUrl={product.primaryImageUrl}
-          imageAlt={
-            product.primaryImageAlt ??
-            // Falls back to a descriptive phrase, not just the name: alt text
-            // is the only textual signal an image search has to go on.
-            `${product.modelName} ${product.color} — chaussure de basketball authentique`
-          }
-          label={`${product.modelName} ${product.color}`}
-          priority={priority}
-          zoomOnHover
-        />
-        {onSale && (
-          <span className="sf-heading absolute left-0 top-0 bg-(--sf-ink) px-2 py-1 text-[10px] font-medium tracking-wide text-(--sf-ink-fg)">
-            PROMO
-          </span>
-        )}
-      </div>
+      <ProductMedia
+        imageUrl={product.primaryImageUrl}
+        imageAlt={
+          product.primaryImageAlt ??
+          // Falls back to a descriptive phrase, not just the name: alt text
+          // is the only textual signal an image search has to go on.
+          `${product.modelName} ${product.color} — chaussure de basketball authentique`
+        }
+        label={`${product.modelName} ${product.color}`}
+        priority={priority}
+        zoomOnHover
+      />
 
-      <div className="flex flex-col gap-1">
-        <h3 className="sf-heading text-base font-medium text-wrap text-(--sf-text) md:text-xl">
-          {product.modelName}
-        </h3>
-        <p className="sf-body text-sm text-(--sf-muted) md:text-lg">
+      <div className="flex flex-col gap-2">
+        <p className="sf-body text-xs font-normal uppercase tracking-[0.12em] text-(--sf-muted)">
           {product.color.toUpperCase()}
         </p>
+        <h3 className="sf-heading text-base font-medium leading-snug tracking-[-0.01em] text-wrap text-(--sf-text) md:text-xl">
+          {product.modelName}
+        </h3>
         <ProductPrice
           price={product.minPrice}
           compareAtPrice={product.compareAtPrice}
