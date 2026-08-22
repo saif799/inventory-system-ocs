@@ -300,8 +300,10 @@
   box-shadow: none;
   transition: background-color 150ms, color 150ms, border-color 150ms;
 }
-.sf-chip:hover:not(:disabled) {
-  background-color: var(--sf-hover);
+@media (hover: hover) {
+  .sf-chip:hover:not(:disabled) {
+    background-color: var(--sf-hover);
+  }
 }
 .sf-chip[data-active='true'] {
   border-color: transparent;

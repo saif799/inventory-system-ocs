@@ -88,7 +88,7 @@ const NavBar = () => {
       <div
         id="mobile-nav"
         className={cn(
-          "absolute left-0 right-0 top-full z-40 border-b border-white/20 bg-background/60 shadow-lg backdrop-blur-xl backdrop-saturate-150 transition-all duration-200 supports-[backdrop-filter]:bg-background/40 dark:border-white/10 dark:bg-background/40 md:hidden",
+          "absolute left-0 right-0 top-full z-40 border-b border-white/20 bg-background shadow-lg transition-all duration-200 dark:border-white/10 md:hidden",
           mobileOpen
             ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0 pointer-events-none"

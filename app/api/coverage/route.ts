@@ -1,51 +1,43 @@
 /**
- * GET /api/coverage
- * Returns communes + tarif for a given wilaya and provider.
+ * GET /api/coverage?wilaya_id=16&provider=dhd|yalidine
+ * Returns that wilaya's communes in the provider-neutral coverage shape:
  *
- * Query params:
- *   wilaya_id  (required) — integer 1-58
- *   provider   (required) — "dhd" | "yalidine"
+ *   { communes: [{ name, modes: { home: {available, fee}, desk: {available, fee, deskId?} } }] }
  *
- * Response:
- *   {
- *     communes: [{ nom, hasStopDesk }]              // DHD
- *     communes: [{ communeId, name, stopdeskId, expressDesk }]  // Yalidine
- *     tarif: { livraison, stopdesk } | null         // DHD only
- *   }
+ * Courier-specific semantics are resolved in lib/delivery/coverageData.ts —
+ * this route no longer branches on provider beyond validating it.
  *
- * GET /api/coverage/wilayas?provider=dhd|yalidine
+ * GET /api/coverage?list=wilayas&provider=dhd|yalidine
  * Returns the list of wilayas covered by the given provider.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getDhdCommunes,
-  getDhdTarif,
+  getCoverage,
   getDhdWilayas,
-  getYalidineCommunes,
   getYalidineWilayas,
 } from "@/lib/delivery/coverageData";
+import { isProviderName } from "@/lib/delivery";
+
+const BAD_PROVIDER = { error: "provider must be dhd or yalidine" };
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const wilayaIdParam = searchParams.get("wilaya_id");
-  const provider = searchParams.get("provider") as "dhd" | "yalidine" | null;
+  const provider = searchParams.get("provider");
   const listWilayas = searchParams.get("list") === "wilayas";
 
-  if (listWilayas) {
-    // Return the full wilaya list for the given provider
-    if (provider === "dhd") {
-      const wilayas = await getDhdWilayas();
-      return NextResponse.json({ wilayas });
-    }
-    if (provider === "yalidine") {
-      const wilayas = await getYalidineWilayas();
-      return NextResponse.json({ wilayas });
-    }
-    return NextResponse.json({ error: "provider must be dhd or yalidine" }, { status: 400 });
+  if (!isProviderName(provider)) {
+    return NextResponse.json(BAD_PROVIDER, { status: 400 });
   }
 
-  if (!wilayaIdParam || !provider) {
+  if (listWilayas) {
+    const wilayas =
+      provider === "yalidine" ? await getYalidineWilayas() : await getDhdWilayas();
+    return NextResponse.json({ wilayas });
+  }
+
+  if (!wilayaIdParam) {
     return NextResponse.json(
       { error: "wilaya_id and provider are required" },
       { status: 400 },
@@ -57,31 +49,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "invalid wilaya_id" }, { status: 400 });
   }
 
-  if (provider === "dhd") {
-    const [communes, tarif] = await Promise.all([
-      getDhdCommunes(wilayaId),
-      getDhdTarif(wilayaId),
-    ]);
-    return NextResponse.json({
-      communes,
-      tarif: tarif
-        ? {
-            livraison: tarif.tarifLivraison,
-            stopdesk: tarif.tarifStopdeskLivraison,
-            echange: tarif.tarifEchange,
-            stopdeskEchange: tarif.tarifStopdeskEchange,
-          }
-        : null,
-    });
-  }
-
-  if (provider === "yalidine") {
-    const communes = await getYalidineCommunes(wilayaId);
-    return NextResponse.json({ communes, tarif: null });
-  }
-
-  return NextResponse.json(
-    { error: "provider must be dhd or yalidine" },
-    { status: 400 },
-  );
+  const communes = await getCoverage(provider, wilayaId);
+  return NextResponse.json({ communes });
 }

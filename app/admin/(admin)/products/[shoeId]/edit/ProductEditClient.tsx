@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { Trash2, Star, Archive, ArchiveRestore } from "lucide-react";
+import { Trash2, Star, Archive, ArchiveRestore, GripVertical } from "lucide-react";
 
 type Shoe = {
   id: string;
@@ -61,6 +61,7 @@ export default function ProductEditClient({
   const [images, setImages] = useState<ImageRow[]>(initialImages);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleSavePricing = async () => {
@@ -287,6 +288,43 @@ export default function ProductEditClient({
     }
   };
 
+  const persistImageOrder = async (ordered: ImageRow[]) => {
+    try {
+      const res = await fetch(`/api/admin/products/${shoe.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageSortOrders: ordered.map((img, i) => ({
+            imageId: img.id,
+            sortOrder: i,
+            isPrimary: img.isPrimary,
+          })),
+        }),
+      });
+      if (!res.ok) toast.error("Failed to save image order");
+    } catch {
+      toast.error("Failed to save image order");
+    }
+  };
+
+  const handleDropImage = (targetId: string) => {
+    if (!draggingId || draggingId === targetId) {
+      setDraggingId(null);
+      return;
+    }
+    const fromIndex = images.findIndex((i) => i.id === draggingId);
+    const toIndex = images.findIndex((i) => i.id === targetId);
+    setDraggingId(null);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const next = [...images];
+    const [moved] = next.splice(fromIndex, 1);
+    next.splice(toIndex, 0, moved);
+    const reindexed = next.map((img, i) => ({ ...img, sortOrder: i }));
+    setImages(reindexed);
+    persistImageOrder(reindexed);
+  };
+
   return (
     <div className="space-y-10">
       {/* Details Section */}
@@ -401,24 +439,42 @@ export default function ProductEditClient({
 
       {/* Image Gallery Section */}
       <section className="space-y-6 border rounded-lg p-6">
-        <h2 className="text-lg font-semibold">Image Gallery</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Image Gallery</h2>
+          {images.length > 1 && (
+            <p className="text-xs text-muted-foreground">Drag to reorder</p>
+          )}
+        </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {images.map((img) => (
-            <div key={img.id} className="relative group rounded-lg overflow-hidden border">
+            <div
+              key={img.id}
+              draggable
+              onDragStart={() => setDraggingId(img.id)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => handleDropImage(img.id)}
+              onDragEnd={() => setDraggingId(null)}
+              className={`relative group rounded-lg overflow-hidden border cursor-grab active:cursor-grabbing transition-opacity ${
+                draggingId === img.id ? "opacity-40" : ""
+              }`}
+            >
+              <div className="absolute top-2 right-2 z-10 bg-black/60 rounded p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                <GripVertical className="h-4 w-4" />
+              </div>
               <Image
                 src={img.url}
                 alt={img.altText ?? `${shoe.modelName} ${shoe.color}`}
                 width={300}
                 height={300}
-                className="object-cover w-full aspect-square"
+                className="object-cover w-full aspect-square pointer-events-none"
               />
               {img.isPrimary && (
                 <span className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">
                   Primary
                 </span>
               )}
-              <div className="absolute bottom-0 inset-x-0 bg-black/60 flex gap-2 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-0 inset-x-0 bg-black/60 flex gap-2 p-2">
                 {!img.isPrimary && (
                   <button
                     onClick={() => handleSetPrimary(img.id)}

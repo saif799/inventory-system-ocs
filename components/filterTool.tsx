@@ -359,7 +359,7 @@ export default function FilterTool({
       </div>
 
       {isStorefront ? (
-        <Accordion type="multiple" defaultValue={["model", "size"]} className="w-full">
+        <Accordion type="multiple" defaultValue={[]} className="w-full">
           {accordionItems}
         </Accordion>
       ) : (

@@ -1,5 +1,5 @@
 import { db, txClient, type Executor } from "@/lib/db";
-import { LendedShoes, orderItems, ordersTable } from "@/lib/schema";
+import { LendedShoes, orderItems, ordersTable, shoeInventory } from "@/lib/schema";
 import { applyMovement } from "@/lib/stock/movement";
 import { getProvider, type DeliveryProvider, type DeliveryProviderName } from "@/lib/delivery";
 import { and, eq, inArray, sql } from "drizzle-orm";
@@ -134,6 +134,26 @@ export async function placeOrder(
     inventoryId,
     quantity,
   }));
+
+  // Selling decrements Physical Quantity (shoeInventory.quantity) regardless
+  // of who sells it, and applyMovement floors at zero instead of rejecting —
+  // so refuse here rather than let a sale go through with no stock backing it.
+  const stockRows = await readExec
+    .select({ id: shoeInventory.id, quantity: shoeInventory.quantity })
+    .from(shoeInventory)
+    .where(
+      inArray(
+        shoeInventory.id,
+        items.map((i) => i.inventoryId),
+      ),
+    );
+  const stockMap = new Map(stockRows.map((r) => [r.id, r.quantity]));
+  const outOfStock = items.filter(
+    (item) => (stockMap.get(item.inventoryId) ?? 0) < item.quantity,
+  );
+  if (outOfStock.length > 0) {
+    return reject(400, "Insufficient stock for one or more selected items.");
+  }
 
   // For a borrower-placed order, make sure the borrower actually holds
   // enough of each selected variant before we let them sell it.

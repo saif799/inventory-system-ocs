@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckCircle2 } from "lucide-react";
 import ProductPrice from "@/components/storefront/ProductPrice";
 
 type SizeOption = {
@@ -14,6 +15,10 @@ type SizeOption = {
  * 1px token border and explicitly NO shadow; selected drops the border and
  * fills with ink. Out of stock uses the uniform 50% disabled treatment.
  * All of that lives in the shared `.sf-chip` recipe in globals.css.
+ *
+ * The whole block is framed as "step 1" — a bordered card with a numbered
+ * badge and a status line beneath the chips — because it gates step 2
+ * (the order form dims until a size is picked). See OrderForm.
  */
 export default function SizeSelector({
   sizes,
@@ -41,23 +46,28 @@ export default function SizeSelector({
     headlinePrice != null &&
     selected.resolvedPrice !== headlinePrice;
 
+  const statusColor = selected ? "var(--sf-accent)" : "var(--sf-text)";
+  const statusText = selected
+    ? selected.quantity <= 3
+      ? `Pointure ${selected.size} — plus que ${selected.quantity} en stock`
+      : `Pointure ${selected.size} sélectionnée`
+    : "Sélectionnez une pointure pour continuer";
+
   return (
-    <div className="sf-body space-y-3">
-      <div className="flex items-center justify-between">
+    <div
+      className="sf-body space-y-4 border border-(--sf-text) bg-(--sf-surface) p-5"
+      style={{ borderRadius: "var(--sf-radius)" }}
+    >
+      <div className="flex items-baseline gap-3">
+        <span
+          className="flex h-[22px] min-w-[22px] translate-y-[3px] items-center justify-center bg-(--sf-ink) text-xs font-medium text-(--sf-ink-fg)"
+          style={{ borderRadius: "var(--sf-radius-sm)" }}
+        >
+          1
+        </span>
         <h2 className="text-sm font-medium text-(--sf-text) md:text-xl">
-          Choisir une pointure
+          Choisissez votre pointure
         </h2>
-        {selected && (
-          <p className="text-sm">
-            {selected.quantity <= 3 ? (
-              <span className="font-medium text-(--sf-accent)">
-                Plus que {selected.quantity} en stock
-              </span>
-            ) : (
-              <span className="text-(--sf-muted)">{selected.quantity} en stock</span>
-            )}
-          </p>
-        )}
       </div>
 
       <div className="flex flex-wrap gap-2 py-1">
@@ -78,6 +88,13 @@ export default function SizeSelector({
             </button>
           );
         })}
+      </div>
+
+      <div className="flex items-center gap-2 border-t border-(--sf-line) pt-3">
+        <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={1.8} style={{ color: statusColor }} />
+        <span className="text-sm font-medium" style={{ color: statusColor }}>
+          {statusText}
+        </span>
       </div>
 
       {sizePriceDiffers && (

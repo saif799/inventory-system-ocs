@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import type React from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductMedia from "./ProductMedia";
@@ -28,6 +29,8 @@ export default function ImageCarousel({
   productName: string;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
 
   if (images.length === 0) {
     return (
@@ -43,12 +46,38 @@ export default function ImageCarousel({
 
   const active = images[activeIndex];
 
+  const SWIPE_THRESHOLD = 40;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null) return;
+    if (touchDeltaX.current > SWIPE_THRESHOLD) {
+      setActiveIndex((i) => (i - 1 + images.length) % images.length);
+    } else if (touchDeltaX.current < -SWIPE_THRESHOLD) {
+      setActiveIndex((i) => (i + 1) % images.length);
+    }
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+  };
+
   return (
     <div className="lg:sticky lg:top-24 lg:flex lg:flex-row-reverse lg:items-start lg:gap-3">
       {/* Main image */}
       <div
-        className="relative w-full overflow-hidden bg-(--sf-surface)"
+        className="relative w-full touch-pan-y overflow-hidden bg-(--sf-surface)"
         style={{ aspectRatio: "var(--sf-media-ratio)", borderRadius: "var(--sf-radius-media)" }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <Image
           src={active.url}

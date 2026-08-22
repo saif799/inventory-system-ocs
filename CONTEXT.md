@@ -58,3 +58,20 @@ Any change to Physical Quantity or Storage Location, always carrying a reason (`
 
 ### Échange
 An order `type` (`type = 2`) representing a customer exchange. Today it is handled identically to a `sale` on the outgoing side — it decrements stock like any other sale — and the incoming pair the customer sends back is reconciled by hand outside the system. The intended behaviour (decrement the outgoing variant, increment the incoming one, atomically) is **not implemented**. Tracked separately in [#13](https://github.com/saif799/inventory-system-ocs/issues/13) — do not conflate an Échange's stock effect with a `retour` when reading order-status code.
+
+## Delivery & Coverage
+
+### Delivery Mode
+How a parcel reaches the customer: **home** (*à domicile* — the courier delivers to the address) or **desk** (*bureau* — the customer collects from a Stop Desk). Carried on the wire and in `ordersTable.stop_desk` as `0` = home, `1` = desk. Every order has exactly one Delivery Mode.
+
+### Stop Desk
+A courier-operated pickup office. Whether one serves a given Commune is a property of the Commune, not of the order — a Commune with no Stop Desk cannot take a `desk` order at all. Only a small minority of Communes have one.
+
+### Coverage
+The set of Communes a given Delivery Provider serves in a Wilaya, together with which Delivery Modes each Commune supports and at what price. Coverage is per-provider: the same Commune may be served by one courier and not another, and the couriers do not agree on Commune spellings. A Commune supporting *no* mode is not offerable and is never shown to a customer.
+
+### Tarif
+A Delivery Provider's price for one Delivery Mode, in integer DZD. **A desk Tarif of `0` means the mode is unavailable, never that it is free** — the two Wilayas priced that way are exactly the two containing no Stop Desk at all. A `0` Tarif and an unsupported mode are the same statement.
+
+### Wilaya / Commune
+The two administrative levels an Algerian delivery address resolves to: the Wilaya (province, numbered 1–58) and the Commune within it. A Delivery Provider need not cover every Wilaya. Fees are quoted per Wilaya by both couriers; Stop Desk availability varies per Commune.

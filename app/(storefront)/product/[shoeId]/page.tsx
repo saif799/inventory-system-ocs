@@ -25,7 +25,10 @@ export async function generateMetadata({ params }: Props) {
   const { shoeId } = await params;
   const product = await getStorefrontProductDetail(shoeId);
   if (!product) {
-    return { title: "Produit introuvable", robots: { index: false, follow: true } };
+    return {
+      title: "Produit introuvable",
+      robots: { index: false, follow: true },
+    };
   }
 
   const name = `${product.modelName} — ${product.color}`;
@@ -54,7 +57,11 @@ function AuthenticBadge() {
   return (
     <span
       className="sf-body text-[11px] font-medium uppercase tracking-[0.08em] text-(--sf-highlight-fg)"
-      style={{ borderRadius: "var(--sf-radius-sm)", backgroundColor: "var(--sf-highlight)", padding: "4px 6px" }}
+      style={{
+        borderRadius: "var(--sf-radius-sm)",
+        backgroundColor: "var(--sf-highlight)",
+        padding: "4px 6px",
+      }}
     >
       100% authentique
     </span>
@@ -70,7 +77,7 @@ export default async function ProductPage({ params }: Props) {
   const inStock = product.sizes.some((size) => size.quantity > 0);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 md:px-8 lg:px-16">
+    <main className="mx-auto max-w-6xl px-4 pt-8 pb-24 md:px-8 lg:px-16 lg:pb-8">
       {/* Offer + shipping details: the machine-readable half of the 24-48h
           promise the TrustBand states in prose just below. */}
       <JsonLd
@@ -89,20 +96,30 @@ export default async function ProductPage({ params }: Props) {
         data={breadcrumbJsonLd([
           { name: "Accueil", path: "/" },
           { name: "Produits", path: "/products" },
-          { name: productName, path: `/product/${encodeURIComponent(product.shoeId)}` },
+          {
+            name: productName,
+            path: `/product/${encodeURIComponent(product.shoeId)}`,
+          },
         ])}
       />
       <JsonLd data={faqJsonLd(STOREFRONT_FAQS)} />
       {/* Breadcrumb — muted, plain, per §9.6. */}
-      <nav aria-label="Fil d'Ariane" className="sf-body mb-4 text-sm font-normal text-(--sf-muted)">
+      <nav
+        aria-label="Fil d'Ariane"
+        className="sf-body mb-4 text-sm font-normal text-(--sf-muted)"
+      >
         <Link href="/" className="hover:text-(--sf-text)">
           Accueil
         </Link>
-        <span className="mx-2" aria-hidden="true">&gt;</span>
+        <span className="mx-2" aria-hidden="true">
+          &gt;
+        </span>
         <Link href="/products" className="hover:text-(--sf-text)">
           Produits
         </Link>
-        <span className="mx-2" aria-hidden="true">&gt;</span>
+        <span className="mx-2" aria-hidden="true">
+          &gt;
+        </span>
         <span className="text-(--sf-text)">{productName}</span>
       </nav>
 
@@ -114,7 +131,9 @@ export default async function ProductPage({ params }: Props) {
             {product.modelName.toUpperCase()}
           </span>
         </div>
-        <h1 className="sf-heading mt-2 text-lg font-medium text-(--sf-text)">{productName}</h1>
+        <h1 className="sf-heading mt-2 text-lg font-medium text-(--sf-text)">
+          {productName}
+        </h1>
         <ProductPrice
           price={product.price}
           compareAtPrice={product.compareAtPrice}
@@ -148,36 +167,10 @@ export default async function ProductPage({ params }: Props) {
           {/* Livraison / Paiement / Référence — the same three facts the mock
               put in a definition list rather than a single line of prose, so
               the shoeId (Référence) is actually visible on the page. */}
-          <dl className="m-0 flex flex-col border-t border-(--sf-line)">
-            <div className="flex items-center justify-between gap-4 border-b border-(--sf-line) py-2.5">
-              <dt className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
-                Livraison
-              </dt>
-              <dd className="sf-body m-0 text-sm text-(--sf-text)">
-                {DELIVERY.minHours}–{DELIVERY.maxHours}h · {DELIVERY.wilayas} wilayas
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-4 border-b border-(--sf-line) py-2.5">
-              <dt className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
-                Paiement
-              </dt>
-              <dd className="sf-body m-0 text-sm text-(--sf-text)">À la livraison</dd>
-            </div>
-            <div className="flex items-center justify-between gap-4 border-b border-(--sf-line) py-2.5">
-              <dt className="sf-body text-xs font-medium uppercase tracking-[0.12em] text-(--sf-muted)">
-                Référence
-              </dt>
-              <dd className="sf-body m-0 text-sm text-(--sf-text)">{product.shoeId}</dd>
-            </div>
-          </dl>
 
           {/* The only prose on the page that describes the product itself.
               Without it a crawler sees a name, a price and a size picker —
               nothing that matches a "authentic <model> in Algeria" query. */}
-          <p className="sf-body text-sm font-normal text-(--sf-muted)">
-            {productName} — chaussure de basketball 100% authentique, vérifiée
-            avant expédition par {BRAND.name}. {DELIVERY.sentenceFr}
-          </p>
 
           <ProductOrderPanel
             modelName={product.modelName}
@@ -186,7 +179,10 @@ export default async function ProductPage({ params }: Props) {
             price={product.price}
             compareAtPrice={product.compareAtPrice}
           />
-
+          <p className="sf-body text-sm font-normal text-(--sf-muted)">
+            {productName} — chaussure de basketball 100% authentique, vérifiée
+            avant expédition par {BRAND.name}. {DELIVERY.sentenceFr}
+          </p>
           <TrustBand />
           <ProductFaq />
         </div>
