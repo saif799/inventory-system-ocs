@@ -194,6 +194,14 @@
   --sf-font-body: var(--sf-font);
   --sf-display-tracking: normal;
   --sf-display-case: none;
+
+  /* Weight scale. DM Mono ships 300/400/500 and the storefront used to sit on
+   * 300 for all body copy — at 14px on a white ground that reads washed out,
+   * especially for the muted greys. The floor is now 400; 500 stays the
+   * emphasis step (headings, prices, selected state). 300 is no longer used
+   * anywhere, so it is no longer downloaded (see app/layout.tsx).           */
+  --sf-weight-body: 400;
+  --sf-weight-emphasis: 500;
 }
 
 /* Applying the theme is scoped; defining it (above) is not. */
@@ -201,9 +209,25 @@
 .sf-portal {
   font-family: var(--sf-font);
   color: var(--sf-text);
+  font-weight: var(--sf-weight-body);
+
+  /* The root <body> is `antialiased` (grayscale smoothing), which thins every
+   * stroke on macOS/iOS — the opposite of what a light monospace on white
+   * needs. Subpixel rendering is restored for the storefront only; /admin
+   * keeps the global setting. */
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
 }
 [data-storefront] {
   background-color: var(--sf-bg);
+}
+
+/* Safety net for components shared with /admin (FilterTool is the live case):
+ * they carry their own `font-light`, which would drop below the storefront's
+ * weight floor. Scoped to the storefront subtree, so /admin keeps its own
+ * lighter look. */
+[data-storefront] .font-light {
+  font-weight: var(--sf-weight-body);
 }
 
 /* ── Typography utilities ───────────────────────────────────────────────

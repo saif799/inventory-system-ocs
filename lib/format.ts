@@ -21,9 +21,21 @@ export function formatCompact(value: number): string {
   return String(Math.round(value));
 }
 
-/** Algerian dinar amount, e.g. "5,243,550 DA". */
+/** Algerian dinar amount, e.g. "5,243,550 DA". Admin/analytics (lang="en"). */
 export function formatDA(value: number): string {
   return `${formatInt(value)} DA`;
+}
+
+/**
+ * Same amount for the French storefront: "5 243 550 DA".
+ *
+ * Kept separate from formatDA rather than swapping the locale under it — the
+ * admin dashboard is lang="en" and its analytics tables are built around
+ * comma grouping. The storefront is fr-DZ, where comma grouping reads as a
+ * decimal point to an Algerian shopper.
+ */
+export function formatDZD(value: number): string {
+  return `${Math.round(value).toLocaleString("fr-DZ")} DA`;
 }
 
 /** 0..1 ratio -> "82%". */

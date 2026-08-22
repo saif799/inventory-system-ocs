@@ -137,7 +137,7 @@ export default function StoreHeader() {
       "px-3 py-2 text-sm transition-colors",
       pathname === href
         ? "font-medium text-(--sf-text)"
-        : "font-light text-(--sf-muted) hover:font-medium hover:text-(--sf-text)",
+        : "font-normal text-(--sf-muted) hover:font-medium hover:text-(--sf-text)",
     );
 
   return (

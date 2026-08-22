@@ -3,7 +3,6 @@
 import { useState } from "react";
 import SizeSelector from "@/components/storefront/SizeSelector";
 import OrderForm from "@/components/storefront/OrderForm";
-import { formatDA } from "@/lib/format";
 
 type SizeOption = {
   inventoryId: string;
@@ -26,7 +25,6 @@ export default function ProductOrderPanel({
   compareAtPrice: number | null;
 }) {
   const [selectedSize, setSelectedSize] = useState<SizeOption | null>(null);
-  const effectivePrice = selectedSize?.resolvedPrice ?? price;
 
   return (
     <div className="flex flex-col gap-5">
@@ -34,13 +32,9 @@ export default function ProductOrderPanel({
         sizes={sizes}
         selectedInventoryId={selectedSize?.inventoryId ?? null}
         onSelect={setSelectedSize}
+        headlinePrice={price}
+        compareAtPrice={compareAtPrice}
       />
-
-      {compareAtPrice != null && compareAtPrice > effectivePrice && (
-        <p className="sf-body text-sm font-medium text-(--sf-accent)">
-          Vous économisez {formatDA(compareAtPrice - effectivePrice)} !
-        </p>
-      )}
 
       <div className="border-t border-(--sf-line) pt-5">
         <OrderForm modelName={modelName} color={color} selectedSize={selectedSize} />

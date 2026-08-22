@@ -20,8 +20,9 @@ import {
 import SendOrderForm from "./sendShoeOrder";
 import EditInventoryDialog from "./EditInventoryDialog";
 import StoreSaleDialog from "./StoreSaleDialog";
-import LendInventoryDialog from "./lendInventory";
-import BringBackDialog from "./bringBackDialog";
+import InventoryTransferDialog, {
+  type TransferLine,
+} from "./InventoryTransferDialog";
 import { GroupedProduct } from "@/app/admin/(admin)/page";
 import { Button, buttonVariants } from "./ui/button";
 import {
@@ -32,20 +33,24 @@ import {
   ShoppingCart,
   Undo2,
 } from "lucide-react";
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { storeHeldStock } from "@/lib/stock/availability";
 
 interface ProductCardProps {
   product: GroupedProduct;
   selectedShoes?: Array<{ id: string }>;
   selectshoe: (id: string, identifier: string) => void;
+  borrowerName?: string;
 }
 
 export default function ProductCard({
-  product: { modelId, modelName, color, sizes, shoeId },
+  product: { modelId, modelName, color, sizes, shoeId, archived },
   selectedShoes,
   selectshoe,
+  borrowerName,
 }: ProductCardProps) {
+  const router = useRouter();
   const params = useParams<{ lenderId?: string }>();
   const lenderId = params?.lenderId;
   const isBorrowerView = Boolean(lenderId);
@@ -53,6 +58,61 @@ export default function ProductCard({
   const [isEditInventoryOpen, setIsEditInventoryOpen] = useState(false);
   const [isLendInventoryOpen, setIsLendInventoryOpen] = useState(false);
   const [isBringBackOpen, setIsBringBackOpen] = useState(false);
+  const [lendLines, setLendLines] = useState<TransferLine[]>([]);
+
+  // Lendable qty per size accounts for stock already lent elsewhere, so it
+  // has to be fetched fresh each time the lend dialog opens.
+  useEffect(() => {
+    if (!isLendInventoryOpen) return;
+    let ignore = false;
+    const inventoryIds = sizes.map((s) => s.inventoryId).join(",");
+    if (!inventoryIds) return;
+
+    fetch(`/api/lended-shoes?inventoryIds=${encodeURIComponent(inventoryIds)}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: { inventoryId: string; lentQuantity: number }[]) => {
+        if (ignore) return;
+        const lentById = new Map(
+          data.map((r) => [r.inventoryId, Number(r.lentQuantity)]),
+        );
+        setLendLines(
+          sizes
+            .map((s) => {
+              const lent = lentById.get(s.inventoryId) ?? 0;
+              const lendable = storeHeldStock(s.quantity, lent);
+              return {
+                inventoryId: s.inventoryId,
+                modelName,
+                color,
+                size: s.size,
+                maxQty: lendable,
+                helperText:
+                  lent > 0
+                    ? `${lendable} lendable · ${lent} already lent`
+                    : `${lendable} in stock`,
+              };
+            })
+            .filter((line) => line.maxQty > 0),
+        );
+      })
+      .catch(() => {
+        if (!ignore) setLendLines([]);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [isLendInventoryOpen, sizes, modelName, color]);
+
+  const bringBackLines: TransferLine[] = sizes.map((s) => ({
+    inventoryId: s.inventoryId,
+    modelName,
+    color,
+    size: s.size,
+    maxQty: s.quantity,
+    helperText: `${s.quantity} held`,
+  }));
+
   return (
     <div
       onClick={() => selectshoe(shoeId, modelName + color + sizes[0].size)}
@@ -61,6 +121,7 @@ export default function ProductCard({
       }
       className={cn(
         "flex w-full flex-col justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition hover:shadow-md focus:outline-none",
+        archived && "opacity-60",
         // show a visible ring when selected
         selectedShoes?.some((shoe) => shoe.id === shoeId)
           ? "ring-2 ring-purple-500/50 ring-offset-2"
@@ -71,6 +132,11 @@ export default function ProductCard({
         <div>
           <h4 className="text-sm font-semibold text-gray-900 truncate">
             {modelName}
+            {archived && (
+              <span className="ml-2 rounded border border-gray-300 px-1.5 py-0.5 align-middle text-[10px] font-medium text-gray-500">
+                archivé
+              </span>
+            )}
           </h4>
           <p className="mt-1 text-sm text-gray-600">
             <span className="font-medium text-gray-800">{color}</span>
@@ -148,16 +214,16 @@ export default function ProductCard({
                     >
                       <Undo2 className="h-3 w-3" /> Bring Back
                     </DialogTrigger>
-                    <BringBackDialog
-                      product={{
-                        modelId,
-                        modelName,
-                        color,
-                        sizes,
-                        shoeId,
+                    <InventoryTransferDialog
+                      open={isBringBackOpen}
+                      onOpenChange={setIsBringBackOpen}
+                      lines={bringBackLines}
+                      target={{
+                        mode: "return",
+                        borrowerId: lenderId,
+                        borrowerName: borrowerName ?? "this borrower",
                       }}
-                      borrowerId={lenderId}
-                      setIsBringBackOpen={setIsBringBackOpen}
+                      onSuccess={() => router.refresh()}
                     />
                   </Dialog>
                 </DropdownMenuItem>
@@ -200,15 +266,13 @@ export default function ProductCard({
                       >
                         <Handshake className="h-3 w-3" /> Lend
                       </DialogTrigger>
-                      <LendInventoryDialog
-                        product={{
-                          modelId,
-                          modelName,
-                          color,
-                          sizes,
-                          shoeId,
-                        }}
-                        setIsLendInventoryOpen={setIsLendInventoryOpen}
+                      <InventoryTransferDialog
+                        open={isLendInventoryOpen}
+                        onOpenChange={setIsLendInventoryOpen}
+                        lines={lendLines}
+                        target={{ mode: "lend" }}
+                        emptyText="No available sizes in stock."
+                        onSuccess={() => router.refresh()}
                       />
                     </Dialog>
                   </DropdownMenuItem>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ProductMedia from "./ProductMedia";
-import { formatDA } from "@/lib/format";
+import ProductPrice from "./ProductPrice";
 import { cn } from "@/lib/utils";
 import type { StorefrontProduct } from "@/lib/storefront/products";
 
@@ -31,35 +31,35 @@ export default function ProductCard({
       <div className="relative">
         <ProductMedia
           imageUrl={product.primaryImageUrl}
-          imageAlt={product.primaryImageAlt ?? `${product.modelName} ${product.color}`}
+          imageAlt={
+            product.primaryImageAlt ??
+            // Falls back to a descriptive phrase, not just the name: alt text
+            // is the only textual signal an image search has to go on.
+            `${product.modelName} ${product.color} — chaussure de basketball authentique`
+          }
           label={`${product.modelName} ${product.color}`}
           priority={priority}
           zoomOnHover
         />
         {onSale && (
-          <span className="sf-heading absolute left-0 top-0 bg-(--sf-ink) px-2 py-1 text-[10px] font-medium text-(--sf-ink-fg)">
+          <span className="sf-heading absolute left-0 top-0 bg-(--sf-ink) px-2 py-1 text-[10px] font-medium tracking-wide text-(--sf-ink-fg)">
             PROMO
           </span>
         )}
       </div>
 
       <div className="flex flex-col gap-1">
-        <h3 className="sf-heading text-md font-medium text-wrap text-(--sf-text) md:text-xl">
+        <h3 className="sf-heading text-base font-medium text-wrap text-(--sf-text) md:text-xl">
           {product.modelName}
         </h3>
         <p className="sf-body text-sm text-(--sf-muted) md:text-lg">
           {product.color.toUpperCase()}
         </p>
-        <div className="flex flex-wrap items-baseline gap-2">
-          <span className="sf-body text-md font-medium text-(--sf-accent) md:text-lg">
-            {formatDA(product.minPrice)}
-          </span>
-          {onSale && (
-            <span className="sf-body text-xs text-(--sf-muted) line-through md:text-sm">
-              {formatDA(product.compareAtPrice!)}
-            </span>
-          )}
-        </div>
+        <ProductPrice
+          price={product.minPrice}
+          compareAtPrice={product.compareAtPrice}
+          size="sm"
+        />
       </div>
     </Link>
   );

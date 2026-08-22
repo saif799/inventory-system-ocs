@@ -9,6 +9,13 @@ export type GroupedProduct = {
   modelId: string;
   modelName: string;
   color: string;
+  /**
+   * Archived variants stay on this page on purpose: archive is a
+   * discoverability flag, and you still physically own these pairs.
+   * Optional: surfaces that reuse this shape (e.g. a borrower's holdings) do
+   * not carry the flag and render the card unbadged.
+   */
+  archived?: boolean;
   sizes: {
     inventoryId: string;
     size: string;
@@ -25,6 +32,8 @@ export default async function InventoryPage() {
       shoeId: shoes.id,
       modelId: shoes.modelId,
       color: shoes.color,
+      archived: shoes.archived,
+      modelArchived: shoeModels.archived,
       quantity: shoeInventory.quantity,
       size: shoeInventory.size,
       modelName: shoeModels.modelName,
@@ -48,6 +57,7 @@ export default async function InventoryPage() {
         modelId: product.modelId,
         modelName: product.modelName,
         color: product.color,
+        archived: product.archived || product.modelArchived,
         sizes: [],
       };
       groupedMap.set(key, group);

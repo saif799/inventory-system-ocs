@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SelectGroup } from "@/components/ui/customSelect";
-import { formatDA } from "@/lib/format";
+import { formatDZD } from "@/lib/format";
 import { useDeliveryCoverage } from "@/lib/delivery/useDeliveryCoverage";
 import type { OrderDraft } from "@/lib/orders/placeOrder";
 
@@ -233,16 +233,16 @@ export default function OrderForm({
         <div className="space-y-1 text-sm">
           <div className="flex justify-between">
             <span className="text-(--sf-muted)">Prix</span>
-            <span>{selectedSize ? formatDA(productPrice) : "—"}</span>
+            <span>{selectedSize ? formatDZD(productPrice) : "—"}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-(--sf-muted)">Livraison</span>
-            <span>{codeWilaya ? (hasTarif ? formatDA(fee) : "Calcul en cours…") : "—"}</span>
+            <span>{codeWilaya ? (hasTarif ? formatDZD(fee) : "Calcul en cours…") : "—"}</span>
           </div>
           <div className="my-4 border-t border-(--sf-text)" />
           <div className="flex justify-between font-medium">
             <span>Total</span>
-            <span>{total > 0 ? formatDA(total) : "—"}</span>
+            <span>{total > 0 ? formatDZD(total) : "—"}</span>
           </div>
         </div>
       </div>

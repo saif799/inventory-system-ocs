@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
 import { shoeModels } from "@/lib/schema";
+import { eq, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
-    const models = await db.select().from(shoeModels);
+    // Feeds the add-shoes model picker, so archived models are withheld.
+    const models = await db
+      .select()
+      .from(shoeModels)
+      .where(eq(shoeModels.archived, false));
     return Response.json(models);
   } catch (error) {
     return Response.json({ error: "Failed to fetch models" }, { status: 500 });
@@ -14,17 +19,33 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { modelName } = await request.json();
+    const name = typeof modelName === "string" ? modelName.trim() : "";
 
-    if (!modelName) {
+    if (!name) {
       return Response.json(
         { error: "Model name is required" },
         { status: 400 }
       );
     }
 
+    // Caught here as well as on rename: a guard that only fires when correcting
+    // a typo is a guard that arrives too late to prevent the duplicate.
+    const [clash] = await db
+      .select({ modelName: shoeModels.modelName })
+      .from(shoeModels)
+      .where(ilike(shoeModels.modelName, name))
+      .limit(1);
+
+    if (clash) {
+      return Response.json(
+        { error: `A model named "${clash.modelName}" already exists` },
+        { status: 409 }
+      );
+    }
+
     const [inserted] = await db
       .insert(shoeModels)
-      .values({ modelName })
+      .values({ modelName: name })
       .returning();
 
     revalidatePath("/admin");

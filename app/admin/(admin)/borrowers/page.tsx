@@ -31,7 +31,7 @@ export default async function BorrowersPage() {
               key={item.id}
               className="flex items-center justify-between rounded-md border p-2 pl-4 text-sm transition hover:bg-gray-50"
             >
-              <Link href={`/${item.id}`} className="flex-1 py-2">
+              <Link href={`/admin/${item.id}`} className="flex-1 py-2">
                 <span className="font-medium">{item.name}</span>
               </Link>
               <BorrowerActions borrowerId={item.id} name={item.name} />

@@ -4,21 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
+import InventoryTransferDialog, {
+  type TransferLine,
+} from "@/components/InventoryTransferDialog";
 import { ArrowLeftRight, HandHeart, RefreshCcw, Undo2 } from "lucide-react";
 
 type BringBackRow = {
@@ -42,28 +37,30 @@ type GiveRow = {
   modelName: string;
 };
 
-type Borrower = { id: string; name: string };
 type Section = "bring_back" | "give";
+
+// Which dialog is open: give-all (spans every product) or bring-back for one
+// specific borrower. Both are served by the same InventoryTransferDialog.
+type DialogState =
+  | { type: "give" }
+  | { type: "bring_back"; borrowerId: string; borrowerName: string }
+  | null;
 
 export default function RebalancePage() {
   const [bringBack, setBringBack] = useState<BringBackRow[]>([]);
   const [give, setGive] = useState<GiveRow[]>([]);
-  const [borrowers, setBorrowers] = useState<Borrower[]>([]);
   const [loading, setLoading] = useState(true);
   const [section, setSection] = useState<Section>("bring_back");
+  const [dialog, setDialog] = useState<DialogState>(null);
 
   const fetchView = async () => {
     setLoading(true);
     try {
-      const [viewRes, borrowersRes] = await Promise.all([
-        fetch("/api/rebalance"),
-        fetch("/api/borrowers"),
-      ]);
+      const viewRes = await fetch("/api/rebalance");
       if (!viewRes.ok) throw new Error("Failed to load rebalancing view");
       const data = await viewRes.json();
       setBringBack(data.bringBack ?? []);
       setGive(data.give ?? []);
-      if (borrowersRes.ok) setBorrowers(await borrowersRes.json());
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -104,6 +101,34 @@ export default function RebalancePage() {
     return Array.from(map.entries());
   }, [give]);
 
+  const giveLines: TransferLine[] = useMemo(
+    () =>
+      give.map((r) => ({
+        inventoryId: r.shoeInventoryId,
+        modelName: r.modelName,
+        color: r.color,
+        size: r.size,
+        maxQty: r.quantity,
+        helperText: `${r.quantity} in stock`,
+      })),
+    [give],
+  );
+
+  const bringBackLinesFor = (items: BringBackRow[]): TransferLine[] =>
+    items.map((r) => ({
+      inventoryId: r.shoeInventoryId,
+      modelName: r.modelName,
+      color: r.color,
+      size: r.size,
+      maxQty: r.held,
+      helperText: `${r.held} held`,
+    }));
+
+  const closeDialog = () => setDialog(null);
+  const onTransferSuccess = () => {
+    fetchView();
+  };
+
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8">
       <div className="flex items-start justify-between">
@@ -118,7 +143,7 @@ export default function RebalancePage() {
         </Button>
       </div>
 
-      <div className="mt-6 flex gap-2">
+      <div className="mt-6 flex flex-wrap items-center gap-2">
         <Button
           variant={section === "bring_back" ? "default" : "outline"}
           onClick={() => setSection("bring_back")}
@@ -133,6 +158,15 @@ export default function RebalancePage() {
           <HandHeart className="mr-2 h-4 w-4" />
           Give some ({give.length})
         </Button>
+        {section === "give" && give.length > 0 && (
+          <Button
+            className="ml-auto"
+            onClick={() => setDialog({ type: "give" })}
+          >
+            <HandHeart className="mr-2 h-4 w-4" />
+            Give shoes…
+          </Button>
+        )}
       </div>
 
       {loading ? (
@@ -144,8 +178,21 @@ export default function RebalancePage() {
           <div className="mt-6 space-y-4">
             {byBorrower.map(([borrowerId, group]) => (
               <Card key={borrowerId}>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between gap-2">
                   <CardTitle className="text-base">{group.name}</CardTitle>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      setDialog({
+                        type: "bring_back",
+                        borrowerId,
+                        borrowerName: group.name,
+                      })
+                    }
+                  >
+                    <Undo2 className="mr-1 h-3 w-3" /> Bring back…
+                  </Button>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {group.items.map((item) => (
@@ -162,12 +209,6 @@ export default function RebalancePage() {
                           store 0 · they hold {item.held}
                         </span>
                       </div>
-                      <BringBackAction
-                        borrowerId={item.borrowerId}
-                        inventoryId={item.shoeInventoryId}
-                        maxQty={item.held}
-                        onDone={fetchView}
-                      />
                     </div>
                   ))}
                 </CardContent>
@@ -198,12 +239,6 @@ export default function RebalancePage() {
                         {item.quantity} in stock
                       </span>
                     </span>
-                    <LendAction
-                      inventoryId={item.shoeInventoryId}
-                      maxQty={item.quantity}
-                      borrowers={borrowers}
-                      onDone={fetchView}
-                    />
                   </div>
                 ))}
               </CardContent>
@@ -211,167 +246,40 @@ export default function RebalancePage() {
           ))}
         </div>
       )}
+
+      <Dialog
+        open={dialog !== null}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
+      >
+        {dialog?.type === "give" && (
+          <InventoryTransferDialog
+            open
+            onOpenChange={closeDialog}
+            lines={giveLines}
+            target={{ mode: "lend" }}
+            onSuccess={onTransferSuccess}
+          />
+        )}
+        {dialog?.type === "bring_back" && (
+          <InventoryTransferDialog
+            open
+            onOpenChange={closeDialog}
+            lines={bringBackLinesFor(
+              byBorrower.find(([id]) => id === dialog.borrowerId)?.[1]
+                .items ?? [],
+            )}
+            target={{
+              mode: "return",
+              borrowerId: dialog.borrowerId,
+              borrowerName: dialog.borrowerName,
+            }}
+            onSuccess={onTransferSuccess}
+          />
+        )}
+      </Dialog>
     </main>
-  );
-}
-
-function clampQty(value: number, max: number) {
-  if (!Number.isFinite(value)) return 1;
-  return Math.max(1, Math.min(max, Math.floor(value)));
-}
-
-function BringBackAction({
-  borrowerId,
-  inventoryId,
-  maxQty,
-  onDone,
-}: {
-  borrowerId: string;
-  inventoryId: string;
-  maxQty: number;
-  onDone: () => void;
-}) {
-  const [qty, setQty] = useState(1);
-  const [busy, setBusy] = useState(false);
-
-  const submit = async () => {
-    setBusy(true);
-    try {
-      const res = await fetch("/api/lended-shoes/bring-back", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ borrowerId, inventoryId, quantity: qty }),
-      });
-      if (!res.ok) {
-        const e = await res.json().catch(() => ({}));
-        throw new Error(e?.error || "Failed to bring back");
-      }
-      toast.success("Brought back.");
-      onDone();
-    } catch (error) {
-      toast.error((error as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <div className="flex items-center gap-1">
-      <Input
-        type="number"
-        min={1}
-        max={maxQty}
-        value={qty}
-        onChange={(e) => setQty(clampQty(Number(e.target.value), maxQty))}
-        className="h-8 w-14 text-xs"
-      />
-      <Button size="sm" variant="outline" disabled={busy} onClick={submit}>
-        <Undo2 className="mr-1 h-3 w-3" /> Bring back
-      </Button>
-    </div>
-  );
-}
-
-function LendAction({
-  inventoryId,
-  maxQty,
-  borrowers,
-  onDone,
-}: {
-  inventoryId: string;
-  maxQty: number;
-  borrowers: Borrower[];
-  onDone: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [qty, setQty] = useState(1);
-  const [busy, setBusy] = useState(false);
-
-  const submit = async () => {
-    const clean = name.trim();
-    if (!clean) {
-      toast.error("Borrower name is required.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const res = await fetch("/api/lended-shoes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          inventoryId,
-          borrowerName: clean,
-          quantity: qty,
-        }),
-      });
-      if (!res.ok) {
-        const e = await res.json().catch(() => ({}));
-        throw new Error(e?.error || "Failed to lend");
-      }
-      toast.success(`Lent to ${clean}.`);
-      setOpen(false);
-      setName("");
-      setQty(1);
-      onDone();
-    } catch (error) {
-      toast.error((error as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          <HandHeart className="mr-1 h-3 w-3" /> Lend
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Lend to a borrower</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-sm">Borrower</label>
-            <Input
-              list="rebalance-borrowers"
-              placeholder="Existing or new name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <datalist id="rebalance-borrowers">
-              {borrowers.map((b) => (
-                <option key={b.id} value={b.name} />
-              ))}
-            </datalist>
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm">Quantity (max {maxQty})</label>
-            <Input
-              type="number"
-              min={1}
-              max={maxQty}
-              value={qty}
-              onChange={(e) => setQty(clampQty(Number(e.target.value), maxQty))}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={busy}
-          >
-            Cancel
-          </Button>
-          <Button onClick={submit} disabled={busy}>
-            {busy ? "Lending…" : "Lend"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   );
 }
 

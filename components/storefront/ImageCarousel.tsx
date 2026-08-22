@@ -52,7 +52,7 @@ export default function ImageCarousel({
       >
         <Image
           src={active.url}
-          alt={active.altText ?? productName}
+          alt={active.altText ?? `${productName} — chaussure de basketball authentique`}
           fill
           className="object-contain"
           sizes="(max-width: 768px) 100vw, 50vw"

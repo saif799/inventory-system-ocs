@@ -13,6 +13,7 @@ export default async function ProductEditPage({ params }: Props) {
     .select({
       id: shoes.id,
       color: shoes.color,
+      archived: shoes.archived,
       priceOverride: shoes.priceOverride,
       compareAtPriceOverride: shoes.compareAtPriceOverride,
       modelBasePrice: shoeModels.basePrice,

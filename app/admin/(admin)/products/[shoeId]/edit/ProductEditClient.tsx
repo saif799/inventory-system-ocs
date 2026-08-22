@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { Trash2, Star } from "lucide-react";
+import { Trash2, Star, Archive, ArchiveRestore } from "lucide-react";
 
 type Shoe = {
   id: string;
@@ -16,6 +16,7 @@ type Shoe = {
   modelBasePrice: number;
   modelCompareAtPrice: number | null;
   modelName: string;
+  archived: boolean;
 };
 
 type InventoryRow = {
@@ -54,6 +55,9 @@ export default function ProductEditClient({
       inventory.map((i) => [i.id, i.priceOverride != null ? String(i.priceOverride) : ""])
     )
   );
+  const [color, setColor] = useState(shoe.color);
+  const [archived, setArchived] = useState(shoe.archived);
+  const [savingDetails, setSavingDetails] = useState(false);
   const [images, setImages] = useState<ImageRow[]>(initialImages);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -85,6 +89,51 @@ export default function ProductEditClient({
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  /** Sends a partial PATCH and reports the server's message on failure. */
+  const patchShoe = async (body: Record<string, unknown>) => {
+    const res = await fetch(`/api/admin/products/${shoe.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error || "Request failed");
+    }
+  };
+
+  const handleSaveColor = async () => {
+    const next = color.trim();
+    if (!next) {
+      toast.error("Colour cannot be empty");
+      return;
+    }
+    setSavingDetails(true);
+    try {
+      await patchShoe({ color: next });
+      setColor(next);
+      toast.success("Colour saved");
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to save colour");
+    } finally {
+      setSavingDetails(false);
+    }
+  };
+
+  const handleToggleArchived = async () => {
+    const next = !archived;
+    setSavingDetails(true);
+    try {
+      await patchShoe({ archived: next });
+      setArchived(next);
+      toast.success(next ? "Product archived" : "Product restored");
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to update product");
+    } finally {
+      setSavingDetails(false);
     }
   };
 
@@ -240,6 +289,50 @@ export default function ProductEditClient({
 
   return (
     <div className="space-y-10">
+      {/* Details Section */}
+      <section className="space-y-4 border rounded-lg p-6">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold">Details</h2>
+          <Button
+            variant={archived ? "secondary" : "outline"}
+            size="sm"
+            onClick={handleToggleArchived}
+            disabled={savingDetails}
+          >
+            {archived ? (
+              <>
+                <ArchiveRestore className="mr-2 h-4 w-4" /> Restore
+              </>
+            ) : (
+              <>
+                <Archive className="mr-2 h-4 w-4" /> Archive
+              </>
+            )}
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {archived
+            ? "Archived: hidden from the catalog, the sitemap and the arrivage picker. Stock and the direct product link are unaffected."
+            : "Rename the colour of this variant. The model name is edited from the products list."}
+        </p>
+        <div className="flex items-end gap-3">
+          <div className="flex-1 space-y-2">
+            <Label>Colour</Label>
+            <Input
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              placeholder="e.g. Triple Black"
+            />
+          </div>
+          <Button
+            onClick={handleSaveColor}
+            disabled={savingDetails || color.trim() === shoe.color}
+          >
+            {savingDetails ? "Saving..." : "Save Colour"}
+          </Button>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section className="space-y-6 border rounded-lg p-6">
         <h2 className="text-lg font-semibold">Pricing</h2>

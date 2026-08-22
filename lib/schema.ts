@@ -16,6 +16,10 @@ export const shoeModels = pgTable("shoe_models", {
   // Storefront pricing (DZD) — the base of the 3-level resolution chain.
   basePrice: integer("base_price").notNull().default(0),
   compareAtPrice: integer("compare_at_price"),
+  // Discoverability flag only: an archived model and its variants drop out of
+  // the storefront catalog and the admin pickers, but keep their stock, their
+  // history and their public product URLs. Never touches Physical Quantity.
+  archived: boolean("archived").notNull().default(false),
 });
 
 export const shoes = pgTable("shoes", {
@@ -28,6 +32,8 @@ export const shoes = pgTable("shoes", {
   // Optional colour-level overrides of the model's price. Null = inherit model.
   priceOverride: integer("price_override"),
   compareAtPriceOverride: integer("compare_at_price_override"),
+  // See shoeModels.archived — same flag, colour-variant scope.
+  archived: boolean("archived").notNull().default(false),
 });
 
 export const ordersTable = pgTable("orders", {

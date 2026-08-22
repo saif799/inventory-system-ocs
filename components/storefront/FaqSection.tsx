@@ -20,7 +20,7 @@ export default function FaqSection() {
         <h2 className="sf-heading text-xl font-medium text-(--sf-text) md:text-3xl">
           Questions fréquentes
         </h2>
-        <p className="sf-body mt-2 text-sm font-light text-(--sf-muted)">
+        <p className="sf-body mt-2 text-sm font-normal text-(--sf-muted)">
           Tout ce qu&apos;il faut savoir avant de commander.
         </p>
       </div>
@@ -28,10 +28,10 @@ export default function FaqSection() {
       <Accordion type="single" collapsible className="mx-auto mt-8 max-w-2xl">
         {STOREFRONT_FAQS.map((faq, i) => (
           <AccordionItem key={i} value={`faq-${i}`}>
-            <AccordionTrigger className="pl-2 text-left text-base font-light text-(--sf-text) data-[state=open]:font-medium">
+            <AccordionTrigger className="pl-2 text-left text-base font-normal text-(--sf-text) data-[state=open]:font-medium">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-sm font-light text-(--sf-muted)">
+            <AccordionContent className="text-sm font-normal text-(--sf-muted)">
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

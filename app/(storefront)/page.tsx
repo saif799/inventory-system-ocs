@@ -3,13 +3,24 @@ import AuthenticityBand from "@/components/storefront/AuthenticityBand";
 import SectionCarousel from "@/components/storefront/SectionCarousel";
 import FaqSection from "@/components/storefront/FaqSection";
 import { getVisibleSections } from "@/lib/storefront/homepage";
+import JsonLd from "@/components/storefront/JsonLd";
+import { STOREFRONT_FAQS } from "@/lib/storefront/faq";
+import { BRAND, faqJsonLd } from "@/lib/storefront/seo";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "OCS Store — Sneakers en Algérie",
-  description:
-    "Sneakers authentiques, livrées partout en Algérie. Paiement à la livraison.",
+  // Absolute: the homepage title should not be suffixed with the brand twice.
+  title: {
+    absolute: `${BRAND.name} — Chaussures de basketball authentiques en Algérie | Livraison 24-48h`,
+  },
+  description: BRAND.descriptionFr,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: `${BRAND.name} — ${BRAND.tagline}`,
+    description: BRAND.descriptionFr,
+    url: "/",
+  },
 };
 
 export default async function StorefrontPage() {
@@ -30,6 +41,10 @@ export default async function StorefrontPage() {
       <AuthenticityBand />
 
       <FaqSection />
+
+      {/* The FAQ answers carry the delivery window and the authenticity claim
+          in machine-readable form — this is what an assistant quotes. */}
+      <JsonLd data={faqJsonLd(STOREFRONT_FAQS)} />
     </>
   );
 }

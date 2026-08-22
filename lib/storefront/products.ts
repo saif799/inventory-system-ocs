@@ -65,6 +65,18 @@ type Row = {
 /** The resolved unit price, `size override -> color override -> model base`, computed in SQL. */
 const resolvedPriceSql = sql<number>`COALESCE(${shoeInventory.priceOverride}, ${shoes.priceOverride}, ${shoeModels.basePrice})`;
 
+/**
+ * Archive is a discoverability flag, not a stock flag: it removes a product
+ * from every surface a buyer *browses* (catalog, homepage sections, sitemap,
+ * model filter) while leaving its stock, its history and its direct
+ * `/product/[shoeId]` URL untouched. An archived model retires its colours
+ * with it — `baseSelect()` already inner-joins `shoeModels`, so one predicate
+ * covers both levels.
+ */
+function notArchived(): SQL {
+  return and(eq(shoes.archived, false), eq(shoeModels.archived, false))!;
+}
+
 function escapeLikePattern(value: string): string {
   return value.replace(/[\\%_]/g, (ch) => `\\${ch}`);
 }
@@ -272,6 +284,7 @@ export async function getStorefrontProducts(opts?: {
   const rows = await baseSelect(e)
     .where(
       and(
+        notArchived(),
         includeOutOfStock ? undefined : gt(shoeInventory.quantity, 0),
         ...buildFilterConditions(e, opts?.filters ?? {}, includeOutOfStock),
       ),
@@ -301,7 +314,7 @@ export async function getStorefrontProductsByIds(
   const e = exec as typeof db;
 
   const rows = await baseSelect(e)
-    .where(inArray(shoes.id, shoeIds))
+    .where(and(notArchived(), inArray(shoes.id, shoeIds)))
     .orderBy(asc(shoes.id), asc(shoeInventory.size));
 
   const grouped = groupRows(rows as Row[]);
@@ -312,6 +325,10 @@ export async function getStorefrontProductsByIds(
     .filter((p): p is StorefrontProduct => p !== undefined);
 }
 
+/**
+ * Deliberately does NOT filter archived: retiring a product removes it from
+ * discovery, but anyone holding the link keeps a working, orderable page.
+ */
 export async function getStorefrontProductDetail(
   shoeId: string,
   exec: Executor = db,
@@ -351,5 +368,6 @@ export async function getStorefrontModels(): Promise<{ id: string; modelName: st
   return db
     .select({ id: shoeModels.id, modelName: shoeModels.modelName })
     .from(shoeModels)
+    .where(eq(shoeModels.archived, false))
     .orderBy(asc(shoeModels.modelName));
 }

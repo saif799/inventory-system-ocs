@@ -32,6 +32,7 @@ export default async function ProductsAdminPage() {
         modelName: m.modelName,
         basePrice: m.basePrice,
         compareAtPrice: m.compareAtPrice,
+        archived: m.archived,
         variants: [],
       },
     ]),
@@ -50,6 +51,7 @@ export default async function ProductsAdminPage() {
       imageCount: imagesByShoe.get(s.id) ?? 0,
       totalStock: stockByShoe.get(s.id) ?? 0,
       hasPrice: effectivePrice > 0,
+      archived: s.archived,
     };
     model.variants.push(variant);
   }
@@ -57,12 +59,15 @@ export default async function ProductsAdminPage() {
   const modelList = Array.from(modelsById.values()).sort((a, b) =>
     a.modelName.localeCompare(b.modelName),
   );
+  // Archived rows are retired on purpose — they should stop nagging.
+  const liveVariants = (m: ModelRow) =>
+    m.archived ? [] : m.variants.filter((v) => !v.archived);
   const unpricedCount = modelList.reduce(
-    (sum, m) => sum + m.variants.filter((v) => !v.hasPrice).length,
+    (sum, m) => sum + liveVariants(m).filter((v) => !v.hasPrice).length,
     0,
   );
   const unphotographedCount = modelList.reduce(
-    (sum, m) => sum + m.variants.filter((v) => v.imageCount === 0).length,
+    (sum, m) => sum + liveVariants(m).filter((v) => v.imageCount === 0).length,
     0,
   );
 

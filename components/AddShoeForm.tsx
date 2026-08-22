@@ -128,14 +128,21 @@ export default function AddShoeForm({
         body: JSON.stringify({ modelName: newModel }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setModels([...models, data]);
-        setNewModel("");
-        setShowNewModel(false);
-        setModelValueSelected(data);
-        setFormData({ ...formData, modelId: data.id.toString() });
+      const data = await res.json();
+
+      if (!res.ok) {
+        // Duplicate names are rejected server-side; without this the button
+        // just did nothing and the name looked accepted.
+        setError(data?.error || "Failed to add model");
+        return;
       }
+
+      setError("");
+      setModels([...models, data]);
+      setNewModel("");
+      setShowNewModel(false);
+      setModelValueSelected(data);
+      setFormData({ ...formData, modelId: data.id.toString() });
     } catch (err) {
       setError("Failed to add model");
     }

@@ -122,7 +122,11 @@ export default async function InventoryPage({
         )}
       </div>
       <BorrowerHistory history={history} />
-      <Listings models={models} products={groupedProducts} />
+      <Listings
+        models={models}
+        products={groupedProducts}
+        borrowerName={borrowerRow?.name}
+      />
     </div>
   );
 }

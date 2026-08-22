@@ -2,56 +2,82 @@ import { db, txClient } from "@/lib/db";
 import { LendedShoes } from "@/lib/schema";
 import { applyMovement } from "@/lib/stock/movement";
 import { revalidateStockPaths } from "@/lib/stock/revalidate";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 
+type BringBackItem = { inventoryId?: string; quantity?: number };
 type BringBackRequest = {
   borrowerId?: string;
-  inventoryId?: string;
-  quantity?: number;
+  items?: BringBackItem[];
 };
 
 export async function POST(request: Request) {
   try {
-    const { borrowerId, inventoryId, quantity }: BringBackRequest =
-      await request.json();
+    const { borrowerId, items }: BringBackRequest = await request.json();
 
-    const safeQuantity = Math.floor(Number(quantity));
-
-    if (!borrowerId || !inventoryId || !Number.isFinite(safeQuantity)) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 });
+    if (!borrowerId) {
+      return Response.json({ error: "Missing borrowerId" }, { status: 400 });
+    }
+    if (!items || items.length === 0) {
+      return Response.json({ error: "No items to bring back" }, { status: 400 });
     }
 
-    if (safeQuantity < 1) {
-      return Response.json({ error: "Quantity must be at least 1" }, { status: 400 });
+    const safeItems = items.map((item) => ({
+      inventoryId: item.inventoryId,
+      quantity: Math.floor(Number(item.quantity)),
+    }));
+
+    if (
+      safeItems.some(
+        (item) =>
+          !item.inventoryId ||
+          !Number.isFinite(item.quantity) ||
+          item.quantity < 1,
+      )
+    ) {
+      return Response.json(
+        { error: "Every item needs a valid quantity of at least 1" },
+        { status: 400 },
+      );
     }
 
-    const [summary] = await db
+    const inventoryIds = [
+      ...new Set(safeItems.map((item) => item.inventoryId!)),
+    ];
+
+    const summaries = await db
       .select({
+        inventoryId: LendedShoes.shoeInventoryId,
         lendedQuantity: sql<number>`COALESCE(SUM(${LendedShoes.quantity}), 0)`,
       })
       .from(LendedShoes)
       .where(
         and(
           eq(LendedShoes.borrowerId, borrowerId),
-          eq(LendedShoes.shoeInventoryId, inventoryId),
+          inArray(LendedShoes.shoeInventoryId, inventoryIds),
         ),
-      );
+      )
+      .groupBy(LendedShoes.shoeInventoryId);
+    const lendedById = new Map(
+      summaries.map((s) => [s.inventoryId, Number(s.lendedQuantity)]),
+    );
 
-    const lendedQuantity = Number(summary?.lendedQuantity ?? 0);
-    if (safeQuantity > lendedQuantity) {
-      return Response.json(
-        {
-          error: `Return quantity exceeds lended amount. Current lended quantity: ${lendedQuantity}`,
-        },
-        { status: 400 },
-      );
+    for (const item of safeItems) {
+      const lendedQuantity = lendedById.get(item.inventoryId!) ?? 0;
+      if (item.quantity > lendedQuantity) {
+        return Response.json(
+          {
+            error: `Return quantity exceeds lended amount. Current lended quantity: ${lendedQuantity}`,
+          },
+          { status: 400 },
+        );
+      }
     }
 
     await txClient().transaction(async (tx) => {
       await applyMovement(
         {
           reason: "return",
-          items: [{ inventoryId, quantity: safeQuantity }],
+          items: safeItems as { inventoryId: string; quantity: number }[],
           borrowerId,
         },
         tx,

@@ -1,20 +1,32 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { shoeInventory, shoeModels, shoes } from "@/lib/schema";
-import { getStorefrontProducts } from "@/lib/storefront/products";
+import {
+  getStorefrontProductDetail,
+  getStorefrontProducts,
+  getStorefrontProductsByIds,
+} from "@/lib/storefront/products";
 import { createTestDb, type TestDb } from "../testDb";
 import type { Executor } from "@/lib/db";
 
 let db: TestDb;
 
-async function seedModel(modelName: string, basePrice: number) {
-  const [model] = await db.insert(shoeModels).values({ modelName, basePrice }).returning();
+async function seedModel(modelName: string, basePrice: number, archived = false) {
+  const [model] = await db
+    .insert(shoeModels)
+    .values({ modelName, basePrice, archived })
+    .returning();
   return model;
 }
 
-async function seedShoe(modelId: string, color: string, priceOverride?: number) {
+async function seedShoe(
+  modelId: string,
+  color: string,
+  priceOverride?: number,
+  archived = false,
+) {
   const [shoe] = await db
     .insert(shoes)
-    .values({ id: `shoe-${crypto.randomUUID()}`, modelId, color, priceOverride })
+    .values({ id: `shoe-${crypto.randomUUID()}`, modelId, color, priceOverride, archived })
     .returning();
   return shoe;
 }
@@ -147,5 +159,50 @@ describe("getStorefrontProducts: SQL-resolved filters", () => {
       filters: { search: "air force", modelIds: [modelA.id], sizes: ["42"], minPrice: 6000 },
     });
     expect(result).toEqual([shoeA2.id]);
+  });
+});
+
+describe("archived products", () => {
+  it("hides an archived shoe from the catalog", async () => {
+    const model = await seedModel("Air Force 1", 5000);
+    const live = await seedShoe(model.id, "White");
+    await seedInventory(live.id, "40", 2);
+    const retired = await seedShoe(model.id, "Black", undefined, true);
+    await seedInventory(retired.id, "42", 3);
+
+    expect(await ids({})).toEqual([live.id]);
+  });
+
+  it("hides every colour of an archived model, even un-archived ones", async () => {
+    const model = await seedModel("Retired Model", 5000, true);
+    const shoe = await seedShoe(model.id, "White");
+    await seedInventory(shoe.id, "40", 2);
+
+    expect(await ids({})).toEqual([]);
+    expect(await ids({ filters: { search: "retired" } })).toEqual([]);
+  });
+
+  it("drops an archived shoe out of a pinned homepage section", async () => {
+    const model = await seedModel("Air Force 1", 5000);
+    const live = await seedShoe(model.id, "White");
+    await seedInventory(live.id, "40", 2);
+    const retired = await seedShoe(model.id, "Black", undefined, true);
+    await seedInventory(retired.id, "42", 3);
+
+    const pinned = await getStorefrontProductsByIds(
+      [live.id, retired.id],
+      db as unknown as Executor,
+    );
+    expect(pinned.map((p) => p.shoeId)).toEqual([live.id]);
+  });
+
+  it("keeps the direct product page working for an archived shoe", async () => {
+    const model = await seedModel("Air Force 1", 5000);
+    const retired = await seedShoe(model.id, "Black", undefined, true);
+    await seedInventory(retired.id, "42", 3);
+
+    const detail = await getStorefrontProductDetail(retired.id, db as unknown as Executor);
+    expect(detail?.shoeId).toBe(retired.id);
+    expect(detail?.sizes.map((s) => s.size)).toEqual(["42"]);
   });
 });

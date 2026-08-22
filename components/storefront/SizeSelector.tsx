@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDA } from "@/lib/format";
+import ProductPrice from "@/components/storefront/ProductPrice";
 
 type SizeOption = {
   inventoryId: string;
@@ -19,12 +19,27 @@ export default function SizeSelector({
   sizes,
   selectedInventoryId,
   onSelect,
+  headlinePrice,
+  compareAtPrice = null,
 }: {
   sizes: SizeOption[];
   selectedInventoryId: string | null;
   onSelect: (size: SizeOption) => void;
+  /** The price already shown beside the title, so this block can stay quiet
+   *  unless the chosen size actually costs something different. */
+  headlinePrice?: number;
+  compareAtPrice?: number | null;
 }) {
   const selected = sizes.find((s) => s.inventoryId === selectedInventoryId);
+
+  // Per-size price overrides are rare (see the 3-level resolution in
+  // lib/helpers). Repeating the headline price here on every selection was a
+  // third copy of the same number; show it only when it genuinely differs.
+  const sizePriceDiffers =
+    selected != null &&
+    selected.resolvedPrice > 0 &&
+    headlinePrice != null &&
+    selected.resolvedPrice !== headlinePrice;
 
   return (
     <div className="sf-body space-y-3">
@@ -65,10 +80,17 @@ export default function SizeSelector({
         })}
       </div>
 
-      {selected && selected.resolvedPrice > 0 && (
-        <p className="sf-heading text-xl font-medium text-(--sf-accent)">
-          {formatDA(selected.resolvedPrice)}
-        </p>
+      {sizePriceDiffers && (
+        <div className="space-y-1">
+          <p className="text-xs text-(--sf-muted)">
+            Prix pour la pointure {selected!.size}
+          </p>
+          <ProductPrice
+            price={selected!.resolvedPrice}
+            compareAtPrice={compareAtPrice}
+            size="md"
+          />
+        </div>
       )}
     </div>
   );

@@ -49,7 +49,7 @@ export default function ProductMedia({
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center border border-(--sf-line)">
-          <span className="sf-heading px-3 text-center text-xs font-light text-(--sf-muted)">
+          <span className="sf-heading px-3 text-center text-xs font-normal text-(--sf-muted)">
             {label}
           </span>
         </div>

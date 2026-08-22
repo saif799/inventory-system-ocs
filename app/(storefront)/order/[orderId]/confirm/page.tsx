@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle } from "lucide-react";
-import { formatDA } from "@/lib/format";
+import { formatDZD } from "@/lib/format";
 
 type Props = { params: Promise<{ orderId: string }> };
 
@@ -37,7 +37,7 @@ export default async function OrderConfirmPage({ params }: Props) {
     .where(eq(orderItems.orderId, orderId));
 
   const whatsappMessage = encodeURIComponent(
-    `Bonjour ! Je viens de passer une commande.\nCommande : ${order.reference || orderId}\nNom : ${order.nom_client}\nTotal : ${formatDA(Number(order.montant))}`,
+    `Bonjour ! Je viens de passer une commande.\nCommande : ${order.reference || orderId}\nNom : ${order.nom_client}\nTotal : ${formatDZD(Number(order.montant))}`,
   );
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "213XXXXXXXXX";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
@@ -50,7 +50,7 @@ export default async function OrderConfirmPage({ params }: Props) {
           <h1 className="sf-heading text-xl font-medium text-green-600 md:text-2xl">
             Commande passée !
           </h1>
-          <p className="sf-body mt-2 text-sm font-light text-(--sf-muted)">
+          <p className="sf-body mt-2 text-sm font-normal text-(--sf-muted)">
             Merci, {order.nom_client}. Votre commande a bien été reçue.
           </p>
         </div>
@@ -90,7 +90,7 @@ export default async function OrderConfirmPage({ params }: Props) {
         <div className="my-4 border-t border-(--sf-text)" />
         <div className="flex justify-between font-medium">
           <span>Total</span>
-          <span className="text-(--sf-text)">{formatDA(Number(order.montant))}</span>
+          <span className="text-(--sf-text)">{formatDZD(Number(order.montant))}</span>
         </div>
       </div>
 

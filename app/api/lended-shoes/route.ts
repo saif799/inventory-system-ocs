@@ -5,10 +5,10 @@ import { revalidateStockPaths } from "@/lib/stock/revalidate";
 import { storeHeldStock } from "@/lib/stock/availability";
 import { eq, inArray, sql } from "drizzle-orm";
 
+type LendItem = { inventoryId?: string; quantity?: number };
 type LendRequest = {
-  inventoryId?: string;
   borrowerName?: string;
-  quantity?: number;
+  items?: LendItem[];
 };
 
 export async function GET(request: Request) {
@@ -50,50 +50,81 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { inventoryId, borrowerName, quantity }: LendRequest =
-      await request.json();
+    const { borrowerName, items }: LendRequest = await request.json();
 
     const cleanBorrowerName = borrowerName?.trim();
-    const safeQuantity = Math.floor(Number(quantity));
-
-    if (!inventoryId || !cleanBorrowerName || !Number.isFinite(safeQuantity)) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 });
+    if (!cleanBorrowerName) {
+      return Response.json({ error: "Borrower name is required" }, { status: 400 });
     }
 
-    if (safeQuantity < 1) {
-      return Response.json({ error: "Quantity must be at least 1" }, { status: 400 });
+    if (!items || items.length === 0) {
+      return Response.json({ error: "No items to lend" }, { status: 400 });
     }
 
-    const [inventoryItem] = await db
+    const safeItems = items.map((item) => ({
+      inventoryId: item.inventoryId,
+      quantity: Math.floor(Number(item.quantity)),
+    }));
+
+    if (
+      safeItems.some(
+        (item) =>
+          !item.inventoryId ||
+          !Number.isFinite(item.quantity) ||
+          item.quantity < 1,
+      )
+    ) {
+      return Response.json(
+        { error: "Every item needs a valid quantity of at least 1" },
+        { status: 400 },
+      );
+    }
+
+    const inventoryIds = [
+      ...new Set(safeItems.map((item) => item.inventoryId!)),
+    ];
+
+    const inventoryRows = await db
       .select({
         id: shoeInventory.id,
         quantity: shoeInventory.quantity,
       })
       .from(shoeInventory)
-      .where(eq(shoeInventory.id, inventoryId))
-      .limit(1);
+      .where(inArray(shoeInventory.id, inventoryIds));
 
-    if (!inventoryItem) {
-      return Response.json({ error: "Inventory item not found" }, { status: 404 });
+    if (inventoryRows.length !== inventoryIds.length) {
+      return Response.json(
+        { error: "One or more inventory items were not found" },
+        { status: 404 },
+      );
     }
+    const quantityById = new Map(inventoryRows.map((r) => [r.id, r.quantity]));
 
-    const [lentSummary] = await db
+    const lentRows = await db
       .select({
+        inventoryId: LendedShoes.shoeInventoryId,
         lentQuantity: sql<number>`COALESCE(SUM(${LendedShoes.quantity}), 0)`,
       })
       .from(LendedShoes)
-      .where(eq(LendedShoes.shoeInventoryId, inventoryId));
+      .where(inArray(LendedShoes.shoeInventoryId, inventoryIds))
+      .groupBy(LendedShoes.shoeInventoryId);
+    const lentById = new Map(
+      lentRows.map((r) => [r.inventoryId, Number(r.lentQuantity)]),
+    );
 
-    const alreadyLent = Number(lentSummary?.lentQuantity ?? 0);
-    const remainingToLend = storeHeldStock(inventoryItem.quantity, alreadyLent);
-
-    if (safeQuantity > remainingToLend) {
-      return Response.json(
-        {
-          error: `Not enough inventory available to lend. Remaining lendable quantity: ${remainingToLend}`,
-        },
-        { status: 400 },
+    for (const item of safeItems) {
+      const remainingToLend = storeHeldStock(
+        quantityById.get(item.inventoryId!)!,
+        lentById.get(item.inventoryId!) ?? 0,
       );
+      if (item.quantity > remainingToLend) {
+        return Response.json(
+          {
+            error: `Not enough inventory available to lend. Remaining lendable quantity: ${remainingToLend}`,
+          },
+          { status: 400 },
+        );
+      }
     }
 
     const borrowerId = await txClient().transaction(async (tx) => {
@@ -115,7 +146,7 @@ export async function POST(request: Request) {
       await applyMovement(
         {
           reason: "lend",
-          items: [{ inventoryId, quantity: safeQuantity }],
+          items: safeItems as { inventoryId: string; quantity: number }[],
           borrowerId: bId,
         },
         tx,
@@ -125,11 +156,7 @@ export async function POST(request: Request) {
     });
 
     revalidateStockPaths(borrowerId);
-    return Response.json({
-      success: true,
-      borrowerId,
-      inventory: inventoryItem,
-    });
+    return Response.json({ success: true, borrowerId });
   } catch (error) {
     console.error("Failed to lend inventory:", error);
     return Response.json({ error: "Failed to lend inventory" }, { status: 500 });

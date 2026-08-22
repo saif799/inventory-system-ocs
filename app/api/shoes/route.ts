@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { shoes, shoeModels } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function GET() {
   try {
@@ -12,7 +12,10 @@ export async function GET() {
         modelId: shoeModels.id,
       })
       .from(shoes)
-      .innerJoin(shoeModels, eq(shoes.modelId, shoeModels.id));
+      .innerJoin(shoeModels, eq(shoes.modelId, shoeModels.id))
+      // Archived variants stay in stock and in history, but must not be
+      // offered as a target for a new arrivage.
+      .where(and(eq(shoes.archived, false), eq(shoeModels.archived, false)));
 
     return Response.json(shoesVariants);
   } catch (error) {

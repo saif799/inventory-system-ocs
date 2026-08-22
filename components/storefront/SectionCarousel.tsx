@@ -53,7 +53,7 @@ export default function SectionCarousel({
             {title}
           </h2>
           {subtitle && (
-            <p className="sf-body mt-1 text-sm font-light text-(--sf-muted)">{subtitle}</p>
+            <p className="sf-body mt-1 text-sm font-normal text-(--sf-muted)">{subtitle}</p>
           )}
         </div>
         {ctaHref && (

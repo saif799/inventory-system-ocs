@@ -1,9 +1,10 @@
 import { ShieldCheck, Wallet, Truck } from "lucide-react";
+import { DELIVERY } from "@/lib/storefront/seo";
 
 const items = [
-  { icon: ShieldCheck, label: "100% authentique" },
+  { icon: ShieldCheck, label: "Basketball 100% authentique" },
   { icon: Wallet, label: "Paiement à la livraison" },
-  { icon: Truck, label: "Livraison dans les 58 wilayas" },
+  { icon: Truck, label: `${DELIVERY.labelFr} — ${DELIVERY.wilayas} wilayas` },
 ];
 
 export default function TrustBand() {
@@ -12,7 +13,7 @@ export default function TrustBand() {
       {items.map(({ icon: Icon, label }) => (
         <div key={label} className="flex items-center gap-3">
           <Icon className="h-5 w-5 shrink-0 text-(--sf-text)" strokeWidth={1.5} />
-          <span className="text-sm font-light text-(--sf-text)">{label}</span>
+          <span className="text-sm font-normal text-(--sf-text)">{label}</span>
         </div>
       ))}
     </div>

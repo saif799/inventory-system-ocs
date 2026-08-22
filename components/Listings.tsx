@@ -40,9 +40,11 @@ const sizes = [
 export default function Listings({
   products,
   models,
+  borrowerName,
 }: {
   products: GroupedProduct[];
   models: shoe_modelsType;
+  borrowerName?: string;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -417,6 +419,7 @@ export default function Listings({
                   product={p}
                   selectshoe={selectshoe}
                   selectedShoes={selectedShoes}
+                  borrowerName={borrowerName}
                 />
               ))}
           </div>

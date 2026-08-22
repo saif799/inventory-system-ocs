@@ -15,10 +15,10 @@ export default function ProductFaq() {
       <Accordion type="single" collapsible>
         {STOREFRONT_FAQS.map((faq, i) => (
           <AccordionItem key={i} value={`faq-${i}`}>
-            <AccordionTrigger className="pl-2 text-left text-base font-light text-(--sf-text) data-[state=open]:font-medium">
+            <AccordionTrigger className="pl-2 text-left text-base font-normal text-(--sf-text) data-[state=open]:font-medium">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-sm font-light text-(--sf-muted)">
+            <AccordionContent className="text-sm font-normal text-(--sf-muted)">
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

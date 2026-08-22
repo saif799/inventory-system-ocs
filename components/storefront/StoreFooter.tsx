@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Instagram, Facebook } from "lucide-react";
+import { BRAND, DELIVERY } from "@/lib/storefront/seo";
 
 // TODO: replace with the real social URLs before launch.
 const socialLinks = [
@@ -35,29 +36,30 @@ export default function StoreFooter() {
   return (
     <footer className="flex flex-col items-center justify-center gap-8 bg-(--sf-footer) py-12">
       <div className="flex flex-col items-center gap-6">
-        <p className="sf-heading text-2xl font-medium text-(--sf-footer-fg)">OCS</p>
+        <p className="sf-heading text-2xl font-medium text-(--sf-footer-fg)">
+          {BRAND.name}
+        </p>
 
-        <p className="sf-body w-4/5 max-w-xl text-center text-sm font-light text-(--sf-footer-muted)">
-          Sneakers authentiques, livrées partout en Algérie. Paiement à la
-          livraison, dans les 58 wilayas.
+        <p className="sf-body w-4/5 max-w-xl text-center text-sm font-normal text-(--sf-footer-muted)">
+          {BRAND.tagline}. {DELIVERY.sentenceFr}
         </p>
 
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="sf-body text-sm font-light text-(--sf-footer-muted) transition-colors hover:text-(--sf-footer-fg)"
+            className="sf-body text-sm font-normal text-(--sf-footer-muted) transition-colors hover:text-(--sf-footer-fg)"
           >
             Accueil
           </Link>
           <Link
             href="/products"
-            className="sf-body text-sm font-light text-(--sf-footer-muted) transition-colors hover:text-(--sf-footer-fg)"
+            className="sf-body text-sm font-normal text-(--sf-footer-muted) transition-colors hover:text-(--sf-footer-fg)"
           >
             Produits
           </Link>
         </div>
 
-        <p className="sf-body text-center text-lg font-light text-(--sf-footer-fg)">
+        <p className="sf-body text-center text-lg font-normal text-(--sf-footer-fg)">
           Suivez-nous
         </p>
 
@@ -74,8 +76,8 @@ export default function StoreFooter() {
           ))}
         </div>
 
-        <p className="sf-body text-sm font-light text-(--sf-footer-muted)">
-          OCS © {year} Tous droits réservés.
+        <p className="sf-body text-sm font-normal text-(--sf-footer-muted)">
+          {BRAND.full} © {year} Tous droits réservés.
         </p>
       </div>
     </footer>
