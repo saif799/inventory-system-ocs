@@ -25,7 +25,7 @@ npx tsx lib/scripts/fixR2ImageUrls.ts   # dry-run rewrite of shoe_images.url ont
 
 Tests are Vitest (`pnpm test` -> `vitest run`), living in `tests/` against a PGlite test DB ([tests/testDb.ts](tests/testDb.ts)). Coverage is partial: `placeOrder`, `lib/stock/movement`, storefront products, and a smoke test.
 
-**Gotcha:** `next.config.mjs` sets `eslint.ignoreDuringBuilds` and `typescript.ignoreBuildErrors` — a green `pnpm build` proves nothing about types. Run `npx tsc --noEmit` after changes.
+**Gotcha:** `next.config.mjs` sets `typescript.ignoreBuildErrors` — a green `pnpm build` proves nothing about types. Run `npx tsc --noEmit` after changes.
 
 **Gotcha:** `drizzle/` contains a single migration from an early commit and is not maintained. Schema changes are applied with `pnpm push` against the Neon database — after editing [lib/schema.ts](lib/schema.ts), push, don't generate a migration.
 

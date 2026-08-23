@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import SizeButton from "./SizeButton";
-import { Dispatch, SetStateAction, useMemo, type ChangeEvent } from "react";
+import { Dispatch, SetStateAction, useMemo, useState, type ChangeEvent } from "react";
 import { Input } from "./ui/input";
-import { Filter, Minus, Plus, X } from "lucide-react";
+import { Filter, Minus, Plus, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -30,6 +30,10 @@ type FilterLabels = {
   minPlaceholder?: string;
   maxPlaceholder?: string;
 };
+
+/** Above this many models the list gets its own search box — scrolling a
+ *  60-item checkbox column on a phone is not a filter, it's a chore. */
+const MODEL_SEARCH_THRESHOLD = 8;
 
 export default function FilterTool({
   models,
@@ -58,7 +62,9 @@ export default function FilterTool({
   mutedHex?: string;
   /** "admin" (default) keeps the original look untouched. "storefront" applies
    *  the Court Line chrome — multiple sections open at once, +/- indicators,
-   *  and `.sf-chip` size chips instead of the admin `SizeButton`. */
+   *  `.sf-chip` size chips instead of the admin `SizeButton`, and the mobile
+   *  summary row (active filters + clear-all) that the desktop rail keeps in
+   *  its `lg:`-only header. */
   variant?: "admin" | "storefront";
   /** When false, filter changes don't touch the URL (caller owns navigation). */
   syncUrl?: boolean;
@@ -67,6 +73,8 @@ export default function FilterTool({
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+
+  const [modelQuery, setModelQuery] = useState("");
 
   const resolvedLabels = {
     filters: labels?.filters ?? "Filters",
@@ -78,9 +86,19 @@ export default function FilterTool({
   };
 
   const sortedModels = useMemo(() => [...models].sort((a, b) => a.localeCompare(b)), [models]);
+  const visibleModels = useMemo(() => {
+    const q = modelQuery.trim().toLowerCase();
+    if (!q) return sortedModels;
+    return sortedModels.filter((m) => m.toLowerCase().includes(q));
+  }, [sortedModels, modelQuery]);
 
   function clearQueryString() {
-    const params = new URLSearchParams(searchParams);
+    // Read the live URL rather than the `searchParams` snapshot: every other
+    // handler here writes with history.replaceState, which never re-renders
+    // the hook, so that snapshot can be several filter clicks stale.
+    const params = new URLSearchParams(
+      typeof window === "undefined" ? searchParams.toString() : window.location.search,
+    );
 
     Object.keys(filterTool).forEach((key) => {
       if (params.has(key)) {
@@ -97,6 +115,12 @@ export default function FilterTool({
     });
 
     return params.toString();
+  }
+
+  function clearAll() {
+    const next = clearQueryString();
+    setModelQuery("");
+    if (syncUrl) router.push(pathname + "?" + next, { scroll: false });
   }
 
   function selectModelFilterS(newModel: string) {
@@ -177,6 +201,12 @@ export default function FilterTool({
     updatePrice("maxPrice", !isNaN(numValue) ? numValue : null);
   }
 
+  function clearBounds() {
+    setfilterTool((prev) => ({ ...prev, minPrice: "", maxPrice: "" }));
+    updatePrice("minPrice", null);
+    updatePrice("maxPrice", null);
+  }
+
   const hasActiveFilters =
     filterTool.models.length > 0 || filterTool.sizes.length > 0 || !!(filterTool.maxPrice ?? filterTool.minPrice);
 
@@ -195,7 +225,10 @@ export default function FilterTool({
     cn(
       "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
       active && cn("font-medium", accentClassName),
-      isStorefront && "group pl-0 text-sm normal-case tracking-normal hover:no-underline [&>svg:last-child]:hidden",
+      isStorefront &&
+        // py-5 on mobile: inside the drawer the trigger is the only thing to
+        // aim at, so the row sits comfortably past the 44px touch target.
+        "group py-5 pl-0 text-base normal-case tracking-normal hover:no-underline lg:py-4 lg:text-sm [&>svg:last-child]:hidden",
     );
   const triggerStyle = (active: boolean) => (active ? { color: accentHex } : undefined);
 
@@ -206,36 +239,96 @@ export default function FilterTool({
     </>
   );
 
+  /** How many values a collapsed section is holding — the only way to read
+   *  the state of a closed accordion without opening it. */
+  const sectionCount = (n: number) =>
+    isStorefront && n > 0 ? (
+      <span
+        className="flex h-5 min-w-5 items-center justify-center rounded-(--sf-radius-sm) px-1 text-[11px] font-medium text-(--sf-accent-fg)"
+        style={{ backgroundColor: accentHex }}
+      >
+        {n}
+      </span>
+    ) : null;
+
+  /** One applied value, rendered as a removable tag in the mobile summary. */
+  const summaryChip = (key: string, label: string, onRemove: () => void) => (
+    <button
+      key={key}
+      type="button"
+      onClick={onRemove}
+      aria-label={`Retirer ${label}`}
+      className="flex h-8 items-center gap-1.5 rounded-(--sf-radius-sm) bg-(--sf-ink) px-2.5 text-xs font-medium text-(--sf-ink-fg)"
+    >
+      <span className="max-w-[9rem] truncate">{label}</span>
+      <X className="size-3.5 shrink-0" strokeWidth={2} />
+    </button>
+  );
+
   const accordionItems = (
     <>
       <AccordionItem value="model">
         <AccordionTrigger className={triggerClass(modelActive)} style={triggerStyle(modelActive)}>
           {isStorefront ? (
             <span className="flex w-full items-center justify-between gap-2">
-              <span>{resolvedLabels.model}</span>
+              <span className="flex items-center gap-2">
+                <span>{resolvedLabels.model}</span>
+                {sectionCount(filterTool.models.length)}
+              </span>
               {caret}
             </span>
           ) : (
             <p>{resolvedLabels.model}</p>
           )}
         </AccordionTrigger>
-        <AccordionContent className="space-y-4 overflow-y-scroll">
-          <div className="relative h-[50vh] w-full overflow-y-auto pr-3">
-            {sortedModels.map((m) => (
-              <div
-                key={m}
-                className="flex cursor-pointer items-center space-x-2 pl-3 hover:font-medium"
-              >
-                <Checkbox
-                  id={m}
-                  checked={filterTool.models.includes(m)}
-                  onCheckedChange={() => selectModelFilterS(m)}
-                />
-                <label htmlFor={m} className="text-base">
-                  {m}
+        <AccordionContent className="space-y-3">
+          {sortedModels.length > MODEL_SEARCH_THRESHOLD && (
+            <div className="relative">
+              <Search
+                className={cn(
+                  "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2",
+                  isStorefront ? "text-(--sf-muted)" : "text-gray-400",
+                )}
+                strokeWidth={1.5}
+              />
+              <Input
+                value={modelQuery}
+                onChange={(e) => setModelQuery(e.target.value)}
+                placeholder={`${resolvedLabels.model}...`}
+                aria-label={resolvedLabels.model}
+                className={cn("h-11 w-full pl-9", isStorefront && "rounded-(--sf-radius)")}
+              />
+            </div>
+          )}
+          {/* max-h, not h: a short — or searched-down — list should not leave a
+              half-empty scroll well sitting above the next section. */}
+          <div className="relative max-h-[38vh] w-full overflow-y-auto overscroll-contain pr-1 lg:max-h-[50vh]">
+            {visibleModels.length === 0 ? (
+              <p className={cn("px-3 py-4 text-sm", isStorefront ? "text-(--sf-muted)" : "text-gray-500")}>
+                {isStorefront ? "Aucun modèle" : "No model"}
+              </p>
+            ) : (
+              visibleModels.map((m) => (
+                <label
+                  key={m}
+                  htmlFor={m}
+                  className={cn(
+                    "flex cursor-pointer items-center hover:font-medium",
+                    // The whole row is the hit area on touch, not just the 16px box.
+                    isStorefront
+                      ? "min-h-11 gap-3 rounded-(--sf-radius-sm) py-1 pl-3 pr-2"
+                      : "gap-2 pl-3",
+                  )}
+                >
+                  <Checkbox
+                    id={m}
+                    checked={filterTool.models.includes(m)}
+                    onCheckedChange={() => selectModelFilterS(m)}
+                  />
+                  <span className="text-base">{m}</span>
                 </label>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </AccordionContent>
       </AccordionItem>
@@ -243,7 +336,10 @@ export default function FilterTool({
         <AccordionTrigger className={triggerClass(sizeActive)} style={triggerStyle(sizeActive)}>
           {isStorefront ? (
             <span className="flex w-full items-center justify-between gap-2">
-              <span>{resolvedLabels.size}</span>
+              <span className="flex items-center gap-2">
+                <span>{resolvedLabels.size}</span>
+                {sectionCount(filterTool.sizes.length)}
+              </span>
               {caret}
             </span>
           ) : (
@@ -287,13 +383,16 @@ export default function FilterTool({
           )}
         </AccordionTrigger>
         <AccordionContent className="flex flex-wrap items-center gap-2">
-          <div className="flex flex-row items-center gap-4 px-1 py-1">
-            <div className="w-full grow">
+          {/* min-w-0 on both fields: number inputs carry an intrinsic min-width
+              that overflows the drawer once the placeholders are spelled out. */}
+          <div className="flex w-full flex-row items-center gap-3 px-1 py-1">
+            <div className="min-w-0 flex-1">
               <Input
                 value={filterTool.minPrice ?? ""}
                 id="minBound"
                 name="minBound"
                 type="number"
+                inputMode="numeric"
                 className={cn(
                   "h-12 w-full rounded-lg border border-gray-300 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500",
                   isStorefront && "h-11 rounded-(--sf-radius) border-(--sf-line) focus:ring-0",
@@ -303,13 +402,19 @@ export default function FilterTool({
                 min="0"
               />
             </div>
-            <div className="my-0 w-5 border-t-[3px] border-black"></div>
-            <div className="w-full grow">
+            <div
+              className={cn(
+                "my-0 w-4 shrink-0 border-t-[3px] border-black",
+                isStorefront && "border-t border-(--sf-line)",
+              )}
+            ></div>
+            <div className="min-w-0 flex-1">
               <Input
                 value={filterTool.maxPrice ?? ""}
                 id="maxBound"
                 name="maxBound"
                 type="number"
+                inputMode="numeric"
                 className={cn(
                   "h-12 w-full rounded-lg border border-gray-300 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500",
                   isStorefront && "h-11 rounded-(--sf-radius) border-(--sf-line) focus:ring-0",
@@ -345,18 +450,45 @@ export default function FilterTool({
         </h3>
         <div className="flex items-center space-x-2">
           {hasActiveFilters && (
-            <X
-              strokeWidth={1.8}
-              className={cn("cursor-pointer", accentClassName)}
-              onClick={() => {
-                const next = clearQueryString();
-                if (syncUrl) router.push(pathname + "?" + next, { scroll: false });
-              }}
-            />
+            <X strokeWidth={1.8} className={cn("cursor-pointer", accentClassName)} onClick={clearAll} />
           )}
           <Filter className="size-6" color={hasActiveFilters ? accentHex : mutedHex} strokeWidth={2} />
         </div>
       </div>
+
+      {/* Mobile summary. The desktop rail carries the same two affordances in
+          its header, which is `lg:`-only — without this a phone user can see
+          neither what is applied nor how to undo it, since the sections are
+          collapsed by then. */}
+      {isStorefront && hasActiveFilters && (
+        <div className="flex flex-col gap-2 border-b border-(--sf-line) pb-3 pt-1 lg:hidden">
+          <div className="flex items-center justify-between gap-2">
+            <span className="sf-body text-xs uppercase tracking-[0.12em] text-(--sf-muted)">
+              {resolvedLabels.filters}
+            </span>
+            <button
+              type="button"
+              onClick={clearAll}
+              className="sf-body text-xs font-medium underline underline-offset-4"
+              style={{ color: accentHex }}
+            >
+              Tout effacer
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {filterTool.models.map((m) => summaryChip(`model-${m}`, m, () => selectModelFilterS(m)))}
+            {filterTool.sizes.map((s) =>
+              summaryChip(`size-${s}`, `${resolvedLabels.size} ${s}`, () => selectSizesFilterS(s)),
+            )}
+            {boundsActive &&
+              summaryChip(
+                "bounds",
+                `${filterTool.minPrice || "0"} - ${filterTool.maxPrice || "∞"}`,
+                clearBounds,
+              )}
+          </div>
+        </div>
+      )}
 
       {isStorefront ? (
         <Accordion type="multiple" defaultValue={[]} className="w-full">

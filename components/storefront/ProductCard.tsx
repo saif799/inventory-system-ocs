@@ -4,13 +4,23 @@ import ProductPrice from "./ProductPrice";
 import { cn } from "@/lib/utils";
 import type { StorefrontProduct } from "@/lib/storefront/products";
 
+/** Cards are narrow (2 columns on mobile), so the run of sizes is capped and
+ *  the remainder collapses into a "+N" — never a second wrapped line. */
+const MAX_VISIBLE_SIZES = 5;
+
 /**
  * Design system §5. No border, no shadow, no background, no radius — a square
- * image that zooms on hover, then a three-line text block:
+ * image that zooms on hover, then a four-line text block:
  *
  *   1. variant — text-sm, muted, ALWAYS UPPERCASE
  *   2. title   — font-medium, steps up once at md:
  *   3. price   — font-medium, accent Pine, suffixed " DA"
+ *   4. sizes   — in-stock pointures as muted, non-interactive chips
+ *
+ * The size line borrows the `.sf-chip` geometry (4px radius, 1px token
+ * hairline) at a smaller scale rather than the recipe itself: these are
+ * inert labels inside a link, not buttons, so they never take the ink fill
+ * or the hover surface that would suggest they can be picked here.
  */
 export default function ProductCard({
   product,
@@ -21,6 +31,12 @@ export default function ProductCard({
   className?: string;
   priority?: boolean;
 }) {
+  const inStockSizes = product.sizes
+    .filter((s) => s.quantity > 0)
+    .sort((a, b) => Number(a.size) - Number(b.size));
+  const visibleSizes = inStockSizes.slice(0, MAX_VISIBLE_SIZES);
+  const hiddenSizeCount = inStockSizes.length - visibleSizes.length;
+
   return (
     <Link
       href={`/product/${product.shoeId}`}
@@ -51,6 +67,37 @@ export default function ProductCard({
           compareAtPrice={product.compareAtPrice}
           size="sm"
         />
+
+        {inStockSizes.length > 0 ? (
+          <ul
+            className="flex flex-nowrap items-center gap-1 overflow-hidden"
+            aria-label={`Pointures disponibles : ${inStockSizes
+              .map((s) => s.size)
+              .join(", ")}`}
+          >
+            {visibleSizes.map((s) => (
+              <li
+                key={s.inventoryId}
+                aria-hidden
+                className="sf-body flex h-6 min-w-6 shrink-0 items-center justify-center rounded-(--sf-radius-sm) border border-(--sf-line) px-1 text-[11px] font-normal leading-none text-(--sf-muted)"
+              >
+                {s.size}
+              </li>
+            ))}
+            {hiddenSizeCount > 0 && (
+              <li
+                aria-hidden
+                className="sf-body flex h-6 shrink-0 items-center text-[11px] font-normal leading-none text-(--sf-muted)"
+              >
+                +{hiddenSizeCount}
+              </li>
+            )}
+          </ul>
+        ) : (
+          <p className="sf-body text-[11px] font-normal uppercase tracking-[0.12em] text-(--sf-muted)">
+            Épuisé
+          </p>
+        )}
       </div>
     </Link>
   );

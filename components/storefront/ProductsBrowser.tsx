@@ -126,11 +126,13 @@ export default function ProductsBrowser({
     window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   };
 
-  const hasActiveFilters =
-    filterParams.models.length > 0 ||
-    filterParams.sizes.length > 0 ||
-    !!filterParams.minPrice ||
-    !!filterParams.maxPrice;
+  // Each model and each size counts once; the price range counts as one
+  // filter however many of its two bounds are set.
+  const activeFilterCount =
+    filterParams.models.length +
+    filterParams.sizes.length +
+    (filterParams.minPrice || filterParams.maxPrice ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0;
 
   return (
     <div className="w-full">
@@ -166,9 +168,14 @@ export default function ProductsBrowser({
         </div>
 
         <div className="min-w-0">
-          {/* Sticky sub-header, sitting directly under the fixed nav. */}
+          {/* Sticky sub-header, sitting directly under the fixed nav — on every
+              breakpoint, so the Filtres trigger stays reachable while the grid
+              scrolls. `--sf-nav-offset` drops to 0 while the nav is retracted,
+              so this rides up with it instead of leaving a gap. The hairline
+              is mobile-only: on desktop the filter rail already separates the
+              grid from the page chrome. */}
           <div
-            className="z-50 flex w-full items-center justify-between gap-3 bg-(--sf-bg) pb-2 pt-2 lg:sticky lg:pb-4"
+            className="sticky z-50 flex w-full items-center justify-between gap-3 border-b border-(--sf-line) bg-(--sf-bg) pb-2 pt-2 lg:border-b-0 lg:pb-4"
             style={{ top: "var(--sf-nav-offset)" }}
           >
             <h2 className="sf-heading text-left text-xl font-medium text-(--sf-text)">
@@ -203,16 +210,27 @@ export default function ProductsBrowser({
                     )}
                     style={{ borderRadius: "var(--sf-radius)" }}
                   >
-                    Filtres <SlidersHorizontal className="size-4" strokeWidth={1.5} />
+                    <SlidersHorizontal className="size-4" strokeWidth={1.5} />
+                    Filtres
+                    {hasActiveFilters && (
+                      <span
+                        className="flex h-5 min-w-5 items-center justify-center bg-(--sf-accent) px-1 text-[11px] font-medium text-(--sf-accent-fg)"
+                        style={{ borderRadius: "var(--sf-radius-sm)" }}
+                      >
+                        {activeFilterCount}
+                      </span>
+                    )}
                   </button>
                 </DrawerTrigger>
-                <DrawerContent className="sf-portal max-h-[90vh]">
-                  <DrawerHeader>
-                    <DrawerTitle className="sf-heading text-left text-xl font-medium">
+                <DrawerContent className="sf-portal flex max-h-[88vh] flex-col">
+                  <DrawerHeader className="shrink-0 border-b border-(--sf-line) px-4 pb-3">
+                    <DrawerTitle className="sf-heading text-left text-lg font-medium">
                       Filtres
                     </DrawerTitle>
                   </DrawerHeader>
-                  <div className="overflow-y-auto px-2 pb-4">
+                  {/* min-h-0 so this pane — not the drawer — owns the scroll,
+                      keeping the "Voir les N résultats" button pinned. */}
+                  <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-2">
                     <FilterTool
                       models={models}
                       sizes={sizes}
@@ -227,7 +245,7 @@ export default function ProductsBrowser({
                       className="px-2"
                     />
                   </div>
-                  <div className="p-4">
+                  <div className="shrink-0 border-t border-(--sf-line) p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                     <button
                       type="button"
                       onClick={() => setDrawerOpen(false)}
