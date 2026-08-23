@@ -44,6 +44,12 @@ interface ProductCardProps {
   borrowerName?: string;
 }
 
+function numericSizeCompare(a: string, b: string): number {
+  const na = Number(a);
+  const nb = Number(b);
+  if (Number.isFinite(na) && Number.isFinite(nb)) return na - nb;
+  return a.localeCompare(b);
+}
 export default function ProductCard({
   product: { modelId, modelName, color, sizes, shoeId, archived },
   selectedShoes,
@@ -104,14 +110,16 @@ export default function ProductCard({
     };
   }, [isLendInventoryOpen, sizes, modelName, color]);
 
-  const bringBackLines: TransferLine[] = sizes.map((s) => ({
-    inventoryId: s.inventoryId,
-    modelName,
-    color,
-    size: s.size,
-    maxQty: s.quantity,
-    helperText: `${s.quantity} held`,
-  }));
+  const bringBackLines: TransferLine[] = sizes
+    .map((s) => ({
+      inventoryId: s.inventoryId,
+      modelName,
+      color,
+      size: s.size,
+      maxQty: s.quantity,
+      helperText: `${s.quantity} held`,
+    }))
+    .sort((a, b) => numericSizeCompare(a.size, b.size));
 
   return (
     <div
