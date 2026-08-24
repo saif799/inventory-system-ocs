@@ -200,7 +200,7 @@ async function fetchImagesByShoeId(shoeIds: string[], e: typeof db = db) {
     })
     .from(shoeImages)
     .where(inArray(shoeImages.shoeId, shoeIds))
-    .orderBy(sql`${shoeImages.isPrimary} DESC`, asc(shoeImages.sortOrder));
+    .orderBy(sql`${shoeImages.isPrimary} DESC`, asc(shoeImages.sortOrder), asc(shoeImages.createdAt));
 
   for (const img of images) {
     const list = map.get(img.shoeId) ?? [];

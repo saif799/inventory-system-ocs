@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle } from "lucide-react";
 import { formatDZD } from "@/lib/format";
+import { resolveProductPrice } from "@/lib/helpers";
+import PurchaseTracker from "@/components/storefront/PurchaseTracker";
 
 type Props = { params: Promise<{ orderId: string }> };
 
@@ -23,18 +25,41 @@ export default async function OrderConfirmPage({ params }: Props) {
 
   if (!order) notFound();
 
+  // The three price columns ride along purely for the Meta Purchase event —
+  // `order.montant` includes the DHD tarif, and the pixel reports merchandise
+  // value only. The joins were already here, so this costs nothing extra.
   const items = await db
     .select({
       inventoryId: shoeInventory.id,
       size: shoeInventory.size,
       color: shoes.color,
       modelName: shoeModels.modelName,
+      shoeId: shoes.id,
+      modelBasePrice: shoeModels.basePrice,
+      shoePriceOverride: shoes.priceOverride,
+      sizePriceOverride: shoeInventory.priceOverride,
     })
     .from(orderItems)
     .innerJoin(shoeInventory, eq(orderItems.shoeInventoryId, shoeInventory.id))
     .innerJoin(shoes, eq(shoeInventory.shoeId, shoes.id))
     .innerJoin(shoeModels, eq(shoes.modelId, shoeModels.id))
     .where(eq(orderItems.orderId, orderId));
+
+  // Merchandise value for the pixel: the same 3-level resolution the
+  // storefront prices with, summed over the line items. Deliberately not
+  // `order.montant` — that carries the delivery tarif on top.
+  const pixelId = process.env.FB_PIXEL_ID;
+  const pixelContents = items.map((item) => ({
+    id: item.shoeId,
+    quantity: 1,
+    item_price: resolveProductPrice(
+      item.modelBasePrice,
+      item.shoePriceOverride,
+      item.sizePriceOverride,
+    ),
+  }));
+  const pixelValue = pixelContents.reduce((sum, c) => sum + c.item_price, 0);
+  const pixelContentIds = [...new Set(pixelContents.map((c) => c.id))];
 
   const whatsappMessage = encodeURIComponent(
     `Bonjour ! Je viens de passer une commande.\nCommande : ${order.reference || orderId}\nNom : ${order.nom_client}\nTotal : ${formatDZD(Number(order.montant))}`,
@@ -44,6 +69,16 @@ export default async function OrderConfirmPage({ params }: Props) {
 
   return (
     <main className="mx-auto max-w-lg px-4 py-16">
+      {pixelId && (
+        <PurchaseTracker
+          pixelId={pixelId}
+          eventId={orderId}
+          value={pixelValue}
+          contentIds={pixelContentIds}
+          contents={pixelContents}
+          phone={order.telephone}
+        />
+      )}
       <div className="flex flex-col items-center gap-5 text-center">
         <CheckCircle2 className="h-14 w-14 text-green-600" strokeWidth={1.5} />
         <div>

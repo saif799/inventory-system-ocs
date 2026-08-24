@@ -17,6 +17,7 @@ import { formatDZD } from "@/lib/format";
 import { useDeliveryCoverage } from "@/lib/delivery/useDeliveryCoverage";
 import type { OrderDraft } from "@/lib/orders/placeOrder";
 import { BRAND } from "@/lib/storefront/seo";
+import { CURRENCY, track } from "@/lib/storefront/pixel";
 
 type SizeOption = {
   inventoryId: string;
@@ -37,11 +38,14 @@ const PHONE_REGEX = /^0[5-7]\d{8}$/;
  * of view.
  */
 export default function OrderForm({
+  shoeId,
   modelName,
   color,
   selectedSize,
   onMissingSize,
 }: {
+  /** Carried only for the Meta pixel — one Meta "product" per colour variant. */
+  shoeId: string;
   modelName: string;
   color: string;
   selectedSize: SizeOption | null;
@@ -141,6 +145,21 @@ export default function OrderForm({
       setError("Veuillez sélectionner une commune.");
       return;
     }
+
+    // After validation, before the request: a click that bounced off a
+    // validation error is not checkout intent. `productPrice`, not `total` —
+    // the delivery fee is excluded here exactly as it is from Purchase, so the
+    // two events are comparable.
+    track("InitiateCheckout", {
+      content_ids: [shoeId],
+      content_type: "product",
+      contents: [
+        { id: shoeId, quantity: 1, item_price: selectedSize.resolvedPrice },
+      ],
+      value: selectedSize.resolvedPrice,
+      currency: CURRENCY,
+      num_items: 1,
+    });
 
     setLoading(true);
     try {

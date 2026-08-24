@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ImageCarousel from "@/components/storefront/ImageCarousel";
 import ProductOrderPanel from "@/components/storefront/ProductOrderPanel";
+import ViewContentTracker from "@/components/storefront/ViewContentTracker";
 import TrustBand from "@/components/storefront/TrustBand";
 import ProductFaq from "@/components/storefront/ProductFaq";
 import ProductPrice from "@/components/storefront/ProductPrice";
@@ -142,6 +143,13 @@ export default async function ProductPage({ params }: Props) {
         />
       </div>
 
+      {/* No-ops unless the pixel actually loaded, so no env check needed here. */}
+      <ViewContentTracker
+        shoeId={product.shoeId}
+        contentName={productName}
+        value={product.price}
+      />
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[60%_1fr] lg:gap-12">
         <ImageCarousel images={product.images} productName={productName} />
 
@@ -173,6 +181,7 @@ export default async function ProductPage({ params }: Props) {
               nothing that matches a "authentic <model> in Algeria" query. */}
 
           <ProductOrderPanel
+            shoeId={product.shoeId}
             modelName={product.modelName}
             color={product.color}
             sizes={product.sizes}

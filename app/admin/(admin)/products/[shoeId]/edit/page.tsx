@@ -36,7 +36,7 @@ export default async function ProductEditPage({ params }: Props) {
     .select()
     .from(shoeImages)
     .where(eq(shoeImages.shoeId, shoeId))
-    .orderBy(asc(shoeImages.sortOrder));
+    .orderBy(asc(shoeImages.sortOrder), asc(shoeImages.createdAt));
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">

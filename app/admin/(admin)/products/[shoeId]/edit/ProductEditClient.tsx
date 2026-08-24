@@ -144,6 +144,11 @@ export default function ProductEditClient({
 
     setUploading(true);
     let successCount = 0;
+    // Seeded once from the current gallery, then advanced locally: `images` is a
+    // stale closure for the whole loop, so reading it per file gave every upload
+    // the same sortOrder (and isPrimary on an empty gallery).
+    let nextSortOrder = images.reduce((max, img) => Math.max(max, img.sortOrder), -1) + 1;
+    let hasPrimary = images.some((img) => img.isPrimary);
 
     for (const file of fileArray) {
       try {
@@ -209,7 +214,7 @@ export default function ProductEditClient({
         }
 
         // 3. Register in DB
-        const currentCount = images.length;
+        const claimPrimary = !hasPrimary;
         const registerRes = await fetch("/api/admin/images", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -217,8 +222,8 @@ export default function ProductEditClient({
             shoeId: shoe.id,
             cloudflareImageId: key,
             url: publicUrl,
-            sortOrder: currentCount,
-            isPrimary: currentCount === 0,
+            sortOrder: nextSortOrder,
+            isPrimary: claimPrimary,
           }),
         });
 
@@ -228,7 +233,14 @@ export default function ProductEditClient({
         }
 
         const newImage: ImageRow = await registerRes.json();
-        setImages((prev) => [...prev, newImage]);
+        nextSortOrder++;
+        if (newImage.isPrimary) hasPrimary = true;
+        // The route unsets any other primary server-side; mirror that locally.
+        setImages((prev) =>
+          newImage.isPrimary
+            ? [...prev.map((img) => ({ ...img, isPrimary: false })), newImage]
+            : [...prev, newImage]
+        );
         successCount++;
       } catch (err: any) {
         toast.error(`Upload failed for ${file.name}: ${err?.message || "Upload failed"}`);

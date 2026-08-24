@@ -25,7 +25,7 @@ export async function GET(_req: Request, { params }: Params) {
       .select()
       .from(shoeImages)
       .where(eq(shoeImages.shoeId, shoeId))
-      .orderBy(asc(shoeImages.sortOrder));
+      .orderBy(asc(shoeImages.sortOrder), asc(shoeImages.createdAt));
 
     return NextResponse.json({ ...shoe, inventory, images });
   } catch (error: any) {

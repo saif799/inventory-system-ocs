@@ -102,7 +102,9 @@ Prices are **integer DZD**, resolved 3 levels root-to-leaf via `resolveProductPr
 
 ## Environment
 
-`.env` at the repo root: `DATABASE_URL` (Neon), `NEXT_PUBLIC_DHD_API_KEY`, `YALIDINE_API_ID` / `YALIDINE_API_ID_TOKEN` / `YALIDINE_API_ID_URL` / `YALIDINE_FROM_WILAYA`, `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET_NAME` / `R2_PUBLIC_URL` (legacy `NEXT_PUBLIC_R2_PUBLIC_URL` is still read as a fallback), `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`. The storefront page fetches its own `/api/products` through `NEXT_PUBLIC_BASE_URL`, so that must be correct in every environment.
+`.env` at the repo root: `DATABASE_URL` (Neon), `NEXT_PUBLIC_DHD_API_KEY`, `YALIDINE_API_ID` / `YALIDINE_API_ID_TOKEN` / `YALIDINE_API_ID_URL` / `YALIDINE_FROM_WILAYA`, `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET_NAME` / `R2_PUBLIC_URL` (legacy `NEXT_PUBLIC_R2_PUBLIC_URL` is still read as a fallback), `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `FB_PIXEL_ID`. The storefront page fetches its own `/api/products` through `NEXT_PUBLIC_BASE_URL`, so that must be correct in every environment.
+
+`FB_PIXEL_ID` is deliberately **not** `NEXT_PUBLIC_` and deliberately not an editable field on `/admin/settings` — `/admin` has no authentication, so a DB-backed pixel id would be a public write endpoint for anyone to repoint the storefront's tracking. It is read in [app/(storefront)/layout.tsx](<app/(storefront)/layout.tsx>) and passed down as a prop; unset means no tracking script renders at all. See the header comment on [components/storefront/PurchaseTracker.tsx](components/storefront/PurchaseTracker.tsx) for why Meta's revenue figure will not match `/admin/analytics`.
 
 ## Working conventions (from AGENTS.md)
 

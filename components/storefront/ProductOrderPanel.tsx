@@ -12,12 +12,14 @@ type SizeOption = {
 };
 
 export default function ProductOrderPanel({
+  shoeId,
   modelName,
   color,
   sizes,
   price,
   compareAtPrice,
 }: {
+  shoeId: string;
   modelName: string;
   color: string;
   sizes: SizeOption[];
@@ -45,6 +47,7 @@ export default function ProductOrderPanel({
 
       <div className="border-t border-(--sf-line) pt-5">
         <OrderForm
+          shoeId={shoeId}
           modelName={modelName}
           color={color}
           selectedSize={selectedSize}
