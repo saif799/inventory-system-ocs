@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "products": "Produits",
+    "breadcrumbLabel": "Fil d'Ariane"
+  },
+  "search": {
+    "label": "Rechercher",
+    "placeholder": "Rechercher un modèle ou une couleur…",
+    "placeholderShort": "Rechercher…"
+  },
+  "menu": {
+    "open": "Ouvrir le menu",
+    "close": "Fermer le menu"
+  },
+  "language": {
+    "label": "Langue",
+    "ar": "العربية",
+    "fr": "Français",
+    "switchTo": "Passer en {{language}}"
+  },
+  "footer": {
+    "follow": "Suivez-nous",
+    "rights": "Tous droits réservés.",
+    "blurb": "Chaussures de basketball 100% authentiques en Algérie. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison."
+  },
+  "trust": {
+    "authentic": "Basketball 100% authentique",
+    "cod": "Paiement à la livraison",
+    "delivery": "Livraison rapide en 24-48h — 58 wilayas"
+  },
+  "brand": {
+    "slogan": "Chaussures de basketball 100% authentiques en Algérie"
+  }
+}

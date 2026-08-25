@@ -1,31 +1,46 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, DM_Mono } from "next/font/google";
+import { DM_Mono, Cairo } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { headers } from "next/headers";
+import { dir } from "i18next";
 // @ts-ignore - Next.js global stylesheet side-effect import is resolved at build time
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { BRAND, SEO_KEYWORDS, SITE_URL } from "@/lib/storefront/seo";
-
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+import { LOCALE_TAGS } from "@/i18n.config";
+import { getRequestLocale, isStorefrontRequest } from "@/app/i18n/server";
 
 // The storefront's one typeface, per the design system — monospace everywhere.
 // Weights 400/500 only: 300 was dropped when the body floor moved up to 400
 // (see --sf-weight-body in globals.css), so shipping it would be dead payload.
-// Declared on <html> (not in the storefront layout)
-// so that Radix portals, which mount on <body> outside the storefront subtree,
-// still resolve --font-dm-mono. It is attached only for storefront requests, so
-// /admin never downloads it.
 const dmMono = DM_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-dm-mono",
 });
 
+// DM Mono has no Arabic glyphs, so the Arabic storefront needs its own face.
+// It is declared as a CSS variable on <html> — not as an inline style on a
+// wrapper — because Radix portals, sonner toasts and Select content all mount
+// on <body>, outside any storefront subtree. Anything scoped lower would leave
+// them rendering Arabic text in a font that cannot draw it. globals.css maps
+// the --sf-font tokens onto it under html[lang="ar"].
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500"],
+  variable: "--font-cairo",
+});
+
 // Storefront-wide defaults. Every storefront page overrides `title` through
 // the template below; /admin overrides `robots` in its own layout so the
 // dashboard never gets indexed.
+//
+// The copy here is French because this file sits above the [lng] segment and
+// also covers /admin, so it has no locale to read. It is a fallback that no
+// storefront page actually renders: every one of them overrides `title`,
+// `description` and `openGraph` in its own locale-aware generateMetadata.
+// Per-page canonicals and hreflang are emitted there too; there is deliberately
+// no `alternates` default here, since a root-level canonical would point every
+// localised page at "/".
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -39,7 +54,6 @@ export const metadata: Metadata = {
   creator: BRAND.name,
   publisher: BRAND.name,
   category: "shopping",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: BRAND.name,
@@ -72,15 +86,21 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // middleware.ts flags storefront requests; admin stays English, storefront is fr-DZ.
-  const headersList = await headers();
-  const isStorefront = headersList.get("x-ocs-storefront") !== null;
-  // fr-DZ, not bare fr: the region subtag is a ranking signal for an Algerian
-  // storefront and costs nothing.
-  const lang = isStorefront ? "fr-DZ" : "en";
+  // proxy.ts tags every storefront request with its locale; /admin is untagged
+  // and stays English and LTR.
+  const isStorefront = await isStorefrontRequest();
+  const locale = await getRequestLocale();
+
+  // fr-DZ / ar-DZ, not bare fr/ar: the region subtag is a ranking signal for
+  // an Algerian storefront and costs nothing.
+  const lang = isStorefront ? LOCALE_TAGS[locale] : "en";
 
   return (
-    <html lang={lang} className={isStorefront ? dmMono.variable : undefined}>
+    <html
+      lang={lang}
+      dir={isStorefront ? dir(locale) : "ltr"}
+      className={isStorefront ? `${dmMono.variable} ${cairo.variable}` : undefined}
+    >
       <body className={`font-sans antialiased`}>
         {children}
         <Analytics />

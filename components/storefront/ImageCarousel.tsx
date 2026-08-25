@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductMedia from "./ProductMedia";
 import { cn } from "@/lib/utils";
+import { useT } from "@/app/i18n/client";
 
 type ImageRow = { url: string; altText: string | null };
 
@@ -28,6 +29,7 @@ export default function ImageCarousel({
   images: ImageRow[];
   productName: string;
 }) {
+  const { t } = useT("product");
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchDeltaX = useRef(0);
@@ -81,7 +83,7 @@ export default function ImageCarousel({
       >
         <Image
           src={active.url}
-          alt={active.altText ?? `${productName} — chaussure de basketball authentique`}
+          alt={active.altText ?? t("carousel.altFallback", { name: productName })}
           fill
           className="object-contain"
           sizes="(max-width: 768px) 100vw, 50vw"
@@ -92,18 +94,19 @@ export default function ImageCarousel({
             <button
               type="button"
               onClick={() => setActiveIndex((i) => (i - 1 + images.length) % images.length)}
-              className="sf-float absolute left-3 top-1/2 hidden -translate-y-1/2 p-2 md:block"
-              aria-label="Image précédente"
+              className="sf-float absolute start-3 top-1/2 hidden -translate-y-1/2 p-2 md:block"
+              aria-label={t("carousel.previous")}
             >
-              <ChevronLeft className="h-4 w-4" strokeWidth={1.5} />
+              {/* Directional glyph, not layout: mirrored in RTL. */}
+              <ChevronLeft className="h-4 w-4 rtl:-scale-x-100" strokeWidth={1.5} />
             </button>
             <button
               type="button"
               onClick={() => setActiveIndex((i) => (i + 1) % images.length)}
-              className="sf-float absolute right-3 top-1/2 hidden -translate-y-1/2 p-2 md:block"
-              aria-label="Image suivante"
+              className="sf-float absolute end-3 top-1/2 hidden -translate-y-1/2 p-2 md:block"
+              aria-label={t("carousel.next")}
             >
-              <ChevronRight className="h-4 w-4" strokeWidth={1.5} />
+              <ChevronRight className="h-4 w-4 rtl:-scale-x-100" strokeWidth={1.5} />
             </button>
           </>
         )}
@@ -120,7 +123,7 @@ export default function ImageCarousel({
                 <button
                   key={img.url}
                   type="button"
-                  aria-label={`Voir l'image ${idx + 1}`}
+                  aria-label={t("carousel.goTo", { index: idx + 1 })}
                   aria-pressed={isActive}
                   onClick={() => setActiveIndex(idx)}
                   onMouseOver={() => setActiveIndex(idx)}
@@ -143,7 +146,7 @@ export default function ImageCarousel({
             })}
           </div>
           {/* Affordance for the horizontally scrollable strip on mobile. */}
-          <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-10 bg-gradient-to-l from-(--sf-bg) to-transparent lg:hidden" />
+          <div className="pointer-events-none absolute bottom-0 end-0 top-0 w-10 bg-gradient-to-l from-(--sf-bg) to-transparent rtl:bg-gradient-to-r lg:hidden" />
         </div>
       )}
     </div>

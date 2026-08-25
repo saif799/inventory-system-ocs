@@ -1,15 +1,27 @@
 /**
- * Single source of truth for everything a search engine or an AI assistant
- * reads about the store: the brand identity, the delivery promise, and the
- * schema.org JSON-LD builders.
+ * The brand identity and the schema.org JSON-LD builders.
  *
- * Why it is centralised: the same three facts (brand name, "authentic
- * basketball shoes", "24-48h delivery") have to appear consistently in the
- * <title>, the meta description, the visible copy and the structured data.
- * Assistants answering "where can I buy real basketball shoes in Algeria?"
- * corroborate across those surfaces — a claim that appears in only one of them
- * reads as noise. Change a fact here and every surface follows.
+ * The *prose* an assistant reads — the delivery promise, the descriptions, the
+ * slogan — used to live here too, as French constants (`DELIVERY.sentenceFr`
+ * and friends). It was moved into app/i18n/locales/{ar,fr}/, because a single
+ * French constant interpolated into every surface is precisely what rendered
+ * French clauses mid-sentence on the Arabic store. Copy is per-locale; this
+ * file keeps only what is language-neutral (URLs, identifiers, numbers) and
+ * takes the translated strings as arguments.
+ *
+ * The tradeoff is real and deliberate: "24-48h" and "58 wilayas" are now
+ * written out in each catalog rather than derived from one constant, so
+ * changing either is a two-file edit. tests/i18n.test.ts holds the catalogs to
+ * the same key set, but it cannot check that the two agree on a number.
  */
+
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  LOCALE_TAGS,
+  localePath,
+  type Locale,
+} from "@/i18n.config";
 
 export const BRAND = {
   /** Legal / searchable name. The header keeps the short "OCS" wordmark. */
@@ -29,23 +41,6 @@ export const BRAND = {
 } as const;
 
 /**
- * The delivery promise, in one place. `minHours`/`maxHours` feed the
- * schema.org shipping block an assistant reads to answer "how fast do they
- * deliver?"; the label strings feed the visible copy.
- */
-export const DELIVERY = {
-  minHours: 24,
-  maxHours: 48,
-  /** schema.org wants whole days for transit time: 24-48h == 1-2 days. */
-  minDays: 1,
-  maxDays: 2,
-  labelFr: "Livraison rapide en 24-48h",
-  sentenceFr:
-    "Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison.",
-  wilayas: 58,
-} as const;
-
-/**
  * Absolute origin for canonicals, sitemap entries and JSON-LD @id values.
  * These must be the *public* domain — a localhost canonical tells Google the
  * page is unreachable — so production has to set NEXT_PUBLIC_SITE_URL (or a
@@ -59,6 +54,44 @@ export const SITE_URL = (
 
 export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/**
+ * OpenGraph spells locales with an underscore ("ar_DZ"), unlike hreflang.
+ * Without this every page inherited the French default from the root layout,
+ * which told a share preview that an Arabic page was French.
+ */
+export function ogLocale(lng: Locale): string {
+  return LOCALE_TAGS[lng].replace("-", "_");
+}
+
+/** Absolute URL for a storefront path in a given locale. */
+export function localeUrl(lng: Locale, path = "/"): string {
+  return absoluteUrl(localePath(lng, path));
+}
+
+/**
+ * The `alternates` block every storefront page must emit: a self-referential
+ * canonical plus the hreflang set.
+ *
+ * This is plumbing, not translation. /ar/... and /fr/... now serve genuinely
+ * different copy, which makes the tags more load-bearing, not less: without
+ * them Google picks a winner itself, which can drop one locale from the index
+ * or land French visitors on Arabic chrome. next-i18next emits none of this.
+ *
+ * x-default points at the Arabic URL because Arabic is the routing default —
+ * it is where an unmatched visitor is sent by proxy.ts.
+ */
+export function localeAlternates(lng: Locale, path = "/") {
+  return {
+    canonical: localePath(lng, path),
+    languages: {
+      ...Object.fromEntries(
+        LOCALES.map((locale) => [LOCALE_TAGS[locale], localePath(locale, path)]),
+      ),
+      "x-default": localePath(DEFAULT_LOCALE, path),
+    },
+  };
 }
 
 /** Terms real buyers type in this market — used for the keywords meta and copy. */
@@ -83,7 +116,15 @@ type JsonLd = Record<string, unknown>;
  * lead time are what let one answer "who ships basketball shoes fast in
  * Algeria?".
  */
-export function organizationJsonLd(): JsonLd {
+export function organizationJsonLd(input: {
+  lng: Locale;
+  /** `common:brand.slogan`, translated by the caller. */
+  slogan: string;
+  /** `home:metaDescription`, translated by the caller. */
+  description: string;
+  /** `catalog:heading`, translated by the caller. */
+  catalogName: string;
+}): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "OnlineStore",
@@ -91,8 +132,8 @@ export function organizationJsonLd(): JsonLd {
     name: BRAND.name,
     alternateName: [BRAND.short, BRAND.full],
     url: SITE_URL,
-    description: BRAND.descriptionFr,
-    slogan: BRAND.tagline,
+    description: input.description,
+    slogan: input.slogan,
     knowsLanguage: ["fr", "ar", "en"],
     areaServed: {
       "@type": "Country",
@@ -116,15 +157,18 @@ export function organizationJsonLd(): JsonLd {
       "@type": "Offer",
       itemOffered: {
         "@type": "Product",
-        name: "Chaussures de basketball authentiques",
+        name: input.catalogName,
         category: "Basketball shoes",
       },
       areaServed: BRAND.country,
       priceCurrency: BRAND.currency,
+      // The 24-48h promise as a number. The prose form is per-locale copy in
+      // app/i18n/locales; keep this in step with it, and with the transit time
+      // in shippingDetailsJsonLd below, by hand.
       deliveryLeadTime: {
         "@type": "QuantitativeValue",
-        minValue: DELIVERY.minHours,
-        maxValue: DELIVERY.maxHours,
+        minValue: 24,
+        maxValue: 48,
         unitCode: "HUR",
       },
     },
@@ -132,21 +176,21 @@ export function organizationJsonLd(): JsonLd {
 }
 
 /** Enables the sitelinks search box and tells crawlers the catalog is searchable. */
-export function websiteJsonLd(): JsonLd {
+export function websiteJsonLd(lng: Locale, description: string): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
     url: SITE_URL,
     name: BRAND.full,
-    description: BRAND.descriptionFr,
-    inLanguage: "fr-DZ",
+    description,
+    inLanguage: LOCALE_TAGS[lng],
     publisher: { "@id": `${SITE_URL}/#store` },
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/products?ProductName={search_term_string}`,
+        urlTemplate: `${localeUrl(lng, "/products")}?ProductName={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -173,10 +217,11 @@ function shippingDetailsJsonLd(): JsonLd {
         maxValue: 1,
         unitCode: "DAY",
       },
+      // schema.org wants whole days for transit time: 24-48h == 1-2 days.
       transitTime: {
         "@type": "QuantitativeValue",
-        minValue: DELIVERY.minDays,
-        maxValue: DELIVERY.maxDays,
+        minValue: 1,
+        maxValue: 2,
         unitCode: "DAY",
       },
     },
@@ -184,9 +229,18 @@ function shippingDetailsJsonLd(): JsonLd {
 }
 
 export type ProductJsonLdInput = {
+  lng: Locale;
   shoeId: string;
   modelName: string;
   color: string;
+  /**
+   * The prose an assistant quotes, already translated by the caller from
+   * `product:prose`. It is passed in rather than built here because Google
+   * requires structured data to match the visible text, and the visible
+   * paragraph on the page is the same string — building a second French copy
+   * here is what used to put French prose on the Arabic product page.
+   */
+  description: string;
   price: number;
   compareAtPrice: number | null;
   images: string[];
@@ -195,13 +249,13 @@ export type ProductJsonLdInput = {
 };
 
 export function productJsonLd(product: ProductJsonLdInput): JsonLd {
-  const url = absoluteUrl(`/product/${encodeURIComponent(product.shoeId)}`);
+  const url = localeUrl(product.lng, `/product/${encodeURIComponent(product.shoeId)}`);
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     "@id": `${url}#product`,
     name: `${product.modelName} — ${product.color}`,
-    description: `${product.modelName} (${product.color}) — chaussure de basketball 100% authentique, vendue par ${BRAND.name}. ${DELIVERY.sentenceFr}`,
+    description: product.description,
     sku: product.shoeId,
     // The shoe id is the printed barcode value, so it doubles as the
     // manufacturer-part identifier a shopping crawler looks for.
@@ -210,7 +264,7 @@ export function productJsonLd(product: ProductJsonLdInput): JsonLd {
     category: "Chaussures de basketball",
     image: product.images,
     url,
-    inLanguage: "fr-DZ",
+    inLanguage: LOCALE_TAGS[product.lng],
     brand: { "@type": "Brand", name: product.modelName },
     ...(product.sizes.length > 0
       ? {
@@ -248,7 +302,10 @@ export function productJsonLd(product: ProductJsonLdInput): JsonLd {
   };
 }
 
-export function breadcrumbJsonLd(trail: { name: string; path: string }[]): JsonLd {
+export function breadcrumbJsonLd(
+  lng: Locale,
+  trail: { name: string; path: string }[],
+): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -256,16 +313,26 @@ export function breadcrumbJsonLd(trail: { name: string; path: string }[]): JsonL
       "@type": "ListItem",
       position: i + 1,
       name: crumb.name,
-      item: absoluteUrl(crumb.path),
+      item: localeUrl(lng, crumb.path),
     })),
   };
 }
 
-export function faqJsonLd(faqs: { question: string; answer: string }[]): JsonLd {
+/**
+ * `inLanguage` is derived here, unlike the other builders which stay pinned to
+ * fr-DZ. Google requires FAQ structured data to match the visible text, and the
+ * FAQ *is* translated (it is store chrome, not SEO copy) — so on /ar this block
+ * carries Arabic questions and must declare Arabic, or it contradicts the page
+ * it describes.
+ */
+export function faqJsonLd(
+  lng: Locale,
+  faqs: { question: string; answer: string }[],
+): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    inLanguage: "fr-DZ",
+    inLanguage: LOCALE_TAGS[lng],
     mainEntity: faqs.map((faq) => ({
       "@type": "Question",
       name: faq.question,
@@ -276,6 +343,7 @@ export function faqJsonLd(faqs: { question: string; answer: string }[]): JsonLd 
 
 /** A catalog page as an ItemList, so crawlers see the products without JS. */
 export function itemListJsonLd(
+  lng: Locale,
   items: { name: string; path: string; image?: string | null }[],
 ): JsonLd {
   return {
@@ -284,7 +352,7 @@ export function itemListJsonLd(
     itemListElement: items.map((item, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: absoluteUrl(item.path),
+      url: localeUrl(lng, item.path),
       name: item.name,
       ...(item.image ? { image: item.image } : {}),
     })),

@@ -1,0 +1,30 @@
+{
+  "title": "Questions fréquentes",
+  "subtitle": "Tout ce qu'il faut savoir avant de commander.",
+  "items": {
+    "deliveryTime": {
+      "q": "En combien de temps êtes-vous livré ?",
+      "a": "{{brand}} livre en 24 à 48h partout en Algérie. Les commandes validées avant 16h partent le jour même via notre partenaire DHD, et vous êtes livré dans les 58 wilayas, à domicile ou au bureau de livraison."
+    },
+    "coverage": {
+      "q": "Livrez-vous dans toutes les wilayas ?",
+      "a": "Oui — les 58 wilayas d'Algérie sont couvertes, avec le même délai de 24 à 48h. Vous choisissez la livraison à domicile ou au stopdesk au moment de la commande."
+    },
+    "cashOnDelivery": {
+      "q": "Puis-je payer à la réception ?",
+      "a": "Oui, le paiement se fait à la livraison (cash à domicile ou au bureau selon le mode choisi). Aucun paiement en ligne n'est demandé, vous ne payez qu'une fois la paire entre vos mains."
+    },
+    "authenticity": {
+      "q": "Les chaussures sont-elles authentiques ?",
+      "a": "Oui. {{brand}} ne vend que des chaussures de basketball 100% authentiques : chaque paire est vérifiée avant expédition, sans exception."
+    },
+    "exchange": {
+      "q": "Puis-je échanger ma pointure après réception ?",
+      "a": "Contactez-nous par WhatsApp dès la réception si la pointure ne convient pas — nous trouverons une solution et organisons l'échange."
+    },
+    "location": {
+      "q": "Où êtes-vous situé ?",
+      "a": "{{brandFull}} est une boutique en ligne algérienne spécialisée dans les chaussures de basketball authentiques. Nous expédions depuis l'Algérie vers l'ensemble du territoire, sans boutique physique à visiter."
+    }
+  }
+}

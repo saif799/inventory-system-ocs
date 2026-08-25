@@ -16,17 +16,11 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from 
 import { SlidersHorizontal, ArrowDownUp, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StorefrontProduct } from "@/lib/storefront/products";
+import { useT } from "@/app/i18n/client";
 
 type SortOption = "nouveautes" | "prix-asc" | "prix-desc";
 
-const FRENCH_LABELS = {
-  filters: "Filtres",
-  model: "Modèle",
-  size: "Pointure",
-  bounds: "Prix",
-  minPlaceholder: "prix min",
-  maxPlaceholder: "prix max",
-};
+
 
 /**
  * Design system §3.3 — a filter rail plus a 2/3-column product grid that
@@ -42,6 +36,7 @@ export default function ProductsBrowser({
   models: string[];
   sizes: number[];
 }) {
+  const { t } = useT("catalog");
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -128,6 +123,19 @@ export default function ProductsBrowser({
 
   // Each model and each size counts once; the price range counts as one
   // filter however many of its two bounds are set.
+  // FilterTool is shared with /admin, so it takes its copy as props rather
+  // than reaching into a storefront catalog.
+  const filterLabels = {
+    filters: t("filters.title"),
+    model: t("filters.model"),
+    size: t("filters.size"),
+    bounds: t("filters.bounds"),
+    minPlaceholder: t("filters.minPlaceholder"),
+    maxPlaceholder: t("filters.maxPlaceholder"),
+    remove: (label: string) => t("filters.remove", { label }),
+    empty: t("filters.noModel"),
+  };
+
   const activeFilterCount =
     filterParams.models.length +
     filterParams.sizes.length +
@@ -138,14 +146,14 @@ export default function ProductsBrowser({
     <div className="w-full">
       <div className="relative py-4 max-w-md">
         <Search
-          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-(--sf-muted)"
+          className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-(--sf-muted)"
           strokeWidth={1.5}
         />
         <Input
           defaultValue={filterParams.ProductName ?? ""}
-          placeholder="Rechercher un modèle ou une couleur…"
-          aria-label="Rechercher un modèle ou une couleur"
-          className="h-12 w-full pl-9"
+          placeholder={t("search.placeholder")}
+          aria-label={t("search.label")}
+          className="h-12 w-full ps-9"
           onChange={(e) => updateSearch(e.target.value)}
         />
       </div>
@@ -158,7 +166,7 @@ export default function ProductsBrowser({
             filterTool={filterParams}
             setfilterTool={setFilterParams}
             boundsMode="price"
-            labels={FRENCH_LABELS}
+            labels={filterLabels}
             accentClassName="text-(--sf-accent)"
             accentHex="var(--sf-accent)"
             mutedHex="var(--sf-muted)"
@@ -178,8 +186,8 @@ export default function ProductsBrowser({
             className="sticky z-50 flex w-full items-center justify-between gap-3 border-b border-(--sf-line) bg-(--sf-bg) pb-2 pt-2 lg:border-b-0 lg:pb-4"
             style={{ top: "var(--sf-nav-offset)" }}
           >
-            <h2 className="sf-heading text-left text-xl font-medium text-(--sf-text)">
-              Produits ({sorted.length})
+            <h2 className="sf-heading text-start text-xl font-medium text-(--sf-text)">
+              {t("count", { count: sorted.length })}
             </h2>
 
             <div className="flex items-center gap-1">
@@ -187,14 +195,16 @@ export default function ProductsBrowser({
                 <Select value={sort} onValueChange={(v) => updateSort(v as SortOption)}>
                   <SelectTrigger
                     className="h-9 w-max border-none shadow-none"
-                    aria-label="Trier les produits"
+                    aria-label={t("sort.label")}
                   >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="sf-portal">
-                    <SelectItem value="nouveautes">Nouveautés</SelectItem>
-                    <SelectItem value="prix-asc">Prix croissant</SelectItem>
-                    <SelectItem value="prix-desc">Prix décroissant</SelectItem>
+                    <SelectItem value="nouveautes">{t("sort.newest")}</SelectItem>
+                    <SelectItem value="prix-asc">{t("sort.priceAsc")}</SelectItem>
+                    <SelectItem value="prix-desc">
+                      {t("sort.priceDesc")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <ArrowDownUp className="size-4 text-(--sf-muted)" strokeWidth={1.5} />
@@ -211,7 +221,7 @@ export default function ProductsBrowser({
                     style={{ borderRadius: "var(--sf-radius)" }}
                   >
                     <SlidersHorizontal className="size-4" strokeWidth={1.5} />
-                    Filtres
+                    {t("filters.title")}
                     {hasActiveFilters && (
                       <span
                         className="flex h-5 min-w-5 items-center justify-center bg-(--sf-accent) px-1 text-[11px] font-medium text-(--sf-accent-fg)"
@@ -224,8 +234,8 @@ export default function ProductsBrowser({
                 </DrawerTrigger>
                 <DrawerContent className="sf-portal flex max-h-[88vh] flex-col">
                   <DrawerHeader className="shrink-0 border-b border-(--sf-line) px-4 pb-3">
-                    <DrawerTitle className="sf-heading text-left text-lg font-medium">
-                      Filtres
+                    <DrawerTitle className="sf-heading text-start text-lg font-medium">
+                      {t("filters.title")}
                     </DrawerTitle>
                   </DrawerHeader>
                   {/* min-h-0 so this pane — not the drawer — owns the scroll,
@@ -237,7 +247,7 @@ export default function ProductsBrowser({
                       filterTool={filterParams}
                       setfilterTool={setFilterParams}
                       boundsMode="price"
-                      labels={FRENCH_LABELS}
+                      labels={filterLabels}
                       accentClassName="text-(--sf-accent)"
                       accentHex="var(--sf-accent)"
                       mutedHex="var(--sf-muted)"
@@ -252,7 +262,7 @@ export default function ProductsBrowser({
                       className="w-full bg-(--sf-ink) py-4 text-sm font-medium text-(--sf-ink-fg) transition-opacity hover:opacity-90"
                       style={{ borderRadius: "var(--sf-radius)" }}
                     >
-                      Voir les {sorted.length} résultats
+                      {t("filters.apply", { count: sorted.length })}
                     </button>
                   </div>
                 </DrawerContent>
@@ -262,7 +272,7 @@ export default function ProductsBrowser({
 
           {sorted.length === 0 ? (
             <p className="sf-body py-16 text-center text-sm text-(--sf-muted)">
-              Aucun produit ne correspond à ces filtres.
+              {t("empty")}
             </p>
           ) : (
             <div className="grid grid-cols-2 gap-3 pb-10 pt-2 md:grid-cols-3 md:gap-4">

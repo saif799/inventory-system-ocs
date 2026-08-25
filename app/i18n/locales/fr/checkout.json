@@ -1,0 +1,71 @@
+{
+  "form": {
+    "heading": "Vos coordonnées et livraison",
+    "nameLabel": "Nom complet",
+    "namePlaceholder": "Nom et prénom",
+    "phoneLabel": "Téléphone",
+    "phonePlaceholder": "Téléphone — 0X XX XX XX XX",
+    "wilaya": "Wilaya",
+    "commune": "Commune"
+  },
+  "errors": {
+    "sizeOutOfStock": "Cette pointure n'est plus en stock.",
+    "nameRequired": "Veuillez entrer votre nom complet.",
+    "phoneInvalid": "Numéro de téléphone invalide (ex: 05/06/07XXXXXXXX).",
+    "wilayaRequired": "Veuillez sélectionner une wilaya.",
+    "communeRequired": "Veuillez sélectionner une commune.",
+    "submitFailed": "Impossible de passer la commande. Veuillez réessayer.",
+    "unexpected": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "delivery": {
+    "modeLabel": "Mode de livraison",
+    "home": "À domicile",
+    "desk": "Bureau — Stop desk",
+    "deskShort": "Bureau de livraison",
+    "deskUnavailableCommune": "Bureau indisponible dans cette commune",
+    "deskUnavailableWilaya": "Bureau indisponible dans cette wilaya",
+    "feeHint": "À domicile {{homeFee}} · Bureau {{deskFee}}"
+  },
+  "summary": {
+    "heading": "Récapitulatif",
+    "price": "Prix",
+    "delivery": "Livraison",
+    "total": "Total",
+    "calculating": "Calcul en cours…",
+    "empty": "—"
+  },
+  "cta": {
+    "loading": "Commande en cours…",
+    "order": "Commander — {{total}}",
+    "chooseSize": "Choisissez une pointure",
+    "orderShort": "Commander",
+    "chooseSizeShort": "Choisir une pointure",
+    "whatsapp": "Commander par WhatsApp"
+  },
+  "reassurance": {
+    "cod": "Paiement à la livraison",
+    "exchange": "Échange de pointure"
+  },
+  "sticky": {
+    "size": "Pointure <0>{{size}}</0>",
+    "noSize": "Pointure —"
+  },
+  "whatsappMessage": {
+    "withSize": "Bonjour ! Je suis intéressé par {{product}}, pointure {{size}} ({{total}}).",
+    "withoutSize": "Bonjour ! Je suis intéressé par {{product}}."
+  },
+  "confirm": {
+    "metaTitle": "Commande confirmée",
+    "heading": "Commande passée !",
+    "subheading": "Merci, {{name}}. Votre commande a bien été reçue.",
+    "items": "Articles",
+    "size": "Pointure",
+    "delivery": "Livraison",
+    "phone": "Téléphone",
+    "total": "Total",
+    "whatsappCta": "Nous contacter sur WhatsApp",
+    "continue": "Continuer mes achats",
+    "whatsappMessage": "Bonjour ! Je viens de passer une commande.\nCommande : {{reference}}\nNom : {{name}}\nTotal : {{total}}",
+    "wilaya": "Wilaya"
+  }
+}

@@ -29,6 +29,10 @@ type FilterLabels = {
   bounds?: string;
   minPlaceholder?: string;
   maxPlaceholder?: string;
+  /** Accessible name for a summary chip's remove button. */
+  remove?: (label: string) => string;
+  /** Shown when the model list has no matches. */
+  empty?: string;
 };
 
 /** Above this many models the list gets its own search box — scrolling a
@@ -83,6 +87,10 @@ export default function FilterTool({
     bounds: labels?.bounds ?? (boundsMode === "price" ? "Price" : "Quantity"),
     minPlaceholder: labels?.minPlaceholder ?? (boundsMode === "price" ? "min price" : "min quantity"),
     maxPlaceholder: labels?.maxPlaceholder ?? (boundsMode === "price" ? "max price" : "max quantity"),
+    // This component is shared with /admin, which passes no labels at all, so
+    // every string needs an English default rather than a French one.
+    remove: labels?.remove ?? ((label: string) => `Remove ${label}`),
+    empty: labels?.empty ?? "No model",
   };
 
   const sortedModels = useMemo(() => [...models].sort((a, b) => a.localeCompare(b)), [models]);
@@ -223,12 +231,12 @@ export default function FilterTool({
   // inside `[data-storefront]`. Inline style always wins over both.
   const triggerClass = (active: boolean) =>
     cn(
-      "pl-2 text-lg font-light text-black data-[state=open]:font-medium",
+      "ps-2 text-lg font-light text-black data-[state=open]:font-medium",
       active && cn("font-medium", accentClassName),
       isStorefront &&
         // py-5 on mobile: inside the drawer the trigger is the only thing to
         // aim at, so the row sits comfortably past the 44px touch target.
-        "group py-5 pl-0 text-base normal-case tracking-normal hover:no-underline lg:py-4 lg:text-sm [&>svg:last-child]:hidden",
+        "group py-5 ps-0 text-base normal-case tracking-normal hover:no-underline lg:py-4 lg:text-sm [&>svg:last-child]:hidden",
     );
   const triggerStyle = (active: boolean) => (active ? { color: accentHex } : undefined);
 
@@ -257,7 +265,7 @@ export default function FilterTool({
       key={key}
       type="button"
       onClick={onRemove}
-      aria-label={`Retirer ${label}`}
+      aria-label={resolvedLabels.remove(label)}
       className="flex h-8 items-center gap-1.5 rounded-(--sf-radius-sm) bg-(--sf-ink) px-2.5 text-xs font-medium text-(--sf-ink-fg)"
     >
       <span className="max-w-[9rem] truncate">{label}</span>
@@ -286,7 +294,7 @@ export default function FilterTool({
             <div className="relative">
               <Search
                 className={cn(
-                  "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2",
+                  "pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2",
                   isStorefront ? "text-(--sf-muted)" : "text-gray-400",
                 )}
                 strokeWidth={1.5}
@@ -296,16 +304,16 @@ export default function FilterTool({
                 onChange={(e) => setModelQuery(e.target.value)}
                 placeholder={`${resolvedLabels.model}...`}
                 aria-label={resolvedLabels.model}
-                className={cn("h-11 w-full pl-9", isStorefront && "rounded-(--sf-radius)")}
+                className={cn("h-11 w-full ps-9", isStorefront && "rounded-(--sf-radius)")}
               />
             </div>
           )}
           {/* max-h, not h: a short — or searched-down — list should not leave a
               half-empty scroll well sitting above the next section. */}
-          <div className="relative max-h-[38vh] w-full overflow-y-auto overscroll-contain pr-1 lg:max-h-[50vh]">
+          <div className="relative max-h-[38vh] w-full overflow-y-auto overscroll-contain pe-1 lg:max-h-[50vh]">
             {visibleModels.length === 0 ? (
               <p className={cn("px-3 py-4 text-sm", isStorefront ? "text-(--sf-muted)" : "text-gray-500")}>
-                {isStorefront ? "Aucun modèle" : "No model"}
+                {resolvedLabels.empty}
               </p>
             ) : (
               visibleModels.map((m) => (
@@ -316,8 +324,8 @@ export default function FilterTool({
                     "flex cursor-pointer items-center hover:font-medium",
                     // The whole row is the hit area on touch, not just the 16px box.
                     isStorefront
-                      ? "min-h-11 gap-3 rounded-(--sf-radius-sm) py-1 pl-3 pr-2"
-                      : "gap-2 pl-3",
+                      ? "min-h-11 gap-3 rounded-(--sf-radius-sm) py-1 ps-3 pe-2"
+                      : "gap-2 ps-3",
                   )}
                 >
                   <Checkbox
@@ -440,7 +448,7 @@ export default function FilterTool({
       >
         <h3
           className={cn(
-            "w-full text-left text-xl font-medium",
+            "w-full text-start text-xl font-medium",
             // sf-body, not sf-heading: the latter forces text-transform:none
             // (an unlayered rule), which would silently cancel `uppercase`.
             isStorefront && "sf-body text-xs uppercase tracking-[0.12em] text-(--sf-text)",

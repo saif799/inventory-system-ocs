@@ -5,10 +5,13 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocalePath, useT } from "@/app/i18n/client";
+import LanguageSwitcher from "@/components/storefront/LanguageSwitcher";
 
+/** Paths are locale-agnostic; the labels and the hrefs are resolved per render. */
 const navLinks = [
-  { href: "/", label: "Accueil" },
-  { href: "/products", label: "Produits" },
+  { path: "/", labelKey: "nav.home" },
+  { path: "/products", labelKey: "nav.products" },
 ] as const;
 
 /** Trackpads emit 1–2px deltas; ignore anything below this so the bar can't flicker. */
@@ -76,6 +79,8 @@ function useHeaderScroll(locked: boolean) {
 export default function StoreHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useT("common");
+  const localeHref = useLocalePath();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -129,7 +134,11 @@ export default function StoreHeader() {
     e.preventDefault();
     const q = query.trim();
     closePanels();
-    router.push(q ? `/products?ProductName=${encodeURIComponent(q)}` : "/products");
+    router.push(
+      q
+        ? `${localeHref("/products")}?ProductName=${encodeURIComponent(q)}`
+        : localeHref("/products"),
+    );
   };
 
   const linkClassName = (href: string) =>
@@ -156,30 +165,31 @@ export default function StoreHeader() {
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
-          href="/"
+          href={localeHref("/")}
           className="sf-heading shrink-0 text-lg font-medium tracking-[0.12em] text-(--sf-text) transition-colors"
         >
           OCS
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map(({ href, label }) => (
+          {navLinks.map(({ path, labelKey }) => (
             <Link
-              key={href}
-              href={href}
-              aria-current={pathname === href ? "page" : undefined}
-              className={linkClassName(href)}
+              key={path}
+              href={localeHref(path)}
+              aria-current={pathname === localeHref(path) ? "page" : undefined}
+              className={linkClassName(localeHref(path))}
             >
-              {label}
+              {t(labelKey)}
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-1">
+          <LanguageSwitcher className="me-1" />
           <button
             ref={searchToggle}
             type="button"
-            aria-label="Rechercher"
+            aria-label={t("search.label")}
             aria-expanded={searchOpen}
             aria-controls="desktop-search"
             className="hidden h-9 w-9 items-center justify-center text-(--sf-text) transition-colors md:flex"
@@ -189,7 +199,7 @@ export default function StoreHeader() {
           </button>
           <button
             type="button"
-            aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-label={mobileOpen ? t("menu.close") : t("menu.open")}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
             className="flex h-9 w-9 items-center justify-center text-(--sf-text) transition-colors md:hidden"
@@ -214,8 +224,8 @@ export default function StoreHeader() {
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher un modèle ou une couleur…"
-              aria-label="Rechercher un modèle ou une couleur"
+              placeholder={t("search.placeholder")}
+              aria-label={t("search.label")}
               className="w-full border-b border-(--sf-line) bg-transparent px-1 py-1.5 text-sm text-(--sf-text) outline-none placeholder:text-(--sf-placeholder) focus:border-(--sf-text)"
             />
           </form>
@@ -240,23 +250,23 @@ export default function StoreHeader() {
         )}
       >
         <div className="flex flex-col gap-1 px-4 py-3">
-          {navLinks.map(({ href, label }) => (
+          {navLinks.map(({ path, labelKey }) => (
             <Link
-              key={href}
-              href={href}
-              aria-current={pathname === href ? "page" : undefined}
-              className={cn(linkClassName(href), "w-full")}
+              key={path}
+              href={localeHref(path)}
+              aria-current={pathname === localeHref(path) ? "page" : undefined}
+              className={cn(linkClassName(localeHref(path)), "w-full")}
               onClick={() => setMobileOpen(false)}
             >
-              {label}
+              {t(labelKey)}
             </Link>
           ))}
           <form onSubmit={handleSearch} className="mt-2">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher…"
-              aria-label="Rechercher un modèle ou une couleur"
+              placeholder={t("search.placeholderShort")}
+              aria-label={t("search.label")}
               className="w-full border-b border-(--sf-line) bg-transparent px-1 py-1.5 text-sm text-(--sf-text) outline-none placeholder:text-(--sf-placeholder) focus:border-(--sf-text)"
             />
           </form>

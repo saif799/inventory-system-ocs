@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import ProductMedia from "./ProductMedia";
 import ProductPrice from "./ProductPrice";
 import { cn } from "@/lib/utils";
 import type { StorefrontProduct } from "@/lib/storefront/products";
+import { useLocalePath, useT } from "@/app/i18n/client";
+import Ltr from "@/components/storefront/Ltr";
 
 /** Cards are narrow (2 columns on mobile), so the run of sizes is capped and
  *  the remainder collapses into a "+N" — never a second wrapped line. */
@@ -31,6 +35,9 @@ export default function ProductCard({
   className?: string;
   priority?: boolean;
 }) {
+  const { t } = useT("catalog");
+  const localeHref = useLocalePath();
+
   const inStockSizes = product.sizes
     .filter((s) => s.quantity > 0)
     .sort((a, b) => Number(a.size) - Number(b.size));
@@ -39,7 +46,7 @@ export default function ProductCard({
 
   return (
     <Link
-      href={`/product/${product.shoeId}`}
+      href={localeHref(`/product/${product.shoeId}`)}
       className={cn("group flex min-w-44 flex-col gap-4 py-2", className)}
     >
       <ProductMedia
@@ -48,7 +55,10 @@ export default function ProductCard({
           product.primaryImageAlt ??
           // Falls back to a descriptive phrase, not just the name: alt text
           // is the only textual signal an image search has to go on.
-          `${product.modelName} ${product.color} — chaussure de basketball authentique`
+          t("card.altFallback", {
+            model: product.modelName,
+            color: product.color,
+          })
         }
         label={`${product.modelName} ${product.color}`}
         priority={priority}
@@ -71,9 +81,9 @@ export default function ProductCard({
         {inStockSizes.length > 0 ? (
           <ul
             className="flex flex-nowrap items-center gap-1 overflow-hidden"
-            aria-label={`Pointures disponibles : ${inStockSizes
-              .map((s) => s.size)
-              .join(", ")}`}
+            aria-label={t("card.sizesLabel", {
+              sizes: inStockSizes.map((s) => s.size).join(", "),
+            })}
           >
             {visibleSizes.map((s) => (
               <li
@@ -81,7 +91,7 @@ export default function ProductCard({
                 aria-hidden
                 className="sf-body flex h-6 min-w-6 shrink-0 items-center justify-center rounded-(--sf-radius-sm) border border-(--sf-line) px-1 text-[11px] font-normal leading-none text-(--sf-muted)"
               >
-                {s.size}
+                <Ltr>{s.size}</Ltr>
               </li>
             ))}
             {hiddenSizeCount > 0 && (
@@ -89,13 +99,13 @@ export default function ProductCard({
                 aria-hidden
                 className="sf-body flex h-6 shrink-0 items-center text-[11px] font-normal leading-none text-(--sf-muted)"
               >
-                +{hiddenSizeCount}
+                <Ltr>+{hiddenSizeCount}</Ltr>
               </li>
             )}
           </ul>
         ) : (
           <p className="sf-body text-[11px] font-normal uppercase tracking-[0.12em] text-(--sf-muted)">
-            Épuisé
+            {t("card.soldOut")}
           </p>
         )}
       </div>

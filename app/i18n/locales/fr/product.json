@@ -1,0 +1,25 @@
+{
+  "authenticBadge": "100% authentique",
+  "notFound": "Produit introuvable",
+  "metaTitle": "{{name}} — Basketball authentique",
+  "metaDescription": "{{name}} au prix de {{price}}. Chaussure de basketball 100% authentique chez {{brand}}. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison.",
+  "prose": "{{name}} — chaussure de basketball 100% authentique, vérifiée avant expédition par {{brand}}. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison.",
+  "price": {
+    "current": "Prix : {{price}}",
+    "compareAt": "Ancien prix : {{price}}"
+  },
+  "size": {
+    "heading": "Choisissez votre pointure",
+    "prompt": "Sélectionnez une pointure pour continuer",
+    "selected": "Pointure <0>{{size}}</0> sélectionnée",
+    "low_one": "Pointure <0>{{size}}</0> — plus que {{count}} en stock",
+    "low_other": "Pointure <0>{{size}}</0> — plus que {{count}} en stock",
+    "priceFor": "Prix pour la pointure <0>{{size}}</0>"
+  },
+  "carousel": {
+    "previous": "Image précédente",
+    "next": "Image suivante",
+    "goTo": "Voir l'image {{index}}",
+    "altFallback": "{{name}} — chaussure de basketball authentique"
+  }
+}

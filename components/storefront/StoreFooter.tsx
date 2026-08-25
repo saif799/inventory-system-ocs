@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Instagram, Facebook } from "lucide-react";
-import { BRAND, DELIVERY } from "@/lib/storefront/seo";
+import { BRAND } from "@/lib/storefront/seo";
+import { getT } from "@/app/i18n/server";
+import { localePath, type Locale } from "@/i18n.config";
+import LanguageSwitcher from "@/components/storefront/LanguageSwitcher";
 
 // TODO: replace with the real social URLs before launch.
 const socialLinks = [
@@ -30,7 +33,8 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
  * Design system §7.2: a full-bleed charcoal slab (#1F2123 — not pure black),
  * everything centred in one vertical stack. py-12, outer gap-8, inner gap-6.
  */
-export default function StoreFooter() {
+export default async function StoreFooter({ lng }: { lng: Locale }) {
+  const { t } = await getT(lng, "common");
   const year = new Date().getFullYear();
 
   return (
@@ -41,26 +45,31 @@ export default function StoreFooter() {
         </p>
 
         <p className="sf-body w-4/5 max-w-xl text-center text-sm font-normal text-(--sf-footer-muted)">
-          {BRAND.tagline}. {DELIVERY.sentenceFr}
+          {t("footer.blurb")}
         </p>
 
         <div className="flex items-center gap-6">
           <Link
-            href="/"
+            href={localePath(lng, "/")}
             className="sf-body text-sm font-normal text-(--sf-footer-muted) transition-colors hover:text-(--sf-footer-fg)"
           >
-            Accueil
+            {t("nav.home")}
           </Link>
           <Link
-            href="/products"
+            href={localePath(lng, "/products")}
             className="sf-body text-sm font-normal text-(--sf-footer-muted) transition-colors hover:text-(--sf-footer-fg)"
           >
-            Produits
+            {t("nav.products")}
           </Link>
         </div>
 
+        {/* Mirrored from the header: the switcher is the only thing that ever
+            writes the locale cookie, so it needs to be findable from the
+            bottom of a long page too. */}
+        <LanguageSwitcher />
+
         <p className="sf-body text-center text-lg font-normal text-(--sf-footer-fg)">
-          Suivez-nous
+          {t("footer.follow")}
         </p>
 
         <div className="flex gap-8">
@@ -77,7 +86,7 @@ export default function StoreFooter() {
         </div>
 
         <p className="sf-body text-sm font-normal text-(--sf-footer-muted)">
-          {BRAND.full} © {year} Tous droits réservés.
+          {BRAND.full} © {year} {t("footer.rights")}
         </p>
       </div>
     </footer>

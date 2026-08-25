@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       })
       .returning();
 
-    revalidatePath("/");
+    revalidatePath("/[lng]", "layout");
     revalidatePath("/admin/storefront");
     return NextResponse.json(created);
   } catch (error: any) {
@@ -74,7 +74,7 @@ export async function PATCH(request: Request) {
       ),
     );
 
-    revalidatePath("/");
+    revalidatePath("/[lng]", "layout");
     revalidatePath("/admin/storefront");
     return NextResponse.json({ success: true });
   } catch (error: any) {

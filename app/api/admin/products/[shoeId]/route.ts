@@ -130,7 +130,7 @@ export async function PATCH(request: Request, { params }: Params) {
 
     revalidatePath("/admin/products");
     revalidatePath("/admin");
-    revalidatePath("/");
+    revalidatePath("/[lng]", "layout");
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

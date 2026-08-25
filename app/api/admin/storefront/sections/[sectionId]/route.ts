@@ -29,7 +29,7 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Section not found" }, { status: 404 });
     }
 
-    revalidatePath("/");
+    revalidatePath("/[lng]", "layout");
     revalidatePath("/admin/storefront");
     return NextResponse.json(updated);
   } catch (error: any) {
@@ -50,7 +50,7 @@ export async function DELETE(_request: Request, { params }: Params) {
       return NextResponse.json({ error: "Section not found" }, { status: 404 });
     }
 
-    revalidatePath("/");
+    revalidatePath("/[lng]", "layout");
     revalidatePath("/admin/storefront");
     return NextResponse.json({ success: true });
   } catch (error: any) {

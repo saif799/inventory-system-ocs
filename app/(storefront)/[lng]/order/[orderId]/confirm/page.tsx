@@ -7,15 +7,27 @@ import { CheckCircle2, MessageCircle } from "lucide-react";
 import { formatDZD } from "@/lib/format";
 import { resolveProductPrice } from "@/lib/helpers";
 import PurchaseTracker from "@/components/storefront/PurchaseTracker";
+import Ltr from "@/components/storefront/Ltr";
+import { getT } from "@/app/i18n/server";
+import { isLocale, localePath } from "@/i18n.config";
 
-type Props = { params: Promise<{ orderId: string }> };
+type Props = { params: Promise<{ lng: string; orderId: string }> };
 
-export const metadata = {
-  title: "Commande confirmée — OCS Store",
-};
+export async function generateMetadata({ params }: Props) {
+  const { lng } = await params;
+  if (!isLocale(lng)) return {};
+  const { t } = await getT(lng, "checkout");
+  return {
+    title: t("confirm.metaTitle"),
+    // A receipt is per-customer and must never be indexed.
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function OrderConfirmPage({ params }: Props) {
-  const { orderId } = await params;
+  const { lng, orderId } = await params;
+  if (!isLocale(lng)) notFound();
+  const { t } = await getT(lng, "checkout");
 
   const [order] = await db
     .select()
@@ -61,8 +73,18 @@ export default async function OrderConfirmPage({ params }: Props) {
   const pixelValue = pixelContents.reduce((sum, c) => sum + c.item_price, 0);
   const pixelContentIds = [...new Set(pixelContents.map((c) => c.id))];
 
+  const total = formatDZD(Number(order.montant));
+
+  // Translated, because a customer who read the whole checkout in Arabic and
+  // is then handed a pre-filled French message has hit exactly the confusion
+  // this locale exists to remove. The order's own values stay verbatim, so the
+  // shop can still read the details at a glance either way.
   const whatsappMessage = encodeURIComponent(
-    `Bonjour ! Je viens de passer une commande.\nCommande : ${order.reference || orderId}\nNom : ${order.nom_client}\nTotal : ${formatDZD(Number(order.montant))}`,
+    t("confirm.whatsappMessage", {
+      reference: order.reference || orderId,
+      name: order.nom_client,
+      total,
+    }),
   );
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "213XXXXXXXXX";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
@@ -83,49 +105,50 @@ export default async function OrderConfirmPage({ params }: Props) {
         <CheckCircle2 className="h-14 w-14 text-green-600" strokeWidth={1.5} />
         <div>
           <h1 className="sf-heading text-xl font-medium text-green-600 md:text-2xl">
-            Commande passée !
+            {t("confirm.heading")}
           </h1>
           <p className="sf-body mt-2 text-sm font-normal text-(--sf-muted)">
-            Merci, {order.nom_client}. Votre commande a bien été reçue.
+            {t("confirm.subheading", { name: order.nom_client })}
           </p>
         </div>
       </div>
 
       <div className="sf-body mt-8 space-y-4 text-sm">
-        {/* <div className="flex justify-between">
-          <span className="text-(--sf-muted)">Numéro de commande</span>
-          <span className="font-medium">{order.reference || orderId}</span>
-        </div> */}
-
         <div className="space-y-3 pt-4">
-          <p className="font-medium">Articles</p>
+          <p className="font-medium">{t("confirm.items")}</p>
           {items.map((item) => (
             <div key={item.inventoryId} className="flex justify-between">
-              <span>
+              {/* Catalog Data — verbatim, in an LTR isolate. */}
+              <Ltr>
                 {item.modelName} — {item.color}
+              </Ltr>
+              {/* Both locales put the label before the number, so this needs
+                  no <Trans> reordering — only the value needs isolating. */}
+              <span className="text-(--sf-text)">
+                {t("confirm.size")} <Ltr>{item.size}</Ltr>
               </span>
-              <span className="text-(--sf-text)">Pointure {item.size}</span>
             </div>
           ))}
         </div>
 
         <div className="space-y-2 border-t border-(--sf-line) pt-4">
           <div className="flex justify-between">
-            <span className="text-(--sf-text)">Livraison</span>
+            <span className="text-(--sf-text)">{t("confirm.delivery")}</span>
             <span>
-              {order.commune}, Wilaya {order.code_wilaya}
+              <Ltr>{order.commune}</Ltr>, {t("confirm.wilaya")}{" "}
+              <Ltr>{order.code_wilaya}</Ltr>
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-(--sf-text)">Téléphone</span>
-            <span>{order.telephone}</span>
+            <span className="text-(--sf-text)">{t("confirm.phone")}</span>
+            <Ltr>{order.telephone}</Ltr>
           </div>
         </div>
 
         <div className="my-4 border-t border-(--sf-text)" />
         <div className="flex justify-between font-medium">
-          <span>Total</span>
-          <span className="text-(--sf-text)">{formatDZD(Number(order.montant))}</span>
+          <span>{t("confirm.total")}</span>
+          <Ltr className="text-(--sf-text)">{total}</Ltr>
         </div>
       </div>
 
@@ -138,14 +161,14 @@ export default async function OrderConfirmPage({ params }: Props) {
           style={{ borderRadius: "var(--sf-radius)" }}
         >
           <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
-          Nous contacter sur WhatsApp
+          {t("confirm.whatsappCta")}
         </a>
         <Link
-          href="/products"
+          href={localePath(lng, "/products")}
           className="flex w-full items-center justify-center border border-(--sf-line) py-4 text-sm font-medium text-(--sf-text) transition-colors hover:bg-(--sf-hover)"
           style={{ borderRadius: "var(--sf-radius)" }}
         >
-          Continuer mes achats
+          {t("confirm.continue")}
         </Link>
       </div>
     </main>

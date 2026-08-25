@@ -4,21 +4,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { STOREFRONT_FAQS } from "@/lib/storefront/faq";
+import { getStorefrontFaqs } from "@/lib/storefront/faq";
+import { getT } from "@/app/i18n/server";
+import type { Locale } from "@/i18n.config";
 
-export default function ProductFaq() {
+export default async function ProductFaq({ lng }: { lng: Locale }) {
+  const { t } = await getT(lng, "faq");
+  const faqs = await getStorefrontFaqs(lng);
+
   return (
     <div className="sf-body border-t border-(--sf-line) py-6">
       <h2 className="sf-heading mb-3 text-sm font-medium text-(--sf-text) md:text-xl">
-        Questions fréquentes
+        {t("title")}
       </h2>
       <Accordion type="single" collapsible>
-        {STOREFRONT_FAQS.map((faq, i) => (
-          <AccordionItem key={i} value={`faq-${i}`}>
-            <AccordionTrigger className="pl-2 text-left text-base font-normal text-(--sf-text) data-[state=open]:font-medium">
+        {faqs.map((faq) => (
+          <AccordionItem key={faq.id} value={`faq-${faq.id}`}>
+            {/* Logical padding/alignment so the trigger flips with the page. */}
+            <AccordionTrigger className="ps-2 text-start text-base font-normal text-(--sf-text) data-[state=open]:font-medium">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-sm font-normal text-(--sf-muted)">
+            <AccordionContent className="text-start text-sm font-normal text-(--sf-muted)">
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

@@ -211,6 +211,24 @@
   --sf-weight-emphasis: 500;
 }
 
+/* Arabic swaps the *font tokens* rather than adding a competing font-family
+ * rule, so every storefront rule that resolves a family through them re-skins
+ * at once — including .sf-portal surfaces, which mount on <body>.
+ *
+ * All three tokens have to be redeclared, not just --sf-font: -display and
+ * -body are declared above as `var(--sf-font)`, and a custom property is
+ * substituted where it is *declared*, so overriding only --sf-font would leave
+ * them resolving to DM Mono.
+ *
+ * The selector is [lang|="ar"], not [lang="ar"], because <html> carries the
+ * full BCP-47 tag ("ar-DZ"). Specificity (0,1,1) beats the :root block above
+ * even though both match the same element. */
+html[lang|='ar'] {
+  --sf-font: var(--font-cairo), 'Noto Kufi Arabic', 'Segoe UI', sans-serif;
+  --sf-font-display: var(--sf-font);
+  --sf-font-body: var(--sf-font);
+}
+
 /* Applying the theme is scoped; defining it (above) is not. */
 [data-storefront],
 .sf-portal {

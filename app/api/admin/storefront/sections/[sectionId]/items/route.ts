@@ -31,7 +31,7 @@ export async function PUT(request: Request, { params }: Params) {
       }
     });
 
-    revalidatePath("/");
+    revalidatePath("/[lng]", "layout");
     revalidatePath("/admin/storefront");
     return NextResponse.json({ success: true, count: shoeIds.length });
   } catch (error: any) {

@@ -1,0 +1,71 @@
+{
+  "form": {
+    "heading": "معلوماتك و التوصيل",
+    "nameLabel": "الاسم و اللقب",
+    "namePlaceholder": "الاسم و اللقب",
+    "phoneLabel": "رقم الهاتف",
+    "phonePlaceholder": "رقم الهاتف — 0X XX XX XX XX",
+    "wilaya": "الولاية",
+    "commune": "البلدية"
+  },
+  "errors": {
+    "sizeOutOfStock": "هذا المقاس لم يعد متوفراً.",
+    "nameRequired": "الرجاء إدخال الاسم و اللقب.",
+    "phoneInvalid": "رقم الهاتف غير صحيح (مثال: 05/06/07XXXXXXXX).",
+    "wilayaRequired": "الرجاء اختيار الولاية.",
+    "communeRequired": "الرجاء اختيار البلدية.",
+    "submitFailed": "تعذر إرسال الطلب. حاول مرة أخرى.",
+    "unexpected": "حدث خطأ ما. حاول مرة أخرى."
+  },
+  "delivery": {
+    "modeLabel": "طريقة التوصيل",
+    "home": "إلى المنزل",
+    "desk": "المكتب — ستوب ديسك",
+    "deskShort": "مكتب التوصيل",
+    "deskUnavailableCommune": "المكتب غير متوفر في هذه البلدية",
+    "deskUnavailableWilaya": "المكتب غير متوفر في هذه الولاية",
+    "feeHint": "إلى المنزل {{homeFee}} · المكتب {{deskFee}}"
+  },
+  "summary": {
+    "heading": "الملخص",
+    "price": "السعر",
+    "delivery": "التوصيل",
+    "total": "المجموع",
+    "calculating": "جاري الحساب…",
+    "empty": "—"
+  },
+  "cta": {
+    "loading": "جاري إرسال الطلب…",
+    "order": "اطلب الآن — {{total}}",
+    "chooseSize": "اختر المقاس",
+    "orderShort": "اطلب الآن",
+    "chooseSizeShort": "اختر المقاس",
+    "whatsapp": "اطلب عبر واتساب"
+  },
+  "reassurance": {
+    "cod": "الدفع عند الاستلام",
+    "exchange": "إمكانية تبديل المقاس"
+  },
+  "sticky": {
+    "size": "المقاس <0>{{size}}</0>",
+    "noSize": "المقاس —"
+  },
+  "whatsappMessage": {
+    "withSize": "السلام عليكم! مهتم بـ {{product}}، المقاس {{size}} ({{total}}).",
+    "withoutSize": "السلام عليكم! مهتم بـ {{product}}."
+  },
+  "confirm": {
+    "metaTitle": "تم تأكيد الطلب",
+    "heading": "تم تسجيل طلبك!",
+    "subheading": "شكراً {{name}}. لقد استلمنا طلبك بنجاح.",
+    "items": "المنتجات",
+    "size": "المقاس",
+    "delivery": "التوصيل",
+    "phone": "رقم الهاتف",
+    "total": "المجموع",
+    "whatsappCta": "تواصل معنا عبر واتساب",
+    "continue": "مواصلة التسوق",
+    "whatsappMessage": "السلام عليكم! لقد قمت بطلب جديد.\nرقم الطلب: {{reference}}\nالاسم: {{name}}\nالمجموع: {{total}}",
+    "wilaya": "ولاية"
+  }
+}

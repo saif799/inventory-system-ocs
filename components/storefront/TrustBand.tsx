@@ -1,13 +1,16 @@
 import { ShieldCheck, Wallet, Truck } from "lucide-react";
-import { DELIVERY } from "@/lib/storefront/seo";
+import { getT } from "@/app/i18n/server";
+import type { Locale } from "@/i18n.config";
 
-const items = [
-  { icon: ShieldCheck, label: "Basketball 100% authentique" },
-  { icon: Wallet, label: "Paiement à la livraison" },
-  { icon: Truck, label: `${DELIVERY.labelFr} — ${DELIVERY.wilayas} wilayas` },
-];
+export default async function TrustBand({ lng }: { lng: Locale }) {
+  const { t } = await getT(lng, "common");
 
-export default function TrustBand() {
+  const items = [
+    { icon: ShieldCheck, label: t("trust.authentic") },
+    { icon: Wallet, label: t("trust.cod") },
+    { icon: Truck, label: t("trust.delivery") },
+  ];
+
   return (
     <div className="sf-body grid grid-cols-1 gap-4 border-t border-(--sf-line) py-6 sm:grid-cols-3">
       {items.map(({ icon: Icon, label }) => (

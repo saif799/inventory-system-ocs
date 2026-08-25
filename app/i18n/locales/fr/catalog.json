@@ -1,0 +1,39 @@
+{
+  "metaTitle": "Toutes les chaussures de basketball",
+  "metaDescription": "Parcourez le catalogue {{brand}} : chaussures de basketball 100% authentiques, toutes pointures. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison.",
+  "ogTitle": "Chaussures de basketball authentiques — {{brand}}",
+  "eyebrow": "Accueil / Produits",
+  "heading": "Chaussures de basketball authentiques",
+  "lede_one": "{{count}} modèle disponible chez {{brand}}. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison.",
+  "lede_other": "{{count}} modèles disponibles chez {{brand}}. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison.",
+  "search": {
+    "placeholder": "Rechercher un modèle ou une couleur…",
+    "label": "Rechercher un modèle ou une couleur"
+  },
+  "count_one": "Produits ({{count}})",
+  "count_other": "Produits ({{count}})",
+  "sort": {
+    "label": "Trier les produits",
+    "newest": "Nouveautés",
+    "priceAsc": "Prix croissant",
+    "priceDesc": "Prix décroissant"
+  },
+  "filters": {
+    "title": "Filtres",
+    "model": "Modèle",
+    "size": "Pointure",
+    "bounds": "Prix",
+    "minPlaceholder": "prix min",
+    "maxPlaceholder": "prix max",
+    "remove": "Retirer {{label}}",
+    "noModel": "Aucun modèle",
+    "apply_one": "Voir le {{count}} résultat",
+    "apply_other": "Voir les {{count}} résultats"
+  },
+  "empty": "Aucun produit ne correspond à ces filtres.",
+  "card": {
+    "sizesLabel": "Pointures disponibles : {{sizes}}",
+    "soldOut": "Épuisé",
+    "altFallback": "{{model}} {{color}} — chaussure de basketball authentique"
+  }
+}

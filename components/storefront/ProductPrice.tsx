@@ -1,5 +1,9 @@
+"use client";
+
 import { formatDZD } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { useT } from "@/app/i18n/client";
+import Ltr from "@/components/storefront/Ltr";
 
 /**
  * The one way a price is written on the storefront: current price in the
@@ -26,6 +30,7 @@ export default function ProductPrice({
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
+  const { t } = useT("product");
   const onSale = compareAtPrice != null && compareAtPrice > price;
   // Rounded, not floored: "-33%" off 15000→10000 is truer than "-33%" vs "-34%"
   // only when rounding, and shoppers read the badge as approximate anyway.
@@ -45,22 +50,24 @@ export default function ProductPrice({
         className={cn("sf-heading font-medium text-(--sf-accent)", scale.current)}
         // The accessible name spells out the currency; "12 000 DA" is read as
         // a bare number by most screen readers.
-        aria-label={`Prix : ${formatDZD(price)}`}
+        aria-label={t("price.current", { price: formatDZD(price) })}
       >
-        {formatDZD(price)}
+        {/* Prices stay an LTR run: without the isolate the bidi algorithm can
+            move the "DA" suffix to the wrong end of the number in Arabic. */}
+        <Ltr>{formatDZD(price)}</Ltr>
       </span>
 
       {onSale && (
         <>
           <span
             className={cn("sf-body text-(--sf-muted) line-through", scale.old)}
-            aria-label={`Ancien prix : ${formatDZD(compareAtPrice)}`}
+            aria-label={t("price.compareAt", { price: formatDZD(compareAtPrice) })}
           >
-            {formatDZD(compareAtPrice)}
+            <Ltr>{formatDZD(compareAtPrice)}</Ltr>
           </span>
           {discountPct > 0 && (
             <span className="sf-body rounded-(--sf-radius-sm) bg-(--sf-highlight) px-1.5 py-0.5 text-[11px] font-medium text-(--sf-highlight-fg)">
-              −{discountPct}%
+              <Ltr>−{discountPct}%</Ltr>
             </span>
           )}
         </>
