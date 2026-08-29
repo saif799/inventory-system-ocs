@@ -35,5 +35,10 @@
     "sizesLabel": "Pointures disponibles : {{sizes}}",
     "soldOut": "Épuisé",
     "altFallback": "{{model}} {{color}} — chaussure de basketball authentique"
+  },
+  "collection": {
+    "metaDescription": "Retrouvez la sélection {{title}} chez {{brand}} : chaussures de basketball 100% authentiques, livraison rapide en 24 à 48h partout en Algérie.",
+    "empty": "Rien pour le moment dans cette collection.",
+    "browseAll": "Voir tout le catalogue"
   }
 }

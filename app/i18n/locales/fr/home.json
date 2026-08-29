@@ -14,9 +14,7 @@
     "title": "Authenticité garantie, livraison en 24-48h",
     "body": "{{brand}} vérifie chaque paire de chaussures de basketball avant expédition, sans exception. Livraison rapide en 24 à 48h partout en Algérie, dans les 58 wilayas, avec paiement à la livraison."
   },
-  "carousel": {
-    "seeAll": "Tout voir",
-    "previous": "Précédent",
-    "next": "Suivant"
+  "collections": {
+    "heading": "Nos collections"
   }
 }

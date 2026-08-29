@@ -26,6 +26,23 @@ The monetary price of a shoe item in Algerian Dinars (DZD / DA), resolved throug
 ### Out-of-Stock Size Guard
 Mechanism disabling selection and submission for size variants whose `quantity` in `shoe_inventory` equals 0. Out-of-stock sizes display strikethrough styling and disabled interaction state.
 
+### Collection
+An admin-curated, ordered set of Products presented on the storefront as one browsable destination — "Suggestions", "Offres", "Ja Morant". A Collection is **curation, not classification**: its members are hand-picked one by one, a Product can belong to several Collections at once, and nothing about a Product determines which Collection it lands in. It carries a title, an optional subtitle, an image, and a Collection Slug. Collections are the homepage's only navigational content — the homepage is a grid of Collection cards, not a list of products (see ADR-0006).
+
+A future taxonomy on Shoe Model (Basketball / Running) would be *classification* and is a different concept — do not call it a Collection.
+
+### Collection Slug
+The stable, human-readable public identifier a Collection is addressed by (`/collection/ja-morant`). Derived from the title when the Collection is created, then treated as fixed: changing it breaks every link already shared, so it is only editable through a deliberate unlock. Renaming a Collection's title does not change its Slug.
+
+### Incomplete Collection
+A Collection with no image. It cannot be rendered — the homepage card *is* the image — so it never reaches the storefront at all, and is flagged as such in admin. This is a draft state, not an error: it is what a Collection looks like between being created and having its photo uploaded.
+
+### Hidden Collection
+A Collection whose visibility has been switched off by the owner. It is absent from the homepage grid **and** its Slug stops resolving. Hidden means hidden — an intentionally parked Collection is not something to keep serving.
+
+### Empty Collection
+A Collection whose every pick is currently unpriced or out of stock, so nothing live remains to show. Distinct from Hidden: nobody switched it off, the stock ran out. Its card drops out of the homepage grid, but **its Slug keeps resolving**, showing an empty state and a route back to the catalog — a link shared to a story outlives the stock it pointed at.
+
 ### Storefront Filtering Tool
 Catalog filtering mechanism adapting the admin `FilterTool` pattern:
 - **Shoe Model Filter**: Filter catalog listings by one or more selected shoe models.

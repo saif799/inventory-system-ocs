@@ -182,7 +182,7 @@ describe("archived products", () => {
     expect(await ids({ filters: { search: "retired" } })).toEqual([]);
   });
 
-  it("drops an archived shoe out of a pinned homepage section", async () => {
+  it("drops an archived shoe out of a Collection's picks", async () => {
     const model = await seedModel("Air Force 1", 5000);
     const live = await seedShoe(model.id, "White");
     await seedInventory(live.id, "40", 2);

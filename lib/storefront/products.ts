@@ -66,8 +66,20 @@ type Row = {
 const resolvedPriceSql = sql<number>`COALESCE(${shoeInventory.priceOverride}, ${shoes.priceOverride}, ${shoeModels.basePrice})`;
 
 /**
+ * A product is "live" when a buyer could actually put it in a basket: it is
+ * priced and at least one size is in stock.
+ *
+ * Curated surfaces (Collections, and the admin picker that badges picks) all
+ * ask this same question, so it is defined once here rather than re-inlined
+ * per caller — the two copies that preceded this had already begun to drift.
+ */
+export function isLive(product: StorefrontProduct): boolean {
+  return product.minPrice > 0 && product.sizes.some((s) => s.quantity > 0);
+}
+
+/**
  * Archive is a discoverability flag, not a stock flag: it removes a product
- * from every surface a buyer *browses* (catalog, homepage sections, sitemap,
+ * from every surface a buyer *browses* (catalog, Collections, sitemap,
  * model filter) while leaving its stock, its history and its direct
  * `/product/[shoeId]` URL untouched. An archived model retires its colours
  * with it — `baseSelect()` already inner-joins `shoeModels`, so one predicate

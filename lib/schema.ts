@@ -269,27 +269,44 @@ export const shoeImages = pgTable("shoe_images", {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Storefront: admin-curated homepage product carousels ("Suggestions", "Offres").
-// The hero itself is static (hardcoded), so there is no hero table.
+// Storefront: admin-curated Collections ("Suggestions", "Offres", "Ja Morant").
+// Curation, not classification — a hand-picked, ordered set of colour variants
+// with an image, a slug and a public page at /[lng]/collection/<slug>. The
+// homepage is the grid of these; the hero itself is static, so there is no
+// hero table. See ADR-0006.
 // ─────────────────────────────────────────────────────────────────────────────
-export const storefrontSections = pgTable("storefront_sections", {
+export const storefrontCollections = pgTable("storefront_collections", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title").notNull(),
   subtitle: varchar("subtitle"),
-  ctaHref: varchar("cta_href"),
+  /**
+   * Public API. Derived from the title on creation, then fixed — renaming the
+   * title must never touch it, or every link already shared 404s.
+   */
+  slug: varchar("slug").notNull().unique(),
+  /**
+   * R2 object key, the single source of truth for the image, exactly as
+   * `shoeImages.cloudflareImageId` is. Nullable: a Collection can be parked
+   * half-finished (an *Incomplete* Collection), it simply never renders.
+   */
+  imageKey: varchar("image_key"),
+  /** Cached public CDN URL, always derived server-side via buildR2PublicUrl. */
+  imageUrl: varchar("image_url"),
+  /** Accessibility / SEO alt text; falls back to the title at render time. */
+  imageAlt: varchar("image_alt"),
   sortOrder: integer("sort_order").notNull().default(0),
   isVisible: boolean("is_visible").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const storefrontSectionItems = pgTable(
-  "storefront_section_items",
+export const storefrontCollectionItems = pgTable(
+  "storefront_collection_items",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    sectionId: uuid("section_id")
+    collectionId: uuid("collection_id")
       .notNull()
-      .references(() => storefrontSections.id, { onDelete: "cascade" }),
+      .references(() => storefrontCollections.id, { onDelete: "cascade" }),
     shoeId: varchar("shoe_id")
       .notNull()
       .references(() => shoes.id, { onDelete: "cascade" }),
@@ -297,6 +314,6 @@ export const storefrontSectionItems = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
-    unique("storefront_section_items_section_shoe_unique").on(t.sectionId, t.shoeId),
+    unique("storefront_collection_items_collection_shoe_unique").on(t.collectionId, t.shoeId),
   ],
 );

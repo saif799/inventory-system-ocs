@@ -18,6 +18,12 @@ export interface ImageUploaderProps {
   onChange?: (value: string | string[]) => void;
   /** Callback fired when an upload batch completes successfully */
   onUploadComplete?: (newUrls: string[]) => void;
+  /**
+   * Same batch, as `{ key, url }` pairs. The R2 object key is the single source
+   * of truth for anything that stores an image (see POST /api/admin/images), so
+   * a caller that persists the upload needs the key, not just the URL.
+   */
+  onUploadObjects?: (objects: UploadedObject[]) => void;
   /** Allow uploading multiple images (default: false) */
   multiple?: boolean;
   /** Maximum file size allowed in Megabytes (default: 5) */
@@ -28,6 +34,12 @@ export interface ImageUploaderProps {
   disabled?: boolean;
   /** Optional custom CSS class for container */
   className?: string;
+}
+
+/** One finished upload: the R2 object key and the public URL built from it. */
+export interface UploadedObject {
+  key: string;
+  url: string;
 }
 
 interface UploadingFile {
@@ -42,6 +54,7 @@ export function ImageUploader({
   value,
   onChange,
   onUploadComplete,
+  onUploadObjects,
   multiple = false,
   maxSizeMB = 5,
   folder = "uploads",
@@ -71,11 +84,11 @@ export function ImageUploader({
     [onChange, multiple]
   );
 
-  const uploadSingleFile = async (fileItem: UploadingFile): Promise<string> => {
+  const uploadSingleFile = async (fileItem: UploadingFile): Promise<UploadedObject> => {
     const { file } = fileItem;
 
     // Helper: Server-side upload fallback via FormData
-    const uploadViaServer = async (): Promise<string> => {
+    const uploadViaServer = async (): Promise<UploadedObject> => {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folder", folder);
@@ -98,7 +111,7 @@ export function ImageUploader({
             : item
         )
       );
-      return data.publicUrl;
+      return { key: data.key, url: data.publicUrl };
     };
 
     try {
@@ -118,10 +131,10 @@ export function ImageUploader({
         return await uploadViaServer();
       }
 
-      const { uploadUrl, publicUrl } = await res.json();
+      const { uploadUrl, key, publicUrl } = await res.json();
 
       // Step 2: Upload file binary directly to Cloudflare R2 with XHR progress listener
-      return await new Promise<string>((resolve, reject) => {
+      return await new Promise<UploadedObject>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.open("PUT", uploadUrl, true);
         xhr.setRequestHeader("Content-Type", file.type);
@@ -146,7 +159,7 @@ export function ImageUploader({
                   : item
               )
             );
-            resolve(publicUrl);
+            resolve({ key, url: publicUrl });
           } else {
             // Non-200 status -> try server fallback
             uploadViaServer().then(resolve).catch(reject);
@@ -200,14 +213,13 @@ export function ImageUploader({
 
     setUploadingFiles((prev) => [...prev, ...newUploadItems]);
 
-    const successfullyUploadedUrls: string[] = [];
+    const uploaded: UploadedObject[] = [];
 
     // Process uploads concurrently
     await Promise.all(
       newUploadItems.map(async (item) => {
         try {
-          const publicUrl = await uploadSingleFile(item);
-          successfullyUploadedUrls.push(publicUrl);
+          uploaded.push(await uploadSingleFile(item));
         } catch (err: any) {
           const errMsg = err?.message || "Upload failed";
           toast.error(`Failed to upload ${item.file.name}: ${errMsg}`);
@@ -219,24 +231,26 @@ export function ImageUploader({
     );
 
     // Remove completed upload progress items after a short delay
+    const uploadedUrls = uploaded.map((o) => o.url);
     setTimeout(() => {
       setUploadingFiles((prev) =>
-        prev.filter((item) => !successfullyUploadedUrls.includes(item.url || ""))
+        prev.filter((item) => !uploadedUrls.includes(item.url || ""))
       );
     }, 600);
 
-    if (successfullyUploadedUrls.length > 0) {
-      const nextUrls = multiple
-        ? [...currentUrls, ...successfullyUploadedUrls]
-        : [successfullyUploadedUrls[0]];
+    if (uploaded.length > 0) {
+      const nextUrls = multiple ? [...currentUrls, ...uploadedUrls] : [uploadedUrls[0]];
 
       updateUrls(nextUrls);
       if (onUploadComplete) {
-        onUploadComplete(successfullyUploadedUrls);
+        onUploadComplete(uploadedUrls);
+      }
+      if (onUploadObjects) {
+        onUploadObjects(uploaded);
       }
       toast.success(
-        `Successfully uploaded ${successfullyUploadedUrls.length} ${
-          successfullyUploadedUrls.length === 1 ? "image" : "images"
+        `Successfully uploaded ${uploaded.length} ${
+          uploaded.length === 1 ? "image" : "images"
         }!`
       );
     }

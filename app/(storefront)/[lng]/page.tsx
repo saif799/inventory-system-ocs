@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Hero from "@/components/storefront/Hero";
 import AuthenticityBand from "@/components/storefront/AuthenticityBand";
-import SectionCarousel from "@/components/storefront/SectionCarousel";
+import CollectionCard from "@/components/storefront/CollectionCard";
 import FaqSection from "@/components/storefront/FaqSection";
-import { getVisibleSections } from "@/lib/storefront/homepage";
+import { getVisibleCollections } from "@/lib/storefront/collections";
 import JsonLd from "@/components/storefront/JsonLd";
 import { getStorefrontFaqs } from "@/lib/storefront/faq";
 import { BRAND, faqJsonLd, localeAlternates, ogLocale } from "@/lib/storefront/seo";
@@ -33,28 +33,46 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
+/**
+ * Hero, then the Collections grid, then the bands. No product rails and no
+ * prices — deliberately, and against the recommendation on the table at the
+ * time: ADR-0006 records the conversion cost this accepts and names the hybrid
+ * (grid plus one auto-generated rail) as the intended fallback if it bites.
+ */
 export default async function StorefrontPage({ params }: Props) {
   const { lng } = await params;
   if (!isLocale(lng)) notFound();
 
-  const sections = await getVisibleSections();
+  const { t } = await getT(lng, "home");
+  const collections = await getVisibleCollections();
   const faqs = await getStorefrontFaqs(lng);
 
   return (
     <>
       <Hero lng={lng} />
-      {sections.map((section) => (
-        <SectionCarousel
-          key={section.id}
-          // title/subtitle are Catalog Data — admin-authored copy stored in the
-          // DB. Like every other DB value they render verbatim rather than
-          // being translated (see CONTEXT.md).
-          title={section.title}
-          subtitle={section.subtitle}
-          ctaHref={section.ctaHref}
-          products={section.products}
-        />
-      ))}
+
+      {collections.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+          <div className="mb-6 border-b border-(--sf-line) pb-4">
+            <h2 className="sf-heading text-xl font-medium text-(--sf-text) md:text-2xl">
+              {t("collections.heading")}
+            </h2>
+          </div>
+
+          {/* Same columns as the product grid — the two surfaces are one system. */}
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+            {collections.map((collection, i) => (
+              <CollectionCard
+                key={collection.id}
+                collection={collection}
+                lng={lng}
+                priority={i < 3}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       <AuthenticityBand lng={lng} />
 
       <FaqSection lng={lng} />

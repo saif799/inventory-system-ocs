@@ -1,6 +1,7 @@
 /**
- * One-off migration: rewrite `shoe_images.url` rows that were stored pointing at
- * the R2 S3 API endpoint (`https://<accountId>.r2.cloudflarestorage.com/<bucket>/<key>`).
+ * One-off migration: rewrite the cached public URLs — `shoe_images.url` and
+ * `storefront_collections.image_url` — that were stored pointing at the R2 S3
+ * API endpoint (`https://<accountId>.r2.cloudflarestorage.com/<bucket>/<key>`).
  *
  * That endpoint only answers authenticated, signed S3 requests, so browsers render
  * a broken image for every such row. The object key is unchanged — only the base
@@ -19,7 +20,7 @@ import { neon } from "@neondatabase/serverless";
 import { eq } from "drizzle-orm";
 import dotenv from "dotenv";
 
-import { shoeImages } from "../schema";
+import { shoeImages, storefrontCollections } from "../schema";
 import { buildR2PublicUrl, getR2PublicBaseUrl } from "../r2";
 
 dotenv.config();
@@ -95,6 +96,7 @@ async function main() {
   }
 
   if (!APPLY) {
+    await fixCollections(db);
     console.log("\nDry run — nothing was written. Re-run with --apply to commit these changes.");
     return;
   }
@@ -108,8 +110,43 @@ async function main() {
       .where(eq(shoeImages.id, change.id));
   }
 
-  console.log(`\n${planned.length} row(s) updated.`);
+  console.log(`\n${planned.length} image row(s) updated.`);
+  await fixCollections(db);
 }
+
+/**
+ * `storefront_collections.image_url` is the second cached public URL in the
+ * schema (ADR-0006), derived from `image_key` exactly as `shoe_images.url` is
+ * derived from `cloudflare_image_id`. It has to be repaired by the same run, or
+ * swapping R2_PUBLIC_URL fixes the product photos and leaves every homepage
+ * Collection card pointing at the old host.
+ */
+async function fixCollections(db: ReturnType<typeof drizzle>) {
+  const rows = await db.select().from(storefrontCollections);
+  const planned = rows.flatMap((row) => {
+    // An Incomplete Collection has no image at all — nothing to repair.
+    if (!row.imageKey?.trim()) return [];
+    const correctUrl = buildR2PublicUrl(row.imageKey.trim());
+    return correctUrl === row.imageUrl ? [] : [{ id: row.id, title: row.title, to: correctUrl }];
+  });
+
+  console.log(`\n${rows.length} collection(s) scanned; ${planned.length} need rewriting.`);
+  for (const change of planned) {
+    console.log(`  ${change.title}`);
+    console.log(`    + ${change.to}`);
+  }
+
+  if (!APPLY) return;
+
+  for (const change of planned) {
+    await db
+      .update(storefrontCollections)
+      .set({ imageUrl: change.to })
+      .where(eq(storefrontCollections.id, change.id));
+  }
+  console.log(`${planned.length} collection row(s) updated.`);
+}
+
 
 main()
   .then(() => process.exit(0))
