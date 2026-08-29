@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { NextResponse } from "next/server";
 import { txClient } from "@/lib/db";
 import { storefrontSectionItems } from "@/lib/schema";
@@ -13,6 +14,9 @@ type Params = { params: Promise<{ sectionId: string }> };
  * (already in the desired display order).
  */
 export async function PUT(request: Request, { params }: Params) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const { sectionId } = await params;
   try {
     const body = await request.json();

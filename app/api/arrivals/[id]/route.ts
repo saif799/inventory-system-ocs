@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import {
   arrivalItems,
@@ -12,6 +13,9 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { id } = await params;
 

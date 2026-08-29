@@ -1,9 +1,13 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import { shoeModels } from "@/lib/schema";
 import { eq, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     // Feeds the add-shoes model picker, so archived models are withheld.
     const models = await db
@@ -17,6 +21,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { modelName } = await request.json();
     const name = typeof modelName === "string" ? modelName.trim() : "";

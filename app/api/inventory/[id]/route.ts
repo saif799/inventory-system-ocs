@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { txClient } from "@/lib/db";
 import { applyMovement } from "@/lib/stock/movement";
 import { revalidateStockPaths } from "@/lib/stock/revalidate";
@@ -6,6 +7,9 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { action, quantity } = await request.json();
     const { id } = await params;

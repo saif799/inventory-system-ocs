@@ -40,9 +40,19 @@ Decided in [docs/adr/0001-storefront-routing-and-pricing-model.md](docs/adr/0001
 - **`app/(storefront)/`** — public customer store at `/`. Catalog, product page, checkout, order confirmation. Checkout is restricted to the DHD provider and creates orders with the ready-to-ship `statusId` (whose row is named `prete a expedier` — with spaces; the underscored form is a courier `external_statuses` value, not the internal name). Storefront-only helpers live in `lib/storefront/` and `components/storefront/`.
 - **`app/admin/(admin)/`** — internal inventory dashboard under `/admin/*` (products, add-shoes, arrivals, orders, analytics, notifier, borrowers, rebalance, settings, `[lenderId]` borrower detail). The route list lives in [components/navBar.tsx](components/navBar.tsx).
 - **`app/api/`** — REST routes used by client components of both apps. Admin-only mutations (product/model edits, image management, storefront section CMS) are namespaced under `app/api/admin/`; everything else is shared.
-- [middleware.ts](middleware.ts) tags every non-admin request with `x-ocs-storefront` so the root layout can pick `lang="fr"` for the storefront vs `lang="en"` for `/admin` — easy to miss since it's not visible from either route tree.
+- [proxy.ts](proxy.ts) (Next 16's renamed `middleware.ts`) does two jobs: it gates the admin surface, then routes storefront locales. It tags storefront requests with the locale header the root layout reads for `lang`/`dir`; `/admin` is left untagged and stays `lang="en"` LTR.
 
-There is **no authentication anywhere** — `/admin/*` is open. Don't assume a session/user exists.
+### Auth
+
+`/admin/*` and every `/api/*` route **except an explicit allowlist** require the single admin password ([ADR-0005](docs/adr/0005-admin-auth-is-a-single-password-signed-cookie.md)). There is one user — the owner — and no user table.
+
+- [lib/auth/session.ts](lib/auth/session.ts) — HMAC-signed stateless cookie. Edge-safe (Web Crypto only, no Node built-ins) because `proxy.ts` imports it.
+- [lib/auth/protected.ts](lib/auth/protected.ts) — **the** allowlist, and it defaults closed: a new `/api` route is protected the moment it exists. Membership is per path *and method* — `/api/order` is public for `POST` (storefront checkout) and admin-only for `GET`/`DELETE`.
+- [lib/auth/guard.ts](lib/auth/guard.ts) — `requireAdmin()` for route handlers, `requireAdminPage()` for Server Components. The proxy already blankets these paths; the guards are the layer that still holds if it is bypassed. Both are in use — don't remove one as "redundant".
+- `GET /api/status` is the one route with two credentials (cron bearer *or* session), because the Vercel cron and the admin sync button both call it.
+- Requires `ADMIN_PASSWORD`, `AUTH_SECRET`, and `CRON_SECRET` — see `.env.example`.
+
+**Gotcha:** the `matcher` in `proxy.ts` is load-bearing for security. It used to exclude `admin|api`; narrowing it again kills the gate silently. [tests/auth/proxyGate.test.ts](tests/auth/proxyGate.test.ts) replays the real regex to catch that.
 
 Server components read `db` directly; client components `fetch` the `/api/*` routes. Writes call `revalidatePath`.
 
@@ -102,7 +112,7 @@ Prices are **integer DZD**, resolved 3 levels root-to-leaf via `resolveProductPr
 
 ## Environment
 
-`.env` at the repo root: `DATABASE_URL` (Neon), `NEXT_PUBLIC_DHD_API_KEY`, `YALIDINE_API_ID` / `YALIDINE_API_ID_TOKEN` / `YALIDINE_API_ID_URL` / `YALIDINE_FROM_WILAYA`, `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET_NAME` / `R2_PUBLIC_URL` (legacy `NEXT_PUBLIC_R2_PUBLIC_URL` is still read as a fallback), `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `FB_PIXEL_ID`. The storefront page fetches its own `/api/products` through `NEXT_PUBLIC_BASE_URL`, so that must be correct in every environment.
+`.env` at the repo root: `DATABASE_URL` (Neon), `NEXT_PUBLIC_DHD_API_KEY`, `YALIDINE_API_ID` / `YALIDINE_API_ID_TOKEN` / `YALIDINE_API_ID_URL` / `YALIDINE_FROM_WILAYA`, `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET_NAME` / `R2_PUBLIC_URL` (legacy `NEXT_PUBLIC_R2_PUBLIC_URL` is still read as a fallback), `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_WHATSAPP_NUMBER`, `FB_PIXEL_ID`, plus the auth trio `ADMIN_PASSWORD` / `AUTH_SECRET` / `CRON_SECRET`. See [.env.example](.env.example) for the full list. `NEXT_PUBLIC_BASE_URL` now feeds SEO canonicals only — the storefront reads the database directly and no longer fetches its own `/api/products`.
 
 `FB_PIXEL_ID` is deliberately **not** `NEXT_PUBLIC_` and deliberately not an editable field on `/admin/settings` — `/admin` has no authentication, so a DB-backed pixel id would be a public write endpoint for anyone to repoint the storefront's tracking. It is read in [app/(storefront)/layout.tsx](<app/(storefront)/layout.tsx>) and passed down as a prop; unset means no tracking script renders at all. See the header comment on [components/storefront/PurchaseTracker.tsx](components/storefront/PurchaseTracker.tsx) for why Meta's revenue figure will not match `/admin/analytics`.
 

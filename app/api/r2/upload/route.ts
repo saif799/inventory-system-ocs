@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { NextResponse } from "next/server";
 import { buildR2PublicUrl, getR2Client } from "@/lib/r2";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
@@ -15,6 +16,9 @@ const ALLOWED_MIME_TYPES = new Set([
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB limit
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;

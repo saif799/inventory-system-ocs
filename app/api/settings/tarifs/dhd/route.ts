@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 /**
  * PATCH /api/settings/tarifs/dhd
  *
@@ -11,6 +12,9 @@ import { db } from "@/lib/db";
 import { dhdTarifs } from "@/lib/schema";
 
 export async function PATCH(req: NextRequest) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await req.json();
     const {
@@ -73,6 +77,9 @@ export async function PATCH(req: NextRequest) {
 import { dhdWilayas } from "@/lib/schema";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const rows = await db
       .select({

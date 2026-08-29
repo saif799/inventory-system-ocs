@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { NextResponse } from "next/server";
 import { getPresignedUploadUrl } from "@/lib/r2";
 
@@ -11,6 +12,9 @@ const ALLOWED_MIME_TYPES = new Set([
 ]);
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     const { filename, contentType, folder } = body;

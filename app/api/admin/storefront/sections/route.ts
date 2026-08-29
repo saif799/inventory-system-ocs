@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { storefrontSections, storefrontSectionItems } from "@/lib/schema";
@@ -6,6 +7,9 @@ import { revalidatePath } from "next/cache";
 
 /** GET /api/admin/storefront/sections — sections with their item count. */
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const sections = await db
       .select({
@@ -30,6 +34,9 @@ export async function GET() {
 
 /** POST /api/admin/storefront/sections — create a section, appended to the end. */
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     const title: string = body?.title?.trim();
@@ -61,6 +68,9 @@ export async function POST(request: Request) {
 
 /** PATCH /api/admin/storefront/sections — bulk reorder: [{ id, sortOrder }]. */
 export async function PATCH(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     const order: { id: string; sortOrder: number }[] = Array.isArray(body?.order) ? body.order : [];

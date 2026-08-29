@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db, txClient } from "@/lib/db";
 import { storeSales } from "@/lib/schema";
 import { applyMovement } from "@/lib/stock/movement";
@@ -5,6 +6,9 @@ import { revalidateStockPaths } from "@/lib/stock/revalidate";
 import { eq } from "drizzle-orm";
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { inventoryId } = await request.json();
 
@@ -40,6 +44,9 @@ export async function POST(request: Request) {
 
 // Revert a store sale: the unit comes back to stock and the gallery re-syncs.
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { id } = await request.json();
 

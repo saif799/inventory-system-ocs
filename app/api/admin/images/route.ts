@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 ﻿import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { shoeImages } from "@/lib/schema";
@@ -14,6 +15,9 @@ import { eq } from "drizzle-orm";
  * R2_PUBLIC_URL (r2.dev -> custom domain) never leaves stale hosts in the DB.
  */
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     const { shoeId, cloudflareImageId, altText, sortOrder, isPrimary } = body;
@@ -63,6 +67,9 @@ export async function POST(request: Request) {
  * Body: { imageId }
  */
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { imageId } = await request.json();
 

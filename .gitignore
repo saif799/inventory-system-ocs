@@ -19,6 +19,9 @@ yarn-error.log*
 
 # env files
 .env*
+# ...but the template belongs in the repo: it is the only record of which
+# vars a fresh checkout needs, and .env* would otherwise swallow it.
+!.env.example
 
 # vercel
 .vercel

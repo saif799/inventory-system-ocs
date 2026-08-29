@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import {
   LendedShoes,
@@ -15,6 +16,9 @@ import { and, eq, sql } from "drizzle-orm";
  *   ownerStore(variant) = shoeInventory.quantity - SUM(lended_shoes.quantity)
  */
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     // BRING BACK: your sellable store for the variant is <= 0 while a specific
     // borrower still holds some -> go get it from them. Grouped by borrower+variant.

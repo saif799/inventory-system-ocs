@@ -75,3 +75,14 @@ A Delivery Provider's price for one Delivery Mode, in integer DZD. **A desk Tari
 
 ### Wilaya / Commune
 The two administrative levels an Algerian delivery address resolves to: the Wilaya (province, numbered 1–58) and the Commune within it. A Delivery Provider need not cover every Wilaya. Fees are quoted per Wilaya by both couriers; Stop Desk availability varies per Commune.
+
+## Access
+
+### Admin Session
+The state of being the signed-in owner. There is exactly one account — the owner — so a session carries no identity, only the fact that whoever holds it proved they know the admin password, and an expiry. Ending a session in one browser does not end it in another (see ADR-0005).
+
+### Admin Surface
+Everything that requires an Admin Session: the `/admin` dashboard and every API route except the Public API Surface. Closed by default — a route is part of the Admin Surface unless it has been explicitly named public.
+
+### Public API Surface
+The short, explicitly enumerated set of API requests a customer's browser is allowed to make without an Admin Session: submitting a checkout, looking up delivery Coverage, and reading the public catalog. Membership is per **request** (path *and* method), not per path — the same path can be public for one method and part of the Admin Surface for another.

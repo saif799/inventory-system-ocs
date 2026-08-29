@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db, txClient } from "@/lib/db";
 import {
   arrivalItems,
@@ -44,6 +45,9 @@ function normalizeSizes(sizes: unknown): string[] {
 }
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const rows = await db
       .select({
@@ -73,6 +77,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     const reference: string | null = body?.reference?.trim() || null;

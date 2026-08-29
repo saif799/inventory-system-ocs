@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db, txClient } from "@/lib/db";
 import { orderItems, ordersTable, shoeModels } from "@/lib/schema";
 import { applyMovement } from "@/lib/stock/movement";
@@ -8,6 +9,9 @@ import { getProvider } from "@/lib/delivery";
 import { eq } from "drizzle-orm";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const models = await db.select().from(shoeModels);
     return Response.json(models);
@@ -40,6 +44,9 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { orderId } = await request.json();
 

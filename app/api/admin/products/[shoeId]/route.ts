@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { shoes, shoeInventory, shoeImages } from "@/lib/schema";
@@ -11,6 +12,9 @@ type Params = { params: Promise<{ shoeId: string }> };
  * Returns the shoe with its images and inventory for the admin edit page.
  */
 export async function GET(_req: Request, { params }: Params) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const { shoeId } = await params;
   try {
     const [shoe] = await db.select().from(shoes).where(eq(shoes.id, shoeId)).limit(1);
@@ -39,6 +43,9 @@ export async function GET(_req: Request, { params }: Params) {
  * overrides, and image sort/primary flags.
  */
 export async function PATCH(request: Request, { params }: Params) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const { shoeId } = await params;
   try {
     const body = await request.json();

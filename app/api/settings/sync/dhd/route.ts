@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 /**
  * POST /api/settings/sync/dhd
  *
@@ -39,6 +40,9 @@ type DhdFeesResponse = {
 };
 
 export async function POST() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const headers = {
       "Content-Type": "application/json",

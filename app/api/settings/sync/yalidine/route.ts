@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 /**
  * POST /api/settings/sync/yalidine
  *
@@ -184,6 +185,9 @@ async function fetchAllPages<T>(
 }
 
 export async function POST() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const headers = yalidineHeaders();
     const base = baseUrl();

@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { shoeModels } from "@/lib/schema";
@@ -16,6 +17,9 @@ type Params = { params: Promise<{ modelId: string }> };
  * a typo rewrites how every past order and arrival reads. That is the point.
  */
 export async function PATCH(request: Request, { params }: Params) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const { modelId } = await params;
   try {
     const body = await request.json();

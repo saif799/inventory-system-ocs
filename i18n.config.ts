@@ -5,21 +5,21 @@ import type { I18nConfig } from "next-i18next/proxy";
  * so this file must stay free of Node built-ins. The `resourceLoader` (which
  * reaches for `fs` in dev) lives in app/i18n/serverConfig.ts instead.
  *
- * Two different "defaults" live here and they are deliberately NOT the same
- * value:
+ * Two "defaults" live here:
  *
- *   DEFAULT_LOCALE ("ar") is the *routing* default — what a visitor gets at `/`.
- *   fallbackLng    ("fr") is the *translation* default — what renders when an
- *                  Arabic key has not been written yet.
+ *   DEFAULT_LOCALE ("fr") is the *routing* default — what a visitor gets at `/`.
+ *   fallbackLng    ("fr") is the *translation* default — what renders when a
+ *                  key has not been written in the active locale yet.
  *
- * Arabic is the language we lead with; French is the language we fall back to
- * because it is the one catalog guaranteed to be complete. Collapsing the two
- * into one value would either send every visitor to French or make untranslated
- * Arabic keys render as raw key names.
+ * They currently agree: French is both the language we lead with and the one
+ * catalog guaranteed to be complete. They are still separate constants because
+ * they answer different questions — flipping the routing default back to Arabic
+ * must not drag the translation fallback with it, or untranslated Arabic keys
+ * would render as raw key names.
  */
 
 /** Routing default: `/` resolves here unless the visitor picked otherwise. */
-export const DEFAULT_LOCALE = "ar";
+export const DEFAULT_LOCALE = "fr";
 
 export const LOCALES = ["ar", "fr"] as const;
 export type Locale = (typeof LOCALES)[number];

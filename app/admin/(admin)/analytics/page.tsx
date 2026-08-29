@@ -43,7 +43,7 @@ export default async function AnalyticsPage({
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href="/analytics/compare"
+            href="/admin/analytics/compare"
             className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <GitCompareArrows className="h-4 w-4" />

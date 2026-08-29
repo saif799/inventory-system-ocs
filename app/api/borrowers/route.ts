@@ -1,8 +1,12 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import { borrower } from "@/lib/schema";
 import { asc } from "drizzle-orm";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const borrowers = await db
       .select({

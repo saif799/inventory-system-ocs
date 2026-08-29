@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db, txClient } from "@/lib/db";
 import { LendedShoes, borrower, shoeInventory } from "@/lib/schema";
 import { applyMovement } from "@/lib/stock/movement";
@@ -12,6 +13,9 @@ type LendRequest = {
 };
 
 export async function GET(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { searchParams } = new URL(request.url);
     const inventoryIdsParam = searchParams.get("inventoryIds");
@@ -49,6 +53,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { borrowerName, items }: LendRequest = await request.json();
 

@@ -5,8 +5,24 @@ import { revalidateStockPaths } from "@/lib/stock/revalidate";
 import { getAllStatusGroups, buildNameToIdMap } from "@/lib/orders/status";
 import { DELIVERY_PROVIDERS } from "@/lib/delivery";
 import { and, eq, inArray, ne } from "drizzle-orm";
+import { hasAdminSession } from "@/lib/auth/guard";
+import { isCronRequest } from "@/lib/auth/session";
 
-export async function GET() {
+/**
+ * The only route with two legitimate callers, so the only one that accepts two
+ * credentials: the Vercel nightly cron (bearer CRON_SECRET) and the admin
+ * "sync now" button (session cookie). Guarding it with the session alone would
+ * have failed silently — the cron would 401 every night with nobody watching,
+ * and delivery statuses would just stop updating.
+ *
+ * It is a GET that mutates stock (`retour` movements, bulk status updates), so
+ * leaving it open was never really "just a read".
+ */
+export async function GET(request: Request) {
+  if (!isCronRequest(request) && !(await hasAdminSession())) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     // Group our order ids by provider so each provider syncs only its own
     // parcels (Yalidine filters its histories query by these; DHD ignores them).

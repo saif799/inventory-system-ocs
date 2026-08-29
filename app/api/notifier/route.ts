@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import {
   ImageNotifierTable,
@@ -10,6 +11,9 @@ import { desc, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const notifiers = await db
       .select({
@@ -48,6 +52,9 @@ export async function GET() {
 
 // Bulk dismiss: { ids: string[] } — used by "Mark product done".
 export async function DELETE(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { ids } = await request.json();
 

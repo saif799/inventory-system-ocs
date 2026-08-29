@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db, txClient } from "@/lib/db";
 import { LendedShoes } from "@/lib/schema";
 import { applyMovement } from "@/lib/stock/movement";
@@ -11,6 +12,9 @@ type BringBackRequest = {
 };
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const { borrowerId, items }: BringBackRequest = await request.json();
 

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import LogoutButton from "@/components/LogoutButton";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -61,6 +62,7 @@ const NavBar = () => {
               {label}
             </Link>
           ))}
+          <LogoutButton className="ms-1" />
         </div>
 
         <Button
@@ -105,6 +107,7 @@ const NavBar = () => {
               {label}
             </Link>
           ))}
+          <LogoutButton className="w-full justify-start" />
         </div>
       </div>
     </nav>

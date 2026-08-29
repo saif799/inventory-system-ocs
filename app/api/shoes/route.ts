@@ -1,8 +1,12 @@
+import { requireAdmin } from "@/lib/auth/guard";
 import { db } from "@/lib/db";
 import { shoes, shoeModels } from "@/lib/schema";
 import { and, eq } from "drizzle-orm";
 
 export async function GET() {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   try {
     const shoesVariants = await db
       .select({
