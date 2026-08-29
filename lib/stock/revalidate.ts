@@ -11,5 +11,5 @@ export function revalidateStockPaths(borrowerId?: string) {
   revalidatePath("/admin/add-shoes");
   revalidatePath("/admin/arrivals");
   revalidatePath("/admin/borrowers");
-  if (borrowerId) revalidatePath(`/admin/${borrowerId}`);
+  if (borrowerId) revalidatePath(`/admin/borrowers/${borrowerId}`);
 }

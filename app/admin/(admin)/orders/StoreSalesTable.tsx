@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -70,6 +71,7 @@ export function StoreSalesTable({
   const { isPending, setParams } = useUrlParams();
   const [search, setSearch] = useState(query);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [pendingRevert, setPendingRevert] = useState<StoreSaleRow | null>(null);
 
   useEffect(() => {
     if (search === query) return;
@@ -80,14 +82,7 @@ export function StoreSalesTable({
   }, [search, query, setParams]);
 
   const handleRevert = async (row: StoreSaleRow) => {
-    if (
-      !confirm(
-        `Revert this sale? ${row.modelName} ${row.color} (size ${row.size}) goes back into stock.`
-      )
-    ) {
-      return;
-    }
-
+    setPendingRevert(null);
     setBusyId(row.id);
     try {
       const res = await fetch("/api/store-sales", {
@@ -265,7 +260,7 @@ export function StoreSalesTable({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleRevert(row)}
+                      onClick={() => setPendingRevert(row)}
                       disabled={busyId === row.id}
                       className="gap-2"
                     >
@@ -334,6 +329,24 @@ export function StoreSalesTable({
           Next
         </Button>
       </div>
+
+      <ConfirmDialog
+        open={pendingRevert !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingRevert(null);
+        }}
+        title="Revert this sale?"
+        description={
+          pendingRevert
+            ? `${pendingRevert.modelName} ${pendingRevert.color} (size ${pendingRevert.size}) goes back into stock.`
+            : undefined
+        }
+        confirmLabel="Revert"
+        destructive
+        onConfirm={() => {
+          if (pendingRevert) handleRevert(pendingRevert);
+        }}
+      />
     </div>
   );
 }

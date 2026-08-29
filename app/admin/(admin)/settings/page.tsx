@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AdminPage from "@/components/admin/AdminPage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -130,16 +131,12 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-6xl space-y-8 p-4 md:p-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Delivery & Coverage Settings</h1>
-        <p className="text-muted-foreground mt-1">
-          Sync wilaya coverage, communes, and delivery fees live from DHD and Yalidine APIs.
-        </p>
-      </div>
-
+    <AdminPage
+      title="Delivery & Coverage Settings"
+      description="Sync wilaya coverage, communes, and delivery fees live from DHD and Yalidine APIs."
+    >
       {/* Provider Sync Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* DHD Card */}
         <Card className="border-blue-900/40 bg-card/60 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -394,6 +391,6 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </AdminPage>
   );
 }

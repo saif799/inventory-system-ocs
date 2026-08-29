@@ -1,4 +1,5 @@
 import Listings from "@/components/Listings";
+import AdminPage from "@/components/admin/AdminPage";
 import { db } from "@/lib/db";
 import { shoeInventory, shoes, shoeModels } from "@/lib/schema";
 import { eq, gt } from "drizzle-orm";
@@ -73,8 +74,14 @@ export default async function InventoryPage() {
   const groupedProducts = Array.from(groupedMap.values());
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 pb-8">
-      <Listings models={models} products={groupedProducts} />
-    </div>
+    <AdminPage
+      title="Inventory"
+      description="Every colour variant with pairs on the shelf."
+      width="wide"
+    >
+      <div className="flex flex-col items-center justify-center gap-8">
+        <Listings models={models} products={groupedProducts} />
+      </div>
+    </AdminPage>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
@@ -64,6 +65,7 @@ export default function ProductEditClient({
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [pendingImageDelete, setPendingImageDelete] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleSavePricing = async () => {
@@ -261,7 +263,7 @@ export default function ProductEditClient({
   };
 
   const handleDeleteImage = async (imageId: string) => {
-    if (!confirm("Delete this image? This is permanent.")) return;
+    setPendingImageDelete(null);
     try {
       const res = await fetch("/api/admin/images", {
         method: "DELETE",
@@ -502,7 +504,7 @@ export default function ProductEditClient({
                   </button>
                 )}
                 <button
-                  onClick={() => handleDeleteImage(img.id)}
+                  onClick={() => setPendingImageDelete(img.id)}
                   className="text-red-400 hover:text-red-300"
                   title="Delete image"
                 >
@@ -536,6 +538,20 @@ export default function ProductEditClient({
           </Button>
         </div>
       </section>
+
+      <ConfirmDialog
+        open={pendingImageDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingImageDelete(null);
+        }}
+        title="Delete this image?"
+        description="It is removed from the gallery and from R2. This is permanent."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => {
+          if (pendingImageDelete) handleDeleteImage(pendingImageDelete);
+        }}
+      />
     </div>
   );
 }

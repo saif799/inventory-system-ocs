@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import AdminPage from "@/components/admin/AdminPage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -42,7 +43,7 @@ type ProductGroup = {
   cells: VariantCell[];
 };
 
-export default function NotifierPage() {
+export default function GallerySyncPage() {
   const [notifiers, setNotifiers] = useState<NotifierItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Direction>("remove");
@@ -62,7 +63,7 @@ export default function NotifierPage() {
       setNotifiers(data);
     } catch (error) {
       console.error("Error fetching notifiers:", error);
-      toast.error("Failed to load the notifier");
+      toast.error("Failed to load the gallery queue");
     } finally {
       setLoading(false);
     }
@@ -158,28 +159,23 @@ export default function NotifierPage() {
     }
   };
 
+  const isRemove = activeTab === "remove";
+
   if (loading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
+      <AdminPage title="Gallery Sync">
+        <div className="flex min-h-[400px] items-center justify-center">
           <p className="text-muted-foreground">Loading...</p>
         </div>
-      </div>
+      </AdminPage>
     );
   }
 
-  const isRemove = activeTab === "remove";
-
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Gallery Sync</h1>
-        <p className="text-muted-foreground">
-          Keep your gallery in sync with your stock — remove what just sold out,
-          add back what came back in stock.
-        </p>
-      </div>
-
+    <AdminPage
+      title="Gallery Sync"
+      description="Keep your gallery in sync with your stock — remove what just sold out, add back what came back in stock."
+    >
       {/* Segmented toggle between the two directions */}
       <div className="mb-6 inline-flex rounded-lg border p-1 bg-muted/40">
         <Button
@@ -291,6 +287,6 @@ export default function NotifierPage() {
           })}
         </div>
       )}
-    </div>
+    </AdminPage>
   );
 }

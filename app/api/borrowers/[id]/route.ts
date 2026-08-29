@@ -62,7 +62,7 @@ export async function PATCH(
     }
 
     revalidatePath("/admin/borrowers");
-    revalidatePath(`/admin/${id}`);
+    revalidatePath(`/admin/borrowers/${id}`);
     return Response.json(updated);
   } catch (error) {
     console.error("Failed to rename borrower", error);

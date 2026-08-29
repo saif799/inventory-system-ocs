@@ -11,6 +11,7 @@ import { desc, eq, sql } from "drizzle-orm";
 import { connection } from "next/server";
 import BorrowerActions from "@/components/borrowerActions";
 import BorrowerHistory from "@/components/borrowerHistory";
+import AdminPage from "@/components/admin/AdminPage";
 
 export type GroupedProduct = {
   shoeId: string;
@@ -24,7 +25,7 @@ export type GroupedProduct = {
   }[];
 };
 
-export default async function InventoryPage({
+export default async function BorrowerDetailPage({
   params,
 }: {
   params: Promise<{ lenderId: string }>;
@@ -108,25 +109,28 @@ export default async function InventoryPage({
   const groupedProducts = Array.from(groupedMap.values());
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 pb-8">
-      <div className="flex w-full max-w-3xl items-center justify-between px-1 pt-4">
-        <h1 className="text-xl font-semibold">
-          {borrowerRow?.name ?? "Borrower"}
-        </h1>
-        {borrowerRow && (
+    <AdminPage
+      title={borrowerRow?.name ?? "Borrower"}
+      description="Stock this borrower is currently holding, and every move behind it."
+      width="wide"
+      actions={
+        borrowerRow ? (
           <BorrowerActions
             borrowerId={lenderId}
             name={borrowerRow.name}
             redirectOnDelete
           />
-        )}
+        ) : null
+      }
+    >
+      <div className="flex flex-col items-center justify-center gap-8">
+        <BorrowerHistory history={history} />
+        <Listings
+          models={models}
+          products={groupedProducts}
+          borrowerName={borrowerRow?.name}
+        />
       </div>
-      <BorrowerHistory history={history} />
-      <Listings
-        models={models}
-        products={groupedProducts}
-        borrowerName={borrowerRow?.name}
-      />
-    </div>
+    </AdminPage>
   );
 }

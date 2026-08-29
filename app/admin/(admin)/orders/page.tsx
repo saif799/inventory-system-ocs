@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { and, asc, count, desc, eq, getTableColumns, gte, ilike, lte, or, sql, type SQL } from "drizzle-orm";
 
+import AdminPage from "@/components/admin/AdminPage";
 import { db } from "@/lib/db";
 import {
   ordersTable,
@@ -92,10 +93,18 @@ export default async function OrdersPage({
       : await renderOnlineOrders({ params, page, offset, searchPattern, query });
 
   return (
-    <div className="container mx-auto py-5">
-      <OrdersTabs activeTab={tab} />
+    <AdminPage
+      title="Orders"
+      description={
+        tab === "store"
+          ? "Sales rung up in the shop."
+          : "Parcels handed to a delivery company."
+      }
+      actions={<OrdersTabs activeTab={tab} />}
+      width="wide"
+    >
       {body}
-    </div>
+    </AdminPage>
   );
 }
 

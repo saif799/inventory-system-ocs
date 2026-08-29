@@ -7,11 +7,8 @@ import LoginForm from "./LoginForm";
  * /admin/login — the one page under /admin that proxy.ts lets through.
  *
  * It lives OUTSIDE the (admin) route group on purpose: that group's layout
- * renders NavBar, and a nav bar full of links you cannot follow is a worse
- * login screen than no nav bar at all.
- *
- * Next resolves static segments before dynamic ones, so this wins over the
- * sibling /admin/[lenderId] route rather than being swallowed by it.
+ * renders the admin sidebar, and a nav full of links you cannot follow is a
+ * worse login screen than no nav at all.
  */
 export const metadata: Metadata = {
   title: "Sign in",

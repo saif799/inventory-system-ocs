@@ -15,7 +15,7 @@ export function OrdersTabs({ activeTab }: { activeTab: Tab }) {
   const isOnline = activeTab === "online";
 
   return (
-    <div className="mb-4 inline-flex rounded-lg border bg-muted/40 p-1">
+    <div className="inline-flex rounded-lg border bg-muted/40 p-1">
       <Button
         variant={isOnline ? "default" : "ghost"}
         size="sm"

@@ -67,7 +67,7 @@ export async function DELETE(request: Request) {
       .where(inArray(ImageNotifierTable.id, ids))
       .returning({ id: ImageNotifierTable.id });
 
-    revalidatePath("/admin/notifier");
+    revalidatePath("/admin/gallery");
     return Response.json({ success: true, deleted: deleted.length });
   } catch (error) {
     console.error("Error bulk deleting notifiers:", error);

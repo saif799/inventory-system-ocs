@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import AdminPage from "@/components/admin/AdminPage";
 import { getAnalyticsData } from "@/lib/analytics";
 import { formatDA, formatInt, formatPct } from "@/lib/format";
 import { YearSelect } from "./YearSelect";
@@ -32,16 +33,16 @@ export default async function AnalyticsPage({
   const { kpis, status } = data;
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">Analytics</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Headline figures are all-time. Charts below are for{" "}
-            <span className="font-medium text-foreground">{data.year}</span>.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
+    <AdminPage
+      title="Analytics"
+      description={
+        <>
+          Headline figures are all-time. Charts below are for{" "}
+          <span className="font-medium text-foreground">{data.year}</span>.
+        </>
+      }
+      actions={
+        <>
           <Link
             href="/admin/analytics/compare"
             className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -50,11 +51,11 @@ export default async function AnalyticsPage({
             Compare models
           </Link>
           <YearSelect year={data.year} years={data.years} />
-        </div>
-      </div>
-
+        </>
+      }
+    >
       {/* KPI tiles — all-time */}
-      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
         <StatTile
           title="Revenue"
           value={formatDA(kpis.revenue)}
@@ -142,7 +143,7 @@ export default async function AnalyticsPage({
           <ProductBars data={data.stockByModel} color="var(--chart-5)" valueLabel="In stock" />
         </ChartCard>
       </div>
-    </main>
+    </AdminPage>
   );
 }
 

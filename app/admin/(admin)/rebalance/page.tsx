@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
+import AdminPage from "@/components/admin/AdminPage";
 import InventoryTransferDialog, {
   type TransferLine,
 } from "@/components/InventoryTransferDialog";
@@ -130,20 +131,17 @@ export default function RebalancePage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Stock rebalancing</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Live view — move stock between your store and your borrowers.
-          </p>
-        </div>
+    <AdminPage
+      title="Stock rebalancing"
+      description="Live view — move stock between your store and your borrowers."
+      width="narrow"
+      actions={
         <Button variant="outline" size="icon" onClick={fetchView}>
           <RefreshCcw className={loading ? "animate-spin" : ""} />
         </Button>
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center gap-2">
+      }
+    >
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           variant={section === "bring_back" ? "default" : "outline"}
           onClick={() => setSection("bring_back")}
@@ -170,7 +168,7 @@ export default function RebalancePage() {
       </div>
 
       {loading ? (
-        <p className="mt-8 text-sm text-gray-500">Loading…</p>
+        <p className="mt-8 text-sm text-muted-foreground">Loading…</p>
       ) : section === "bring_back" ? (
         byBorrower.length === 0 ? (
           <Empty text="Nothing to bring back — your store has stock." />
@@ -205,7 +203,7 @@ export default function RebalancePage() {
                           {item.modelName} {item.color}
                         </span>
                         <Badge variant="outline">size {item.size}</Badge>
-                        <span className="text-xs text-gray-600">
+                        <span className="text-xs text-muted-foreground">
                           store 0 · they hold {item.held}
                         </span>
                       </div>
@@ -235,7 +233,7 @@ export default function RebalancePage() {
                   >
                     <span>
                       size {item.size} ·{" "}
-                      <span className="text-gray-600">
+                      <span className="text-muted-foreground">
                         {item.quantity} in stock
                       </span>
                     </span>
@@ -279,13 +277,13 @@ export default function RebalancePage() {
           />
         )}
       </Dialog>
-    </main>
+    </AdminPage>
   );
 }
 
 function Empty({ text }: { text: string }) {
   return (
-    <p className="mt-8 rounded-md border border-dashed p-4 text-sm text-gray-600">
+    <p className="mt-8 rounded-md border border-dashed p-4 text-sm text-muted-foreground">
       {text}
     </p>
   );

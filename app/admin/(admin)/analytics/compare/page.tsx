@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { shoeModels } from "@/lib/schema";
+import AdminPage from "@/components/admin/AdminPage";
 import { getModelComparison } from "@/lib/analytics";
 import { formatDA, formatInt, formatPct } from "@/lib/format";
 import {
@@ -69,23 +70,19 @@ export default async function ComparePage({
       : null;
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8">
-      <Link
-        href="/admin/analytics"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" /> Analytics
-      </Link>
-
-      <div className="mt-2">
-        <h1 className="text-2xl font-semibold">Compare models</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Pick two or more models to compare their sales, returns and size demand over a
-          period.
-        </p>
-      </div>
-
-      <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <AdminPage
+      title="Compare models"
+      description="Pick two or more models to compare their sales, returns and size demand over a period."
+      actions={
+        <Link
+          href="/admin/analytics"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" /> Analytics
+        </Link>
+      }
+    >
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <ModelMultiSelect models={allModels} selected={validIds} />
         <RangeControl from={from} to={to} />
       </div>
@@ -182,6 +179,6 @@ export default async function ComparePage({
           </Card>
         </div>
       )}
-    </main>
+    </AdminPage>
   );
 }

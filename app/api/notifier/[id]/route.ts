@@ -24,7 +24,7 @@ export async function DELETE(
     if (res.length === 0) {
       return Response.json({ error: "Item not found" }, { status: 404 });
     }
-    revalidatePath("/admin/notifier");
+    revalidatePath("/admin/gallery");
     return Response.json({ success: true });
   } catch (error) {
     console.error("Error deleting notifier:", error);

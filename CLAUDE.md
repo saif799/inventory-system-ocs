@@ -38,7 +38,7 @@ Next.js 16 App Router + React 19, Tailwind v4, shadcn/ui (new-york, `components/
 Decided in [docs/adr/0001-storefront-routing-and-pricing-model.md](docs/adr/0001-storefront-routing-and-pricing-model.md):
 
 - **`app/(storefront)/`** — public customer store at `/`. Catalog, product page, checkout, order confirmation. Checkout is restricted to the DHD provider and creates orders with the ready-to-ship `statusId` (whose row is named `prete a expedier` — with spaces; the underscored form is a courier `external_statuses` value, not the internal name). Storefront-only helpers live in `lib/storefront/` and `components/storefront/`.
-- **`app/admin/(admin)/`** — internal inventory dashboard under `/admin/*` (products, add-shoes, arrivals, orders, analytics, notifier, borrowers, rebalance, settings, `[lenderId]` borrower detail). The route list lives in [components/navBar.tsx](components/navBar.tsx).
+- **`app/admin/(admin)/`** — internal inventory dashboard under `/admin/*` (products, add-shoes, arrivals, orders, analytics, gallery, borrowers, rebalance, settings, `borrowers/[lenderId]` borrower detail). The route list lives in [components/admin/AdminSidebar.tsx](components/admin/AdminSidebar.tsx), and every page renders through the shared shell in [components/admin/AdminPage.tsx](components/admin/AdminPage.tsx).
 - **`app/api/`** — REST routes used by client components of both apps. Admin-only mutations (product/model edits, image management, storefront section CMS) are namespaced under `app/api/admin/`; everything else is shared.
 - [proxy.ts](proxy.ts) (Next 16's renamed `middleware.ts`) does two jobs: it gates the admin surface, then routes storefront locales. It tags storefront requests with the locale header the root layout reads for `lang`/`dir`; `/admin` is left untagged and stays `lang="en"` LTR.
 
@@ -75,7 +75,7 @@ Any write that touches stock **and** another table (order rows, lend rows, notif
 - **`borrower` / `LendedShoes`** — an append-only signed ledger, not a balance. Lending inserts `+n`, returning inserts a row, and a borrower-placed order inserts `-1`. Holdings are always `SUM(quantity)`. Owner↔borrower rebalancing is computed live in `GET /api/rebalance` — there is no stored table.
 - **`arrivals` / `arrivalItems`** — an "arrivage" (received shipment). `arrivalItems.quantity` is an immutable snapshot of what arrived, deliberately not kept in sync with live `shoeInventory.quantity`.
 - **`shoeImages`** — R2 gallery per color variant; `isPrimary` is the catalog thumbnail, `sortOrder` the carousel order.
-- **`ImageNotifierTable`** — a work queue for "add/remove this variant's photo from the Instagram gallery", consumed by `/admin/notifier`.
+- **`ImageNotifierTable`** — a work queue for "add/remove this variant's photo from the Instagram gallery", consumed by `/admin/gallery` (the route was called `/admin/notifier` until issue #15; the API is still `/api/notifier/*`).
 - **Delivery coverage tables** (`dhd_wilayas`, `dhd_communes`, `dhd_tarifs`, `yalidine_wilayas`, `yalidine_communes`) — the DB replacement for the root-level `communes.json`, `tarifs.json`, `yalidinCommunes_withExpressDesk.json`. Read them through [lib/delivery/coverageData.ts](lib/delivery/coverageData.ts), never re-import the JSONs. (`wilayas.json` is still imported for wilaya display names in analytics and the orders table.)
 
 ### Stock invariants

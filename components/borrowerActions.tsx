@@ -17,13 +17,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { Input } from "@/components/ui/input";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 export default function BorrowerActions({
   borrowerId,
   name,
-  /** When true, a successful delete sends the user back to /borrowers. */
+  /** When true, a successful delete sends the user back to /admin/borrowers. */
   redirectOnDelete = false,
 }: {
   borrowerId: string;
@@ -32,6 +33,7 @@ export default function BorrowerActions({
 }) {
   const router = useRouter();
   const [renameOpen, setRenameOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [newName, setNewName] = useState(name);
   const [busy, setBusy] = useState(false);
 
@@ -63,7 +65,7 @@ export default function BorrowerActions({
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Delete borrower "${name}"? This cannot be undone.`)) return;
+    setDeleteOpen(false);
     setBusy(true);
     try {
       const res = await fetch(`/api/borrowers/${borrowerId}`, {
@@ -75,7 +77,7 @@ export default function BorrowerActions({
       }
       toast.success("Borrower deleted.");
       if (redirectOnDelete) {
-        router.push("/borrowers");
+        router.push("/admin/borrowers");
       } else {
         router.refresh();
       }
@@ -106,12 +108,22 @@ export default function BorrowerActions({
           </DropdownMenuItem>
           <DropdownMenuItem
             className="text-red-600 focus:text-red-600"
-            onClick={handleDelete}
+            onClick={() => setDeleteOpen(true)}
           >
             <Trash2 className="mr-2 h-3 w-3" /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title={`Delete borrower "${name}"?`}
+        description="Their lending history goes with them. This cannot be undone."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={handleDelete}
+      />
 
       <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
         <DialogContent>

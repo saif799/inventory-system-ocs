@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { arrivalItems, arrivals } from "@/lib/schema";
 import { desc, eq, sql } from "drizzle-orm";
 import { ArrivalsList } from "./ArrivalsList";
+import AdminPage from "@/components/admin/AdminPage";
 
 export default async function ArrivalsPage() {
   const rows = await db
@@ -20,9 +21,11 @@ export default async function ArrivalsPage() {
     .orderBy(desc(arrivals.createdAt));
 
   return (
-    <div className="container mx-auto py-5">
-      <h1 className="mb-4 text-2xl font-semibold">Arrivages</h1>
+    <AdminPage
+      title="Arrivages"
+      description="Received shipments, and what each one brought in."
+    >
       <ArrivalsList arrivals={rows} />
-    </div>
+    </AdminPage>
   );
 }

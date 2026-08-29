@@ -55,10 +55,10 @@ export default function ProductsFilterBar({
   archivedCount: number;
 }) {
   return (
-    // Parks under the admin navbar, which is `sticky top-0 z-40` and 57px
-    // tall (components/navBar.tsx) — top-0 here would slide beneath it, and a
-    // z at or above 40 would ride over its mobile menu.
-    <div className="bg-background sticky top-[57px] z-20 -mx-4 border-b px-4 py-3 md:-mx-8 md:px-8">
+    // Parks under the admin header, which is `sticky top-0 z-30` and h-14
+    // (app/admin/(admin)/layout.tsx) — top-0 here would slide beneath it, and
+    // a z at or above 30 would ride over it.
+    <div className="bg-background sticky top-14 z-20 -mx-4 border-b px-4 py-3 md:-mx-8 md:px-8">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[200px] flex-1">
           <Search className="text-muted-foreground absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
