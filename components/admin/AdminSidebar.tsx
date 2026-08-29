@@ -71,9 +71,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Storefront",
     items: [
-      // Issue #14 renames this route to /admin/collections and flips the href
-      // with it; the label is already the one that rename lands on.
-      { href: "/admin/storefront", label: "Collections", icon: LayoutGrid },
+      { href: "/admin/collections", label: "Collections", icon: LayoutGrid },
       { href: "/admin/gallery", label: "Gallery", icon: Images },
     ],
   },
