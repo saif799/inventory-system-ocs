@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,7 @@ export default function ProductEditClient({
   inventory: InventoryRow[];
   images: ImageRow[];
 }) {
+  const router = useRouter();
   const [priceOverride, setPriceOverride] = useState(
     shoe.priceOverride != null ? String(shoe.priceOverride) : ""
   );
@@ -131,6 +133,9 @@ export default function ProductEditClient({
       await patchShoe({ archived: next });
       setArchived(next);
       toast.success(next ? "Product archived" : "Product restored");
+      // revalidatePath in the route handler clears the server cache; this is
+      // what makes the products list re-render with the new value.
+      router.refresh();
     } catch (e: any) {
       toast.error(e?.message || "Failed to update product");
     } finally {

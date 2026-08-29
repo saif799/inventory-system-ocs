@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import { shoeModels, shoes, shoeInventory, shoeImages } from "@/lib/schema";
 import { resolveProductPrice } from "@/lib/helpers";
-import ProductsAdminClient, { type ModelRow, type VariantRow } from "./ProductsAdminClient";
+import ProductsAdminClient from "./ProductsAdminClient";
+import type { ModelRow, VariantRow } from "./types";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,11 @@ export default async function ProductsAdminPage() {
       archived: s.archived,
     };
     model.variants.push(variant);
+  }
+
+  // db.select() has no order, so without this colours reshuffle between loads.
+  for (const model of modelsById.values()) {
+    model.variants.sort((a, b) => a.color.localeCompare(b.color));
   }
 
   const modelList = Array.from(modelsById.values()).sort((a, b) =>

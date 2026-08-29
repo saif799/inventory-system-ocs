@@ -3,7 +3,7 @@
 import { Package, Store } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useTableParams } from "./useTableParams";
+import { useUrlParams } from "@/lib/hooks/useUrlParams";
 import type { Tab } from "./params";
 
 /**
@@ -11,7 +11,7 @@ import type { Tab } from "./params";
  * them rather than restoring whatever the other tab was last filtered by.
  */
 export function OrdersTabs({ activeTab }: { activeTab: Tab }) {
-  const { replaceAllParams } = useTableParams();
+  const { replaceAllParams } = useUrlParams();
   const isOnline = activeTab === "online";
 
   return (

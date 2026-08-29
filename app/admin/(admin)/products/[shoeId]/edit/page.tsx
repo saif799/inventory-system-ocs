@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { shoes, shoeInventory, shoeImages, shoeModels } from "@/lib/schema";
 import { eq, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import ProductEditClient from "./ProductEditClient";
 
 type Props = { params: Promise<{ shoeId: string }> };
@@ -40,6 +42,15 @@ export default async function ProductEditPage({ params }: Props) {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Also half the stale-list fix: a forward Link navigation refetches this
+          force-dynamic page, where browser Back replays the cached RSC payload. */}
+      <Link
+        href="/admin/products"
+        className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 text-sm"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to products
+      </Link>
       <h1 className="text-2xl font-bold mb-2">
         Edit Product: {shoe.modelName} — {shoe.color}
       </h1>

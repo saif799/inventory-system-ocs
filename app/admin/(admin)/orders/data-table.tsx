@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { buildOrderColumns, type OrderType } from "./columns";
-import { useTableParams } from "./useTableParams";
+import { useUrlParams } from "@/lib/hooks/useUrlParams";
 import {
   ALL_STATUSES,
   DEFAULT_ORDER_SORT,
@@ -70,7 +70,7 @@ export function DataTable({
   sort,
 }: DataTableProps) {
   const router = useRouter();
-  const { isPending, setParams } = useTableParams();
+  const { isPending, setParams } = useUrlParams();
   const [search, setSearch] = useState(query);
   const [isSyncing, setIsSyncing] = useState(false);
 

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useTableParams } from "./useTableParams";
+import { useUrlParams } from "@/lib/hooks/useUrlParams";
 import type { DateMode } from "./params";
 
 export type StoreSaleRow = {
@@ -67,7 +67,7 @@ export function StoreSalesTable({
   soldToday,
 }: StoreSalesTableProps) {
   const router = useRouter();
-  const { isPending, setParams } = useTableParams();
+  const { isPending, setParams } = useUrlParams();
   const [search, setSearch] = useState(query);
   const [busyId, setBusyId] = useState<string | null>(null);
 
