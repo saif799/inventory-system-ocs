@@ -85,7 +85,6 @@ export default function AddShoeForm({
   const [note, setNote] = useState("");
 
   const [formData, setFormData] = useState({
-    modelId: "",
     color: "",
     size: "",
     quantity: "1",
@@ -142,7 +141,6 @@ export default function AddShoeForm({
       setNewModel("");
       setShowNewModel(false);
       setModelValueSelected(data);
-      setFormData({ ...formData, modelId: data.id.toString() });
     } catch (err) {
       setError("Failed to add model");
     }
@@ -183,7 +181,7 @@ export default function AddShoeForm({
         },
       ]);
     } else {
-      if (!formData.modelId || !modelValueSelected) {
+      if (!modelValueSelected) {
         setError("Select a model");
         return;
       }
@@ -200,7 +198,7 @@ export default function AddShoeForm({
           color: formData.color.trim(),
           sizes,
           quantity,
-          modelId: formData.modelId,
+          modelId: modelValueSelected.id,
           basePrice: Number(formData.basePrice) || 0,
           compareAtPrice: formData.compareAtPrice
             ? Number(formData.compareAtPrice)
@@ -349,10 +347,6 @@ export default function AddShoeForm({
                           onSelect={() => {
                             setValueSelected(s);
                             setOpenexistingPopover(false);
-                            setFormData({
-                              ...formData,
-                              modelId: s.id.toString(),
-                            });
                           }}
                         >
                           {s.modelName} - {s.color}
@@ -400,7 +394,6 @@ export default function AddShoeForm({
                               setOpennewPopover(false);
                               setFormData({
                                 ...formData,
-                                modelId: model.id,
                                 basePrice: String(model.basePrice),
                                 compareAtPrice:
                                   model.compareAtPrice != null ? String(model.compareAtPrice) : "",

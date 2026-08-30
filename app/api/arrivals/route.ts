@@ -10,6 +10,10 @@ import {
 import { applyMovement } from "@/lib/stock/movement";
 import { revalidateStockPaths } from "@/lib/stock/revalidate";
 import { generateShortId } from "@/lib/generateId";
+import {
+  findMalformedModelIds,
+  findUnknownModelIds,
+} from "@/lib/arrivals/validate";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 
 type NewLine = {
@@ -188,6 +192,28 @@ export async function POST(request: Request) {
           }
         }
       }
+    }
+
+    // Guard before the transaction: a bad modelId is otherwise only caught by
+    // Postgres mid-insert, which rolls the whole arrivage back behind a generic
+    // 500. Both checks name the offending value so the cause is visible.
+    const newModelIds = shoeInserts.map((s) => s.modelId);
+    const malformed = findMalformedModelIds(newModelIds);
+    if (malformed.length) {
+      return Response.json(
+        {
+          error: `Not a valid model id: ${malformed.join(", ")}. Pick the model again — this looks like a shoe id.`,
+        },
+        { status: 400 },
+      );
+    }
+
+    const unknown = await findUnknownModelIds(newModelIds);
+    if (unknown.length) {
+      return Response.json(
+        { error: `Unknown model: ${unknown.join(", ")}` },
+        { status: 400 },
+      );
     }
 
     const arrivalId = crypto.randomUUID();

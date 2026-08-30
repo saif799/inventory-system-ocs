@@ -9,7 +9,10 @@ import { BRAND, SEO_KEYWORDS, SITE_URL } from "@/lib/storefront/seo";
 import { LOCALE_TAGS } from "@/i18n.config";
 import { getRequestLocale, isStorefrontRequest } from "@/app/i18n/server";
 
-// The storefront's one typeface, per the design system — monospace everywhere.
+// The one typeface for both apps, per the storefront design system —
+// monospace everywhere. /admin used to fall through to the `--font-sans`
+// token (Geist, which was never actually loaded); globals.css now points that
+// token at this variable too, so the dashboard matches the store.
 // Weights 400/500 only: 300 was dropped when the body floor moved up to 400
 // (see --sf-weight-body in globals.css), so shipping it would be dead payload.
 const dmMono = DM_Mono({
@@ -99,7 +102,13 @@ export default async function RootLayout({
     <html
       lang={lang}
       dir={isStorefront ? dir(locale) : "ltr"}
-      className={isStorefront ? `${dmMono.variable} ${cairo.variable}` : undefined}
+      // Which of the two apps is rendering. globals.css hangs the /admin-only
+      // type rules off this; the storefront keeps using [data-storefront],
+      // which its own subtree already sets.
+      data-app={isStorefront ? "storefront" : "admin"}
+      // Unconditional: /admin resolves --font-sans through --font-dm-mono, so
+      // the variables have to exist on <html> for untagged requests too.
+      className={`${dmMono.variable} ${cairo.variable}`}
     >
       <body className={`font-sans antialiased`}>
         {children}

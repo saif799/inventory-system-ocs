@@ -75,8 +75,13 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  /* One typeface across both apps. These are the Tailwind `font-sans` /
+   * `font-mono` tokens that /admin renders through; the storefront resolves
+   * its own --sf-font chain instead (which swaps to Cairo under lang="ar").
+   * They used to name Geist, which no layout ever loaded, so /admin silently
+   * fell back to the system UI font. */
+  --font-sans: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -122,6 +127,28 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ── /admin type ──────────────────────────────────────────────────────────
+ * DM Mono ships 400 and 500 and nothing heavier (the family has no 600/700
+ * face at all), so every `font-semibold` / `font-bold` in the dashboard —
+ * ~40 call sites, most of them shadcn defaults — was being *synthesised*:
+ * the browser smears the 400 outline sideways, which is what reads as too
+ * heavy and slightly blurred. Switching synthesis off makes font matching
+ * fall back to the nearest real face (500) instead of faking one, so the
+ * whole dashboard sits on the two weights that actually exist.
+ *
+ * Only weight synthesis is disabled, not `font-synthesis: none` — that would
+ * also kill faux italics, which DM Mono does need (it has no italic face).
+ *
+ * Scoped to /admin: the storefront already keeps itself on 400/500 through
+ * --sf-weight-body / --sf-weight-emphasis, and its design system is tuned as
+ * it is. `data-app` is set on <html> in app/layout.tsx.
+ *
+ * Radix portals and sonner toasts mount on <body>, which is inside this
+ * selector, so they inherit it too. */
+html[data-app='admin'] {
+  font-synthesis-weight: none;
 }
 
 /* ═════════════════════════════════════════════════════════════════════════
