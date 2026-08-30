@@ -37,7 +37,7 @@ export default async function Hero({ lng }: { lng: Locale }) {
             </span>
           </div>
 
-          <h1 className="sf-heading mt-6 text-4xl font-medium leading-[1] tracking-[-0.04em] text-(--sf-text) md:text-5xl lg:text-6xl">
+          <h1 className="sf-heading mt-6 text-4xl font-medium leading-none tracking-[-0.04em] text-(--sf-text) md:text-5xl lg:text-6xl">
             {t("hero.title")}
           </h1>
 
