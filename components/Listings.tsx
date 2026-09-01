@@ -17,12 +17,10 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { shoeModels } from "@/lib/schema";
 import { InferSelectModel } from "drizzle-orm";
 
-import PrintPdf from "@/lib/print";
 import ProductCard from "./productCard";
 import { Input } from "./ui/input";
 import { GroupedProduct } from "@/app/admin/(admin)/page";
 import MultipleItemsOrder from "./multipleItemsOrder";
-import printShoeLabels from "@/lib/print";
 type shoe_modelsType = Array<InferSelectModel<typeof shoeModels>>;
 
 export type shoesType = {
@@ -52,7 +50,6 @@ export default function Listings({
   const [selectedShoes, setSelectedShoes] =
     useState<Array<{ id: string; name: string }>>();
   const [selectIsOn, setSelectIsOn] = useState<boolean>(false);
-  const [sortOption, setSortOption] = useState<"asc" | "desc">();
 
   type FilterParams = {
     models: string[];
@@ -61,7 +58,6 @@ export default function Listings({
     maxPrice?: string | null;
     ProductName?: string;
   };
-  const selectedModels = searchParams.get("models")?.split(",") ?? [];
 
   const [filterParams, setFilterParams] = useState<FilterParams>({
     models: searchParams.get("models")?.split(",") ?? [],
@@ -75,17 +71,35 @@ export default function Listings({
     ProductName: searchParams.get("ProductName")?.toLowerCase(),
   });
 
+  // One debounced writer owns the URL, and it rebuilds the whole query from
+  // filterParams. The search box used to also write the URL on every keystroke,
+  // which raced this effect and stripped the keys it did not know about — which
+  // is also why FilterTool is mounted with syncUrl={false} below.
   useEffect(() => {
     const id = setTimeout(() => {
       const params = new URLSearchParams();
       if (filterParams.ProductName) {
         params.set("ProductName", filterParams.ProductName);
       }
-      window.history.replaceState(null, "", `?${params.toString()}`);
+      if (filterParams.models.length > 0) {
+        params.set("models", filterParams.models.join(","));
+      }
+      if (filterParams.sizes.length > 0) {
+        params.set("sizes", filterParams.sizes.join(","));
+      }
+      if (filterParams.minPrice) params.set("minPrice", filterParams.minPrice);
+      if (filterParams.maxPrice) params.set("maxPrice", filterParams.maxPrice);
+
+      const query = params.toString();
+      window.history.replaceState(
+        null,
+        "",
+        query ? `${pathname}?${query}` : pathname,
+      );
     }, 300);
 
     return () => clearTimeout(id);
-  }, [filterParams.ProductName]);
+  }, [filterParams, pathname]);
 
   const strModels = models.map((m) => m.modelName);
 
@@ -134,7 +148,13 @@ export default function Listings({
     return true;
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Reads filterParams, not searchParams: replaceState does not feed back into
+  // useSearchParams, so the URL copy goes stale the moment a filter changes.
+  const hasActiveFilters =
+    filterParams.models.length > 0 ||
+    filterParams.sizes.length > 0 ||
+    Boolean(filterParams.minPrice) ||
+    Boolean(filterParams.maxPrice);
 
   function selectshoe(id: string, name: string) {
     if (selectIsOn) {
@@ -146,31 +166,11 @@ export default function Listings({
     }
   }
 
-  function createQueryString(name: string, value: string) {
-    const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set(name, value);
-    } else {
-      params.delete(name);
-    }
-    return params.toString();
-  }
-
   function SearchProduct(value: string) {
     setFilterParams((prev) => ({
       ...prev,
       ProductName: value,
     }));
-
-    const params = new URLSearchParams(window.location.search);
-
-    if (value) {
-      params.set("ProductName", value);
-    } else {
-      params.delete("ProductName");
-    }
-
-    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
   }
 
   function scrollToListings() {
@@ -181,34 +181,34 @@ export default function Listings({
       window.scrollTo({ top: targetPosition, behavior: "smooth" });
     }
   }
-  function handleSorting(value: string) {
-    setSortOption(value === "asc" || value === "desc" ? value : undefined);
-  }
 
   return (
     <div className="w-full">
-      <div className=" flex w-full items-center justify-center bg-white px-4 pb-2 pt-2 gap-2 lg:pb-4">
+      <div className="flex w-full flex-col gap-1 pb-2 pt-2 lg:items-center lg:pb-4">
         <Input
-          // value={searchQuery ?? ""}
           defaultValue={filterParams.ProductName ?? ""}
           placeholder="Search Product..."
-          className="w-full lg:max-w-3xl px-4 py-2  text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full lg:max-w-3xl px-4 py-2 text-lg border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           onChange={(e) => {
             SearchProduct(e.target.value);
           }}
         />
+        <p className="w-full text-sm font-medium text-gray-600 lg:max-w-3xl">
+          Listings ({listings.length})
+        </p>
       </div>
       <div id="listings" className="grid w-full lg:grid-cols-4">
-        <div className="hidden flex-col lg:col-span-1 lg:ml-4 lg:mr-14 lg:inline-flex">
+        <div className="hidden flex-col lg:col-span-1 lg:mr-14 lg:inline-flex">
           <FilterTool
             models={strModels}
             sizes={sizes}
             filterTool={filterParams}
             setfilterTool={setFilterParams}
+            syncUrl={false}
           />
         </div>
-        <div className="col-span-3 w-full">
-          <div className="top-[62px] z-50 flex w-full items-center justify-between bg-white px-4 pb-2 pt-2 lg:sticky lg:pb-4">
+        <div className="w-full lg:col-span-3">
+          <div className="z-50 flex w-full items-center justify-end gap-2 pb-2 pt-2 lg:sticky lg:top-14 lg:justify-between lg:bg-background lg:pb-4">
             <label className="items-center gap-2 cursor-pointer hidden lg:flex">
               <input
                 type="checkbox"
@@ -229,89 +229,33 @@ export default function Listings({
               )}
 
               {selectIsOn && (
-                <>
-                  <Button
-                    variant="outline"
-                    className="ml-2 bg-purple-100 text-purple-800 hover:bg-purple-200"
-                    onClick={() => {
-                      const allSelected =
-                        (selectedShoes?.length ?? 0) === listings.length;
-                      if (allSelected) {
-                        setSelectedShoes([]);
-                      } else {
-                        setSelectedShoes(
-                          listings.map((shoe) => ({
-                            id: shoe.shoeId,
-                            name: shoe.modelName + shoe.color,
-                          })),
-                        );
-                      }
-                    }}
-                  >
-                    {(selectedShoes?.length ?? 0) === listings.length
-                      ? "Deselect All"
-                      : "Select All"}
-                  </Button>
-
-                  {selectedShoes && selectedShoes.length > 0 && (
-                    <Button
-                      variant="outline"
-                      className="ml-2 bg-purple-100 text-purple-800 hover:bg-purple-200"
-                      onClick={() => {
-                        const shoesToPrint = listings
-                          .filter((shoe) =>
-                            selectedShoes.some(
-                              (selected) => selected.id === shoe.shoeId,
-                            ),
-                          )
-                          .map((shoe) => ({
-                            id: shoe.shoeId,
-                            name: shoe.modelName + shoe.color,
-                          }));
-
-                        // PrintPdf(shoesToPrint);
-                      }}
-                    >
-                      Print Selected
-                    </Button>
-                  )}
-                </>
+                <Button
+                  variant="outline"
+                  className="ml-2 bg-purple-100 text-purple-800 hover:bg-purple-200"
+                  onClick={() => {
+                    const allSelected =
+                      (selectedShoes?.length ?? 0) === listings.length;
+                    if (allSelected) {
+                      setSelectedShoes([]);
+                    } else {
+                      setSelectedShoes(
+                        listings.map((shoe) => ({
+                          id: shoe.shoeId,
+                          name: shoe.modelName + shoe.color,
+                        })),
+                      );
+                    }
+                  }}
+                >
+                  {(selectedShoes?.length ?? 0) === listings.length
+                    ? "Deselect All"
+                    : "Select All"}
+                </Button>
               )}
-              {/* <TestPrintButton /> */}
             </label>
-            <h3 className="text-left text-xl font-medium">
-              Listings ({listings.length})
-            </h3>
 
-            {/* <div className="hidden items-center gap-1 pr-4 lg:inline-flex">
-              <p className="font-medium">Order by</p>
-              <Select onValueChange={(e) => handleSorting(e)}>
-                <SelectTrigger className="w-max">
-                  <SelectValue placeholder="Most Recent" className="w-full" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">
-                    <p>Most Recent</p>
-                  </SelectItem>
-                  <SelectItem value="asc">
-                    <div className="flex items-center justify-between gap-2">
-                      <p>Price: Ascending</p>
-                      <ArrowUp strokeWidth={1.5} size={17} />
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="desc">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      Price: Descending{" "}
-                      <ArrowDown strokeWidth={1.5} size={17} />
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <ArrowDownUp strokeWidth={1.5} size={18} />
-            </div> */}
             <div className="flex gap-1">
               <MultipleItemsOrder
-                shoe={products[0]}
                 shoes={products}
                 onSuccess={() => {
                   // Refresh listings or update UI
@@ -324,13 +268,7 @@ export default function Listings({
                     onClick={() => scrollToListings()}
                     variant="outline"
                     className={cn(
-                      "",
-
-                      ((selectedModels && selectedModels.length > 0) ||
-                        filterParams.sizes.length > 0 ||
-                        filterParams.maxPrice ||
-                        filterParams.minPrice) &&
-                        "font-medium text-purple-900",
+                      hasActiveFilters && "font-medium text-purple-900",
                     )}
                   >
                     Filter <FilterIcon className="size-4" />
@@ -341,105 +279,48 @@ export default function Listings({
                     <DrawerTitle className="text-xl font-medium">
                       Filter tools
                     </DrawerTitle>
-                    <div className="flex w-full items-center justify-between pb-">
+                    <div className="flex w-full items-center justify-between">
                       <h3 className="w-full text-left text-lg font-medium">
                         Filters
                       </h3>
                       <Filter className="size-6" color="#000" strokeWidth={2} />
-                    </div>{" "}
+                    </div>
                   </DrawerHeader>
-                  {/* <div className="flex w-full flex-col pb-2 pl-6 lg:hidden">
-                  <h5 className="pb-4 text-lg text-black">Sort by</h5>
-                  <div className="flex items-center space-x-2 pl-3 hover:font-medium">
-                    <RadioGroup
-                      className="flex flex-col space-y-3"
-                      defaultValue="none"
-                      value={sortOption ? sortOption : "none"}
-                      onValueChange={(v) => handleSorting(v)}
-                    >
-                      <div className="flex w-full gap-3">
-                        <RadioGroupItem
-                          value="none"
-                          id="most-recent"
-                          className="text-purple-800"
-                        />
-                        <Label className="text-black" htmlFor="most-recent">
-                          Most Recent
-                        </Label>
-                      </div>
-                      <div className="flex w-full gap-3">
-                        <RadioGroupItem
-                          value="asc"
-                          id="price-asc"
-                          className="text-purple-800"
-                        />
-                        <Label className="text-black" htmlFor="price-asc">
-                          Price : Ascending
-                        </Label>
-                        <ArrowUp strokeWidth={1.8} size={17} />
-                      </div>
-                      <div className="flex w-full gap-3">
-                        <RadioGroupItem
-                          value="desc"
-                          id="price-desc"
-                          className="text-purple-800"
-                        />
-                        <Label className="text-black" htmlFor="price-desc">
-                          Price : Descending
-                        </Label>
-                        <ArrowDown strokeWidth={1.8} size={17} />
-                      </div>
-                    </RadioGroup>
-                  </div>
-                </div> */}
                   <FilterTool
                     models={strModels}
                     sizes={sizes}
                     filterTool={filterParams}
                     setfilterTool={setFilterParams}
+                    syncUrl={false}
                   />
                 </DrawerContent>
               </Drawer>
             </div>
           </div>
-          <div className="grid w-full grid-cols-2 gap-3 py-2 px-3 pb-10 md:grid-cols-3 md:gap-4 lg:gap-4 lg:pr-8">
-            {listings
-              .sort((pa, pb) => {
-                if (sortOption === "asc") {
-                  return pa.modelName.localeCompare(pb.modelName);
-                } else if (sortOption === "desc") {
-                  return pb.modelName.localeCompare(pa.modelName);
-                } else {
-                  return 0;
-                }
-              })
-              .map((p) => (
+          {listings.length === 0 ? (
+            <p className="py-16 text-center text-sm text-gray-600">
+              {products.length === 0
+                ? borrowerName
+                  ? `${borrowerName} is not holding any stock.`
+                  : "Nothing on the shelf yet."
+                : "No product matches these filters."}
+            </p>
+          ) : (
+            <div className="grid w-full grid-cols-1 gap-3 py-2 pb-10 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:gap-4 lg:pr-8">
+              {listings.map((p) => (
                 <ProductCard
                   key={p.shoeId}
                   product={p}
                   selectshoe={selectshoe}
                   selectedShoes={selectedShoes}
+                  selectEnabled={selectIsOn}
                   borrowerName={borrowerName}
                 />
               ))}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-}
-
-export function TestPrintButton() {
-  const handleTestPrint = () => {
-    printShoeLabels([
-      {
-        id: "TEST7343079276",
-        name: "Air Max 90",
-        sizes: "40, 41, 43, 45",
-        price: "4500",
-      },
-    ]);
-  };
-
-  return <button onClick={handleTestPrint}>Print test labels</button>;
 }

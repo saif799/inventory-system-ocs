@@ -27,6 +27,7 @@ import { GroupedProduct } from "@/app/admin/(admin)/page";
 import { Button, buttonVariants } from "./ui/button";
 import {
   Handshake,
+  ImageIcon,
   MoreHorizontal,
   Package,
   Pencil,
@@ -34,6 +35,7 @@ import {
   Undo2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { storeHeldStock } from "@/lib/stock/availability";
 
@@ -41,6 +43,13 @@ interface ProductCardProps {
   product: GroupedProduct;
   selectedShoes?: Array<{ id: string }>;
   selectshoe: (id: string, identifier: string) => void;
+  /**
+   * Whether the surrounding list is in select mode. When false the card is not
+   * a toggle at all — no click handler, no pressed state, no ring — so a tap on
+   * a phone (where the select checkbox is hidden) never claims to do something
+   * it does not do.
+   */
+  selectEnabled?: boolean;
   borrowerName?: string;
 }
 
@@ -51,9 +60,18 @@ function numericSizeCompare(a: string, b: string): number {
   return a.localeCompare(b);
 }
 export default function ProductCard({
-  product: { modelId, modelName, color, sizes, shoeId, archived },
+  product: {
+    modelId,
+    modelName,
+    color,
+    sizes,
+    shoeId,
+    archived,
+    primaryImageUrl,
+  },
   selectedShoes,
   selectshoe,
+  selectEnabled = false,
   borrowerName,
 }: ProductCardProps) {
   const router = useRouter();
@@ -121,54 +139,84 @@ export default function ProductCard({
     }))
     .sort((a, b) => numericSizeCompare(a.size, b.size));
 
+  const sortedSizes = [...sizes].sort((a, b) =>
+    numericSizeCompare(a.size, b.size),
+  );
+  const totalPairs = sizes.reduce((total, s) => total + s.quantity, 0);
+  const isSelected = selectedShoes?.some((shoe) => shoe.id === shoeId) ?? false;
+
   return (
-    <div
-      onClick={() => selectshoe(shoeId, modelName + color + sizes[0].size)}
-      aria-pressed={
-        selectedShoes?.some((shoe) => shoe.id === shoeId) ? "true" : "false"
+    <article
+      onClick={
+        selectEnabled
+          ? () => selectshoe(shoeId, modelName + color + sizes[0].size)
+          : undefined
       }
+      aria-pressed={selectEnabled ? (isSelected ? "true" : "false") : undefined}
       className={cn(
-        "flex w-full flex-col justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition hover:shadow-md focus:outline-none",
+        "flex w-full min-w-0 items-start gap-3 overflow-hidden rounded-lg border border-gray-200 bg-white p-3 text-left shadow-sm transition hover:shadow-md focus:outline-none",
         archived && "opacity-60",
+        selectEnabled && "cursor-pointer",
         // show a visible ring when selected
-        selectedShoes?.some((shoe) => shoe.id === shoeId)
+        selectEnabled && isSelected
           ? "ring-2 ring-purple-500/50 ring-offset-2"
           : "",
       )}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <h4 className="text-sm font-semibold text-gray-900 truncate">
+      <Link
+        href={`/admin/products/${shoeId}/edit`}
+        onClick={(e) => e.stopPropagation()}
+        className="size-16 shrink-0 overflow-hidden rounded-md border border-gray-200 sm:size-20"
+      >
+        {primaryImageUrl ? (
+          // next/image buys nothing here: images.unoptimized is on in next.config.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={primaryImageUrl}
+            alt={`${modelName} ${color}`}
+            className="size-full object-cover"
+          />
+        ) : (
+          <span className="flex size-full items-center justify-center bg-gray-100 text-gray-400">
+            <ImageIcon className="size-5" />
+            <span className="sr-only">Add a photo</span>
+          </span>
+        )}
+      </Link>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-2 self-stretch">
+        <div className="flex items-start gap-2">
+          <h4 className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-900">
             {modelName}
-            {archived && (
-              <span className="ml-2 rounded border border-gray-300 px-1.5 py-0.5 align-middle text-[10px] font-medium text-gray-500">
-                archivé
-              </span>
-            )}
           </h4>
-          <p className="mt-1 text-sm text-gray-600">
-            <span className="font-medium text-gray-800">{color}</span>
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm font-medium text-gray-800">Size</p>
-          <p className="mt-1 rounded-md bg-gray-100 px-1 py-1 text-xs font-medium text-gray-700 whitespace-normal wrap-break-word">
-            {sizes.map((s) => s.size).join(", ")}
-          </p>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div>
-            <p className="text-xs text-gray-600">Quantity</p>
-            <p className="text-sm font-medium text-gray-800">
-              {sizes.reduce((total, s) => total + s.quantity, 0)}
-            </p>
-          </div>
+          <span
+            title={`${totalPairs} pairs`}
+            className="shrink-0 rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700"
+          >
+            {totalPairs}
+            <span className="sr-only"> pairs in stock</span>
+          </span>
+          {archived && (
+            <span className="shrink-0 rounded border border-gray-300 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
+              archivé
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <p className="truncate text-sm font-medium text-gray-800">{color}</p>
+
+        <ul className="flex flex-wrap gap-1">
+          {sortedSizes.map((s) => (
+            <li
+              key={s.inventoryId}
+              className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums whitespace-nowrap text-gray-700"
+            >
+              {s.size}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-auto flex items-center justify-end gap-2">
           <Dialog>
             <DialogTrigger
               onClick={(e) => e.stopPropagation()}
@@ -179,7 +227,7 @@ export default function ProductCard({
               })}
             >
               <Package className="h-3 w-3" />
-              {/* <span>order</span> */}
+              <span className="sr-only">Add an order</span>
             </DialogTrigger>
             <DialogContent
               className="w-full max-w-full sm:max-w-xl transition-all duration-300 max-h-[80vh] overflow-y-auto overflow-x-hidden px-2 md:p-6"
@@ -261,9 +309,7 @@ export default function ProductCard({
                     </Dialog>{" "}
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    onClick={() => setIsLendInventoryOpen(true)}
-                  >
+                  <DropdownMenuItem onClick={() => setIsLendInventoryOpen(true)}>
                     <Dialog
                       open={isLendInventoryOpen}
                       onOpenChange={setIsLendInventoryOpen}
@@ -325,6 +371,6 @@ export default function ProductCard({
           </DropdownMenu>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

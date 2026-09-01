@@ -323,16 +323,21 @@ export default function AddShoeForm({
                   variant="outline"
                   role="combobox"
                   aria-expanded={openexistingPopover}
-                  className="w-[200px] justify-between"
+                  className="w-full justify-between"
                 >
-                  {valueSelected
-                    ? `${valueSelected.modelName} - ${valueSelected.color}`
-                    : "Select a model..."}
-                  <ChevronsUpDown className="opacity-50" />
+                  <span className="min-w-0 truncate">
+                    {valueSelected
+                      ? `${valueSelected.modelName} - ${valueSelected.color}`
+                      : "Select a model..."}
+                  </span>
+                  <ChevronsUpDown className="shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command className="rounded-lg border shadow-md md:min-w-[400px]">
+              <PopoverContent
+                align="start"
+                className="w-(--radix-popover-trigger-width) p-0"
+              >
+                <Command className="rounded-lg">
                   <CommandInput
                     placeholder="Type a command or search..."
                     value={shoeSearch}
@@ -361,23 +366,28 @@ export default function AddShoeForm({
         ) : (
           <div className="space-y-2">
             <Label htmlFor="model">Shoe Model</Label>
-            <div className="flex gap-2">
+            <div className="flex min-w-0 gap-2">
               <Popover open={opennewPopover} onOpenChange={setOpennewPopover}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={opennewPopover}
-                    className="w-[200px] justify-between"
+                    className="min-w-0 flex-1 justify-between"
                   >
-                    {modelValueSelected
-                      ? `${modelValueSelected.modelName}`
-                      : "Select a model..."}
-                    <ChevronsUpDown className="opacity-50" />
+                    <span className="min-w-0 truncate">
+                      {modelValueSelected
+                        ? `${modelValueSelected.modelName}`
+                        : "Select a model..."}
+                    </span>
+                    <ChevronsUpDown className="shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command className="rounded-lg border shadow-md md:min-w-[400px]">
+                <PopoverContent
+                  align="start"
+                  className="w-(--radix-popover-trigger-width) p-0"
+                >
+                  <Command className="rounded-lg">
                     <CommandInput
                       placeholder="Type a command or search..."
                       value={modelSearch}
@@ -413,6 +423,7 @@ export default function AddShoeForm({
                 type="button"
                 onClick={() => setShowNewModel(!showNewModel)}
                 variant="outline"
+                className="shrink-0"
               >
                 <Plus className="w-4 h-4" />
               </Button>

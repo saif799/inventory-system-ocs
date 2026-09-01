@@ -1,6 +1,7 @@
 import Listings from "@/components/Listings";
 import AdminPage from "@/components/admin/AdminPage";
 import { db } from "@/lib/db";
+import { primaryImageByShoeId } from "@/lib/images";
 import { shoeInventory, shoes, shoeModels } from "@/lib/schema";
 import { eq, gt } from "drizzle-orm";
 import { connection } from "next/server";
@@ -17,6 +18,14 @@ export type GroupedProduct = {
    * not carry the flag and render the card unbadged.
    */
   archived?: boolean;
+  /**
+   * Primary Image (shoe_images.is_primary) of this colour variant, or null
+   * when nobody has photographed it yet. Roughly half of the in-stock variants
+   * are null: the card renders a placeholder that links to the catalogue
+   * editor. Optional so a surface that does not care can keep passing the old
+   * shape.
+   */
+  primaryImageUrl?: string | null;
   sizes: {
     inventoryId: string;
     size: string;
@@ -44,6 +53,8 @@ export default async function InventoryPage() {
     .innerJoin(shoeModels, eq(shoes.modelId, shoeModels.id))
     .where(gt(shoeInventory.quantity, 0));
 
+  const imageByShoe = await primaryImageByShoeId();
+
   const models = await db.select().from(shoeModels);
 
   const groupedMap = new Map<string, GroupedProduct>();
@@ -59,6 +70,7 @@ export default async function InventoryPage() {
         modelName: product.modelName,
         color: product.color,
         archived: product.archived || product.modelArchived,
+        primaryImageUrl: imageByShoe.get(product.shoeId) ?? null,
         sizes: [],
       };
       groupedMap.set(key, group);

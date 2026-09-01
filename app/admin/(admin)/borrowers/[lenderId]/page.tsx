@@ -1,5 +1,6 @@
 import Listings from "@/components/Listings";
 import { db } from "@/lib/db";
+import { primaryImageByShoeId } from "@/lib/images";
 import {
   shoeInventory,
   shoes,
@@ -12,18 +13,7 @@ import { connection } from "next/server";
 import BorrowerActions from "@/components/borrowerActions";
 import BorrowerHistory from "@/components/borrowerHistory";
 import AdminPage from "@/components/admin/AdminPage";
-
-export type GroupedProduct = {
-  shoeId: string;
-  modelId: string;
-  modelName: string;
-  color: string;
-  sizes: {
-    inventoryId: string;
-    size: string;
-    quantity: number;
-  }[];
-};
+import type { GroupedProduct } from "@/app/admin/(admin)/page";
 
 export default async function BorrowerDetailPage({
   params,
@@ -57,6 +47,8 @@ export default async function BorrowerDetailPage({
       shoeModels.modelName,
     )
     .having(sql`SUM(${LendedShoes.quantity}) > 0`);
+
+  const imageByShoe = await primaryImageByShoeId();
 
   const models = await db.select().from(shoeModels);
 
@@ -94,6 +86,7 @@ export default async function BorrowerDetailPage({
         modelId: product.modelId,
         modelName: product.modelName,
         color: product.color,
+        primaryImageUrl: imageByShoe.get(product.shoeId) ?? null,
         sizes: [],
       };
       groupedMap.set(key, group);

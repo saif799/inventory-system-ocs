@@ -291,7 +291,7 @@ export default function SendOrderForm({
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a wilaya..." />
               </SelectTrigger>
-              <SelectContent className="w-[200px] p-0">
+              <SelectContent className="max-w-[calc(100vw-2rem)]">
                 <SelectGroup>
                   {wilayasList.map((s) => (
                     <SelectItem
@@ -326,7 +326,7 @@ export default function SendOrderForm({
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a commune..." />
               </SelectTrigger>
-              <SelectContent className="w-[200px] p-0">
+              <SelectContent className="max-w-[calc(100vw-2rem)]">
                 <SelectGroup>
                   {formData.code_wilaya &&
                     communeNames.map((name) => (

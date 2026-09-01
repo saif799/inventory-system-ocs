@@ -57,11 +57,9 @@ interface ProductCardProps {
 
 export default function MultipleItemsOrder({
   onSuccess,
-  shoe,
   shoes,
 }: {
   onSuccess?: () => void;
-  shoe: GroupedProduct;
   shoes: Array<GroupedProduct>;
 }) {
   // Original state for shoes management
@@ -72,7 +70,6 @@ export default function MultipleItemsOrder({
   const [selectedShoes, setSelectedShoes] = useState<
     Array<{ shoe: GroupedProduct; inventoryId: string; selectedSize: string }>
   >([]);
-  console.log(selectedShoes);
 
   const AvailableSources = [
     { code: "i", value: "instagram" },
@@ -303,7 +300,7 @@ export default function MultipleItemsOrder({
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a wilaya..." />
                   </SelectTrigger>
-                  <SelectContent className="w-[200px] p-0">
+                  <SelectContent className="max-w-[calc(100vw-2rem)]">
                     <SelectGroup>
                       {wilayas.map((s) => (
                         <SelectItem
@@ -338,7 +335,7 @@ export default function MultipleItemsOrder({
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a commune..." />
                   </SelectTrigger>
-                  <SelectContent className="w-[200px] p-0">
+                  <SelectContent className="max-w-[calc(100vw-2rem)]">
                     <SelectGroup>
                       {formData.code_wilaya &&
                         communeNames.map((name) => (
@@ -537,7 +534,10 @@ export function ChooseShoeComboBox({
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent
+        align="start"
+        className="w-(--radix-popover-trigger-width) p-0"
+      >
         <Command id="addShoe">
           <CommandInput placeholder="Search framework..." className="h-9" />
           <CommandList>
