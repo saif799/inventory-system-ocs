@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocalePath, useT } from "@/app/i18n/client";
@@ -20,30 +21,64 @@ const SCROLL_DELTA = 8;
 const HIDE_AFTER = 96;
 
 /**
+ * Every descendant of the bar inks itself from these four tokens, so one
+ * override on a wrapper re-skins the whole subtree for a dark ground without
+ * teaching LanguageSwitcher, the search field or the links what "standing over
+ * a photograph" means.
+ */
+const ON_DARK = {
+  "--sf-text": "#fbfefc",
+  "--sf-muted": "rgba(251,254,252,0.72)",
+  "--sf-line": "rgba(251,254,252,0.32)",
+  "--sf-placeholder": "rgba(251,254,252,0.6)",
+} as React.CSSProperties;
+
+/**
  * Retract on scroll down, return on scroll up. `locked` pins the bar open while
  * a panel is expanded — retracting a menu the user just opened is hostile.
+ *
+ * Also tracks `overHero`, independent of the retract delta-gating: the bar is
+ * transparent for exactly as long as a hero photograph is still behind it, so
+ * this measures the real element (`[data-sf-hero]`, see Hero.tsx) against the
+ * bar's own height rather than guessing a scroll threshold — an 8px threshold
+ * used to turn the bar white while the photo still filled the screen. It reacts
+ * to the first pixel of scroll, and re-measures on resize and on navigation,
+ * hence `route` in the deps.
  */
-function useHeaderScroll(locked: boolean) {
+function useHeaderScroll(
+  locked: boolean,
+  bar: RefObject<HTMLElement | null>,
+  route: string,
+) {
   const [retracted, setRetracted] = useState(false);
+  const [overHero, setOverHero] = useState(true);
   const lastY = useRef(0);
 
   const reveal = useCallback(() => setRetracted(false), []);
 
   useEffect(() => {
-    if (locked) {
-      setRetracted(false);
-      return;
-    }
+    const measure = () => {
+      const hero = document.querySelector("[data-sf-hero]");
+      // No hero on this page: the bar sits on the white ground from pixel one.
+      setOverHero(
+        !!hero &&
+          hero.getBoundingClientRect().bottom > (bar.current?.offsetHeight ?? 0),
+      );
+    };
 
     // Re-baseline on every (re)subscribe: a reload can restore mid-page, and
     // releasing the body scroll lock can shift the offset under us.
     lastY.current = Math.max(0, window.scrollY);
+    measure();
+    if (locked) setRetracted(false);
 
     let frame = 0;
     const onScroll = () => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
+        measure();
+        if (locked) return;
         // Clamp: iOS rubber-banding reports negative and overshooting values.
         const y = Math.max(0, window.scrollY);
         const delta = y - lastY.current;
@@ -54,13 +89,15 @@ function useHeaderScroll(locked: boolean) {
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(frame);
     };
-  }, [locked]);
+  }, [locked, bar, route]);
 
-  return { retracted, reveal };
+  return { retracted, overHero, reveal };
 }
 
 /**
@@ -72,9 +109,16 @@ function useHeaderScroll(locked: boolean) {
  * imagery gets the full viewport. It is `fixed`, and <main> reserves its height
  * once via `pt-(--sf-nav-h)`, so retracting costs no layout shift.
  *
- * That reserved band also means the bar never overlaps page content — what sits
- * behind it is always the white ground, so the glass stays opaque enough to
- * carry ink text and the bar has no transparent "over the hero" state.
+ * The one exception is the homepage: Hero.tsx cancels that reserved band with
+ * a negative margin so its photo runs full-bleed to the top of the viewport,
+ * and the bar goes transparent (`overHero`, see useHeaderScroll) to float over
+ * it — everywhere else the ground behind the bar is always white, so the glass
+ * stays opaque enough to carry ink text without a transparent state.
+ *
+ * Opening a panel does NOT cancel that. A white sheet dropped over the photo
+ * was the single ugliest moment on the phone; instead both panels switch to the
+ * dark twin of the glass (`.sf-glass-dark`) and re-ink through ON_DARK, so the
+ * bar reads as one surface whichever ground it happens to be standing on.
  */
 export default function StoreHeader() {
   const pathname = usePathname();
@@ -85,9 +129,19 @@ export default function StoreHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const searchToggle = useRef<HTMLButtonElement>(null);
+  const barRef = useRef<HTMLElement>(null);
 
   const panelOpen = mobileOpen || searchOpen;
-  const { retracted, reveal } = useHeaderScroll(panelOpen);
+  const { retracted, overHero, reveal } = useHeaderScroll(
+    panelOpen,
+    barRef,
+    pathname,
+  );
+
+  // `isHome` is the server-side guess that keeps the first paint from flashing
+  // the wrong surface; `overHero` is the measured truth from the first frame on.
+  const isHome = pathname === localeHref("/");
+  const transparent = isHome && overHero;
 
   const closePanels = useCallback(() => {
     setMobileOpen(false);
@@ -145,20 +199,37 @@ export default function StoreHeader() {
     cn(
       "sf-body border-b px-3 py-2 text-xs font-medium uppercase tracking-[0.12em] transition-colors",
       pathname === href
-        ? "border-(--sf-accent) text-(--sf-text)"
-        : "border-transparent text-(--sf-muted) hover:text-(--sf-text)",
+        ? transparent
+          ? // Pine reads as near-black on the hero photo; Volt is the one
+            // token in the palette built for a dark ground (see globals.css),
+            // so the active state borrows it here rather than losing contrast.
+            "border-(--sf-highlight) text-white"
+          : "border-(--sf-accent) text-(--sf-text)"
+        : transparent
+          ? "border-transparent text-white/72 hover:text-white"
+          : "border-transparent text-(--sf-muted) hover:text-(--sf-text)",
     );
+
+  // The two drop-down panels share one surface: light on the page, dark on the
+  // hero. Kept in variables so the search drawer and the mobile sheet cannot
+  // drift apart.
+  const panelSurface = transparent ? "sf-glass-dark" : "sf-glass";
+  const panelStyle = transparent ? ON_DARK : undefined;
 
   return (
     <header
+      ref={barRef}
       // A retracted bar keeps its links tabbable but off-screen; pull it back
       // as soon as focus lands inside so keyboard users can see where they are.
       onFocus={reveal}
       className={cn(
-        "sf-glass fixed left-0 right-0 top-0 z-[1000] h-(--sf-nav-h) border-b shadow-xs",
+        "fixed left-0 right-0 top-0 z-[1000] h-(--sf-nav-h) border-b",
+        transparent
+          ? "border-transparent bg-transparent shadow-none"
+          : "sf-glass shadow-xs",
         // Tailwind v4 writes -translate-y-* to the `translate` property, not
         // `transform` — transitioning `transform` here would snap, not slide.
-        "transition-[translate] duration-300 ease-out",
+        "transition-[translate,background-color,border-color,box-shadow] duration-300 ease-out",
         "will-change-[translate] motion-reduce:transition-none",
         retracted ? "-translate-y-full" : "translate-y-0",
       )}
@@ -166,7 +237,10 @@ export default function StoreHeader() {
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href={localeHref("/")}
-          className="sf-heading shrink-0 text-lg font-medium tracking-[0.12em] text-(--sf-text) transition-colors"
+          className={cn(
+            "sf-heading shrink-0 text-lg font-medium tracking-[0.12em] transition-colors",
+            transparent ? "text-white" : "text-(--sf-text)",
+          )}
         >
           OCS
         </Link>
@@ -185,14 +259,25 @@ export default function StoreHeader() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <LanguageSwitcher className="me-1" />
+          {/* LanguageSwitcher's own classes resolve through --sf-text/--sf-muted/
+              --sf-line; overriding those here re-skins it for the hero without
+              teaching the component about "transparent" itself. */}
+          <span
+            className="flex items-center gap-1"
+            style={transparent ? ON_DARK : undefined}
+          >
+            <LanguageSwitcher className="me-1" />
+          </span>
           <button
             ref={searchToggle}
             type="button"
             aria-label={t("search.label")}
             aria-expanded={searchOpen}
             aria-controls="desktop-search"
-            className="hidden h-9 w-9 items-center justify-center text-(--sf-text) transition-colors md:flex"
+            className={cn(
+              "hidden h-9 w-9 items-center justify-center transition-colors md:flex",
+              transparent ? "text-white" : "text-(--sf-text)",
+            )}
             onClick={() => setSearchOpen((v) => !v)}
           >
             <Search className="h-6 w-6" strokeWidth={1.5} />
@@ -202,7 +287,10 @@ export default function StoreHeader() {
             aria-label={mobileOpen ? t("menu.close") : t("menu.open")}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
-            className="flex h-9 w-9 items-center justify-center text-(--sf-text) transition-colors md:hidden"
+            className={cn(
+              "flex h-9 w-9 items-center justify-center transition-colors md:hidden",
+              transparent ? "text-white" : "text-(--sf-text)",
+            )}
             onClick={() => setMobileOpen((v) => !v)}
           >
             {mobileOpen ? (
@@ -217,7 +305,11 @@ export default function StoreHeader() {
       {searchOpen && (
         <div
           id="desktop-search"
-          className="sf-glass hidden border-b px-4 py-3 shadow-xs md:block"
+          style={panelStyle}
+          className={cn(
+            "hidden border-b px-4 py-3 shadow-xs md:block",
+            panelSurface,
+          )}
         >
           <form onSubmit={handleSearch} className="mx-auto flex max-w-7xl gap-2">
             <input
@@ -233,8 +325,13 @@ export default function StoreHeader() {
       )}
 
       {mobileOpen && (
+        // `absolute`, not `fixed`, and sized explicitly: the header's
+        // will-change:translate makes it the containing block for fixed
+        // descendants, so `fixed inset-0` here resolved against the 64px bar
+        // and collapsed the scrim to zero height. Anchor it below the bar and
+        // give it a viewport of its own instead.
         <div
-          className="fixed inset-0 top-(--sf-nav-h) z-30 bg-black/60 backdrop-blur-sm md:hidden"
+          className="absolute left-0 right-0 top-full z-30 h-dvh bg-black/60 backdrop-blur-sm md:hidden"
           aria-hidden="true"
           onClick={() => setMobileOpen(false)}
         />
@@ -242,8 +339,10 @@ export default function StoreHeader() {
 
       <div
         id="mobile-nav"
+        style={panelStyle}
         className={cn(
-          "sf-glass absolute left-0 right-0 top-full z-40 border-b shadow-xs transition-all duration-200 md:hidden",
+          "absolute left-0 right-0 top-full z-40 border-b shadow-xs transition-all duration-200 md:hidden",
+          panelSurface,
           mobileOpen
             ? "visible translate-y-0 opacity-100"
             : "pointer-events-none invisible -translate-y-2 opacity-0",

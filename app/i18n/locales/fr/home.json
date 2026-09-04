@@ -3,12 +3,8 @@
   "metaDescription": "{{brand}} vend des chaussures de basketball 100% authentiques en Algérie. Livraison rapide en 24 à 48h dans les 58 wilayas, paiement à la livraison.",
   "ogTitle": "{{brand}} — Chaussures de basketball 100% authentiques en Algérie",
   "hero": {
-    "badge": "100% authentique",
     "title": "Chaussures de basketball authentiques en Algérie",
-    "subtitle": "Chaque paire est vérifiée avant expédition, sans exception.",
-    "ctaPrimary": "Découvrir la collection",
-    "ctaSecondary": "Voir les nouveautés",
-    "tagline": "Every Pair Counts"
+    "cta": "Voir les produits"
   },
   "authenticity": {
     "title": "Authenticité garantie, livraison en 24-48h",

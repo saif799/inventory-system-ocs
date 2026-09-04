@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Mono, Cairo } from "next/font/google";
+import { DM_Mono, Cairo, Anton } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { dir } from "i18next";
 // @ts-ignore - Next.js global stylesheet side-effect import is resolved at build time
@@ -31,6 +31,19 @@ const cairo = Cairo({
   subsets: ["arabic", "latin"],
   weight: ["400", "500"],
   variable: "--font-cairo",
+});
+
+// The one exception to "one typeface": the hero headline. DM Mono cannot carry
+// a poster-scale line — a monospace has no condensed cut, so at 100px+ it eats
+// the whole viewport and still reads thin. Anton is the display face and is
+// used in exactly one place (components/storefront/Hero.tsx); it ships a single
+// weight (400, already ultra-bold) and Latin only, which is why the headline it
+// draws is a fixed English wordmark rather than translated copy.
+const anton = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-anton",
+  display: "swap",
 });
 
 // Storefront-wide defaults. Every storefront page overrides `title` through
@@ -108,7 +121,7 @@ export default async function RootLayout({
       data-app={isStorefront ? "storefront" : "admin"}
       // Unconditional: /admin resolves --font-sans through --font-dm-mono, so
       // the variables have to exist on <html> for untagged requests too.
-      className={`${dmMono.variable} ${cairo.variable}`}
+      className={`${dmMono.variable} ${cairo.variable} ${anton.variable}`}
     >
       <body className={`font-sans antialiased`}>
         {children}

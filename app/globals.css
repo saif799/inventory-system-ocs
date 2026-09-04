@@ -189,6 +189,13 @@ html[data-app='admin'] {
   --sf-glass: rgb(251 254 252 / 0.62);      /* --sf-bg   at 62%            */
   --sf-glass-line: rgb(219 225 221 / 0.6);  /* --sf-line at 60%            */
 
+  /* The same chrome inverted, for the one place the ground behind the bar is
+   * a photograph rather than the page: the homepage hero. Kept as its own
+   * pair rather than a filter on the light one so the ink token that goes
+   * with it (white) is chosen here, not guessed at the use site.            */
+  --sf-glass-dark: rgb(10 17 14 / 0.42);         /* --sf-text at 42%         */
+  --sf-glass-dark-line: rgb(251 254 252 / 0.16); /* --sf-bg   at 16%         */
+
   /* ── The one chromatic accent: prices, links, active state. ─────────── */
   --sf-accent: #155e41;       /* Pine                                      */
   --sf-accent-fg: #ffffff;
@@ -294,6 +301,23 @@ html[lang|='ar'] {
   font-family: var(--sf-font-body);
 }
 
+/* Poster type. The single exception to the one-typeface rule above, used only
+ * by the hero headline: DM Mono has no condensed cut, so at 100px+ it runs off
+ * the viewport and still reads thin. Anton is Latin-only and always uppercase,
+ * so whatever it draws has to be a fixed English wordmark — never translated
+ * copy, which is why html[lang|="ar"] does not remap it the way --sf-font is
+ * remapped. line-height sits under 1 because caps have no descenders and
+ * stacked lines should touch. */
+.sf-poster {
+  font-family: var(--font-anton), 'Anton', Impact, 'Haettenschweiler',
+    'Arial Narrow Bold', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  line-height: 0.88;
+  font-synthesis-weight: none;
+}
+
 .sf-scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -328,6 +352,24 @@ html[lang|='ar'] {
     border-color: var(--sf-glass-line);
     -webkit-backdrop-filter: blur(20px) saturate(1.6);
     backdrop-filter: blur(20px) saturate(1.6);
+  }
+}
+
+/* The dark twin, used by the nav panels while the bar is floating over the
+ * hero photo. Same progressive-enhancement shape as .sf-glass: opaque first,
+ * translucent only where backdrop-filter exists. Its contents have to be
+ * re-inked for a dark ground — StoreHeader does that by overriding
+ * --sf-text / --sf-muted / --sf-line / --sf-placeholder on the panel. */
+.sf-glass-dark {
+  background-color: #0a110e;
+  border-color: rgb(251 254 252 / 0.16);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sf-glass-dark {
+    background-color: var(--sf-glass-dark);
+    border-color: var(--sf-glass-dark-line);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(20px) saturate(1.4);
   }
 }
 

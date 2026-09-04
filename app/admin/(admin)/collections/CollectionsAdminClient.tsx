@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import AdminPage from "@/components/admin/AdminPage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ImageUploader, type UploadedObject } from "@/components/ui/image-uploader";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,45 +19,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { collectionSlug } from "@/lib/storefront/slug";
-import { ArrowUp, ArrowDown, ImageOff, Trash2, Plus, X, Unlock } from "lucide-react";
-
-export type CatalogEntry = {
-  shoeId: string;
-  modelName: string;
-  color: string;
-  primaryImageUrl: string | null;
-  isLive: boolean;
-};
-
-export type CollectionWithItems = {
-  id: string;
-  title: string;
-  subtitle: string | null;
-  slug: string;
-  imageKey: string | null;
-  imageUrl: string | null;
-  imageAlt: string | null;
-  sortOrder: number;
-  isVisible: boolean;
-  items: CatalogEntry[];
-};
+import { ArrowUp, ArrowDown, ImageOff, Trash2, Plus } from "lucide-react";
+import type { CollectionSummary } from "./types";
 
 async function patchJson(url: string, body: unknown) {
   const res = await fetch(url, {
@@ -75,28 +38,26 @@ async function patchJson(url: string, body: unknown) {
 /**
  * The admin grid deliberately mirrors the storefront's: same square image, same
  * two-then-three columns. A Collection is merchandised by its picture, so the
- * page where it is edited should show the owner what a visitor will see rather
- * than a stack of accordions with the image hidden inside them.
+ * page where it is edited should show the owner what a visitor will see.
  *
- * Editing happens in a Sheet, one Collection at a time — the picker, the
- * reorder list and the uploader are too much to inline into a tile.
+ * Editing is a *route*, not a Sheet. It used to be a right-hand Sheet with the
+ * product picker nested inside it, and that nesting is what broke the picker: a
+ * Sheet is a modal Radix Dialog whose focus trap lives in module-level state,
+ * so an overlay opened on top of it fought it for focus and the search box
+ * could not be typed into. A page has no trap to fight.
  */
 export default function CollectionsAdminClient({
   collections: initialCollections,
-  catalog,
 }: {
-  collections: CollectionWithItems[];
-  catalog: CatalogEntry[];
+  collections: CollectionSummary[];
 }) {
+  const router = useRouter();
   const [collections, setCollections] = useState(initialCollections);
   const [newTitle, setNewTitle] = useState("");
   const [creating, setCreating] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<CollectionWithItems | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<CollectionSummary | null>(null);
 
-  const editing = collections.find((c) => c.id === editingId) ?? null;
-
-  const patchCollection = (id: string, patch: Partial<CollectionWithItems>) =>
+  const patchCollection = (id: string, patch: Partial<CollectionSummary>) =>
     setCollections((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)));
 
   const createCollection = async () => {
@@ -111,12 +72,11 @@ export default function CollectionsAdminClient({
       });
       if (!res.ok) throw new Error();
       const created = await res.json();
-      setCollections((prev) => [...prev, { ...created, items: [] }]);
       setNewTitle("");
+      toast.success("Collection créée");
       // Straight into the editor: a Collection is not usable until it has an
       // image, so creation is only ever step one.
-      setEditingId(created.id);
-      toast.success("Collection créée");
+      router.push(`/admin/collections/${created.id}`);
     } catch {
       toast.error("Échec de la création");
     } finally {
@@ -124,12 +84,11 @@ export default function CollectionsAdminClient({
     }
   };
 
-  const deleteCollection = async (collection: CollectionWithItems) => {
+  const deleteCollection = async (collection: CollectionSummary) => {
     try {
       const res = await fetch(`/api/admin/collections/${collection.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
       setCollections((prev) => prev.filter((c) => c.id !== collection.id));
-      if (editingId === collection.id) setEditingId(null);
       toast.success("Collection supprimée");
     } catch {
       toast.error("Échec de la suppression");
@@ -170,22 +129,6 @@ export default function CollectionsAdminClient({
     }
   };
 
-  const saveItems = async (collectionId: string, items: CatalogEntry[]) => {
-    const before = collections.find((c) => c.id === collectionId)?.items ?? [];
-    patchCollection(collectionId, { items });
-    try {
-      const res = await fetch(`/api/admin/collections/${collectionId}/items`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shoeIds: items.map((i) => i.shoeId) }),
-      });
-      if (!res.ok) throw new Error();
-    } catch {
-      patchCollection(collectionId, { items: before });
-      toast.error("Échec de l'enregistrement des produits");
-    }
-  };
-
   return (
     <AdminPage
       title="Collections"
@@ -218,7 +161,6 @@ export default function CollectionsAdminClient({
               collection={collection}
               isFirst={index === 0}
               isLast={index === collections.length - 1}
-              onOpen={() => setEditingId(collection.id)}
               onToggleVisible={(v) => toggleVisible(collection.id, v)}
               onMove={(direction) => moveCollection(collection.id, direction)}
               onDelete={() => setPendingDelete(collection)}
@@ -226,14 +168,6 @@ export default function CollectionsAdminClient({
           ))}
         </div>
       )}
-
-      <CollectionEditor
-        collection={editing}
-        catalog={catalog}
-        onClose={() => setEditingId(null)}
-        onPatch={patchCollection}
-        onSaveItems={saveItems}
-      />
 
       <AlertDialog
         open={pendingDelete !== null}
@@ -268,24 +202,23 @@ function CollectionTile({
   collection,
   isFirst,
   isLast,
-  onOpen,
   onToggleVisible,
   onMove,
   onDelete,
 }: {
-  collection: CollectionWithItems;
+  collection: CollectionSummary;
   isFirst: boolean;
   isLast: boolean;
-  onOpen: () => void;
   onToggleVisible: (isVisible: boolean) => void;
   onMove: (direction: -1 | 1) => void;
   onDelete: () => void;
 }) {
+  const href = `/admin/collections/${collection.id}`;
+
   return (
     <div className="flex flex-col gap-3">
-      <button
-        type="button"
-        onClick={onOpen}
+      <Link
+        href={href}
         className="group relative block aspect-square w-full overflow-hidden rounded-md border bg-muted text-left"
       >
         {collection.imageUrl ? (
@@ -307,19 +240,14 @@ function CollectionTile({
             needs image
           </Badge>
         )}
-      </button>
+      </Link>
 
       <div className="min-w-0">
-        <button
-          type="button"
-          onClick={onOpen}
-          className="block w-full truncate text-left font-medium hover:underline"
-        >
+        <Link href={href} className="block w-full truncate text-left font-medium hover:underline">
           {collection.title}
-        </button>
+        </Link>
         <p className="text-xs text-muted-foreground">
-          {collection.items.length} produit{collection.items.length === 1 ? "" : "s"} · /
-          {collection.slug}
+          {collection.itemCount} produit{collection.itemCount === 1 ? "" : "s"} · /{collection.slug}
         </p>
       </div>
 
@@ -364,356 +292,5 @@ function CollectionTile({
         </div>
       </div>
     </div>
-  );
-}
-
-/**
- * The editor panel. Everything about one Collection lives here: its image, its
- * copy, its slug, and its picks.
- */
-function CollectionEditor({
-  collection,
-  catalog,
-  onClose,
-  onPatch,
-  onSaveItems,
-}: {
-  collection: CollectionWithItems | null;
-  catalog: CatalogEntry[];
-  onClose: () => void;
-  onPatch: (id: string, patch: Partial<CollectionWithItems>) => void;
-  onSaveItems: (collectionId: string, items: CatalogEntry[]) => void;
-}) {
-  return (
-    <Sheet open={collection !== null} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-full gap-0 overflow-y-auto sm:max-w-lg">
-        {collection && (
-          <CollectionEditorBody
-            // Remounts on switching collections, so the draft state below never
-            // leaks from one Collection into the next.
-            key={collection.id}
-            collection={collection}
-            catalog={catalog}
-            onClose={onClose}
-            onPatch={onPatch}
-            onSaveItems={onSaveItems}
-          />
-        )}
-      </SheetContent>
-    </Sheet>
-  );
-}
-
-function CollectionEditorBody({
-  collection,
-  catalog,
-  onClose,
-  onPatch,
-  onSaveItems,
-}: {
-  collection: CollectionWithItems;
-  catalog: CatalogEntry[];
-  onClose: () => void;
-  onPatch: (id: string, patch: Partial<CollectionWithItems>) => void;
-  onSaveItems: (collectionId: string, items: CatalogEntry[]) => void;
-}) {
-  const [form, setForm] = useState({
-    title: collection.title,
-    subtitle: collection.subtitle ?? "",
-    imageAlt: collection.imageAlt ?? "",
-    slug: collection.slug,
-  });
-  // The slug is public API: locked by default, and unlocking is a decision the
-  // owner has to make on purpose (ADR-0006).
-  const [slugUnlocked, setSlugUnlocked] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  const save = async () => {
-    setSaving(true);
-    try {
-      const updated = await patchJson(`/api/admin/collections/${collection.id}`, {
-        title: form.title.trim(),
-        subtitle: form.subtitle.trim() || null,
-        imageAlt: form.imageAlt.trim() || null,
-        // Renaming the title must never touch the slug — it only travels when
-        // it was deliberately unlocked.
-        ...(slugUnlocked ? { slug: form.slug.trim() } : {}),
-      });
-      onPatch(collection.id, {
-        title: updated.title,
-        subtitle: updated.subtitle,
-        imageAlt: updated.imageAlt,
-        slug: updated.slug,
-      });
-      toast.success("Collection mise à jour");
-      onClose();
-    } catch (error: any) {
-      toast.error(error?.message || "Échec de la mise à jour");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  /** The uploaded R2 key is what gets stored; the API derives the URL from it. */
-  const setImage = async (objects: UploadedObject[]) => {
-    const uploaded = objects[0];
-    if (!uploaded) return;
-    try {
-      const updated = await patchJson(`/api/admin/collections/${collection.id}`, {
-        imageKey: uploaded.key,
-      });
-      onPatch(collection.id, { imageKey: updated.imageKey, imageUrl: updated.imageUrl });
-      toast.success("Image mise à jour");
-    } catch {
-      toast.error("Échec de la mise à jour de l'image");
-    }
-  };
-
-  const clearImage = async () => {
-    try {
-      const updated = await patchJson(`/api/admin/collections/${collection.id}`, {
-        imageKey: null,
-      });
-      onPatch(collection.id, { imageKey: updated.imageKey, imageUrl: updated.imageUrl });
-      toast.success("Image supprimée");
-    } catch {
-      toast.error("Échec de la suppression de l'image");
-    }
-  };
-
-  const addItem = (entry: CatalogEntry) => {
-    if (collection.items.some((i) => i.shoeId === entry.shoeId)) return;
-    onSaveItems(collection.id, [...collection.items, entry]);
-  };
-
-  const removeItem = (shoeId: string) => {
-    onSaveItems(
-      collection.id,
-      collection.items.filter((i) => i.shoeId !== shoeId),
-    );
-  };
-
-  const moveItem = (shoeId: string, direction: -1 | 1) => {
-    const index = collection.items.findIndex((i) => i.shoeId === shoeId);
-    const swapIndex = index + direction;
-    if (index === -1 || swapIndex < 0 || swapIndex >= collection.items.length) return;
-    const reordered = [...collection.items];
-    [reordered[index], reordered[swapIndex]] = [reordered[swapIndex], reordered[index]];
-    onSaveItems(collection.id, reordered);
-  };
-
-  return (
-    <>
-      <SheetHeader>
-        <SheetTitle>{collection.title}</SheetTitle>
-        <SheetDescription>/collection/{collection.slug}</SheetDescription>
-      </SheetHeader>
-
-      <div className="space-y-6 px-4 pb-4">
-        <div className="space-y-2">
-          <Label>Image</Label>
-          {collection.imageUrl && (
-            <div className="space-y-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={collection.imageUrl}
-                alt={collection.imageAlt ?? collection.title}
-                className="aspect-square w-40 rounded-md border object-cover"
-              />
-              <Button size="sm" variant="outline" onClick={clearImage}>
-                <Trash2 className="h-3.5 w-3.5" /> Remove image
-              </Button>
-            </div>
-          )}
-          {/* Always rendered, image or not: uploading over an existing one is
-              how an image gets *replaced*, and the API deletes the old R2
-              object on that PATCH. Hiding it behind "remove first" would make
-              that path unreachable and orphan the object on an abandoned edit. */}
-          <ImageUploader
-            key={collection.imageKey ?? "empty"}
-            folder={`collections/${collection.id}`}
-            onUploadObjects={setImage}
-          />
-          <p className="text-xs text-muted-foreground">
-            Shown as a square on the homepage — the only place a collection image appears. Without
-            it the collection never reaches the storefront.
-          </p>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="collection-title">Title</Label>
-          <Input
-            id="collection-title"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="collection-subtitle">Subtitle</Label>
-          <Input
-            id="collection-subtitle"
-            value={form.subtitle}
-            placeholder="Optional"
-            onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="collection-alt">Image alt text</Label>
-          <Input
-            id="collection-alt"
-            value={form.imageAlt}
-            placeholder="Falls back to the title"
-            onChange={(e) => setForm({ ...form, imageAlt: e.target.value })}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="collection-slug">URL</Label>
-          <div className="flex items-center gap-2">
-            <Input
-              id="collection-slug"
-              value={form.slug}
-              readOnly={!slugUnlocked}
-              // Normalised as typed: the API slugifies whatever it is sent, so
-              // showing the raw input would promise an URL it will not create.
-              onChange={(e) => setForm({ ...form, slug: collectionSlug(e.target.value) })}
-              className={slugUnlocked ? "" : "bg-muted text-muted-foreground"}
-            />
-            {!slugUnlocked && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="shrink-0"
-                onClick={() => setSlugUnlocked(true)}
-              >
-                <Unlock className="h-3.5 w-3.5" /> changer l&apos;URL
-              </Button>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {slugUnlocked
-              ? "⚠️ Changer l'URL casse tous les liens déjà partagés vers cette collection (bio Instagram, stories). L'ancienne adresse renverra une erreur 404."
-              : "Fixée à la création. Renommer le titre ne la change pas."}
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label>Products ({collection.items.length})</Label>
-            <ProductPicker catalog={catalog} onSelect={addItem} />
-          </div>
-
-          {collection.items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No products picked yet.</p>
-          ) : (
-            <div className="space-y-2">
-              {collection.items.map((item, index) => (
-                <div
-                  key={item.shoeId}
-                  className="flex items-center gap-2 rounded-md border px-3 py-2"
-                >
-                  <span className="min-w-0 flex-1 truncate text-sm">
-                    {item.modelName} — {item.color}
-                  </span>
-                  {!item.isLive && (
-                    <Badge variant="destructive" className="shrink-0">
-                      hors ligne
-                    </Badge>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 w-7 p-0"
-                    disabled={index === 0}
-                    onClick={() => moveItem(item.shoeId, -1)}
-                    aria-label="Move up"
-                  >
-                    <ArrowUp className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 w-7 p-0"
-                    disabled={index === collection.items.length - 1}
-                    onClick={() => moveItem(item.shoeId, 1)}
-                    aria-label="Move down"
-                  >
-                    <ArrowDown className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 w-7 p-0 text-red-500"
-                    onClick={() => removeItem(item.shoeId)}
-                    aria-label="Remove product"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <SheetFooter>
-        <Button onClick={save} disabled={saving || !form.title.trim()}>
-          Enregistrer
-        </Button>
-        <Button variant="outline" onClick={onClose}>
-          Fermer
-        </Button>
-      </SheetFooter>
-    </>
-  );
-}
-
-function ProductPicker({
-  catalog,
-  onSelect,
-}: {
-  catalog: CatalogEntry[];
-  onSelect: (entry: CatalogEntry) => void;
-}) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Plus className="h-4 w-4" /> Add product
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[320px] p-0" align="end">
-        <Command className="rounded-lg border shadow-md">
-          <CommandInput placeholder="Search model or colour…" />
-          <CommandList>
-            <CommandGroup>
-              {catalog.map((entry) => (
-                <CommandItem
-                  key={entry.shoeId}
-                  value={`${entry.modelName} ${entry.color}`}
-                  onSelect={() => {
-                    onSelect(entry);
-                    setOpen(false);
-                  }}
-                >
-                  <span className="truncate">
-                    {entry.modelName} — {entry.color}
-                  </span>
-                  {!entry.isLive && (
-                    <Badge variant="destructive" className="ml-auto shrink-0">
-                      hors ligne
-                    </Badge>
-                  )}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
   );
 }

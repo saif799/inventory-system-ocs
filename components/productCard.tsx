@@ -78,6 +78,7 @@ export default function ProductCard({
   const params = useParams<{ lenderId?: string }>();
   const lenderId = params?.lenderId;
   const isBorrowerView = Boolean(lenderId);
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [isStoreSaleOpen, setIsStoreSaleOpen] = useState(false);
   const [isEditInventoryOpen, setIsEditInventoryOpen] = useState(false);
   const [isLendInventoryOpen, setIsLendInventoryOpen] = useState(false);
@@ -217,7 +218,7 @@ export default function ProductCard({
         </ul>
 
         <div className="mt-auto flex items-center justify-end gap-2">
-          <Dialog>
+          <Dialog open={isOrderOpen} onOpenChange={setIsOrderOpen}>
             <DialogTrigger
               onClick={(e) => e.stopPropagation()}
               className={buttonVariants({
@@ -245,6 +246,12 @@ export default function ProductCard({
                 <SendOrderForm
                   shoe={{ shoeId, modelId, modelName, color, sizes }}
                   borrowerId={isBorrowerView ? lenderId : undefined}
+                  // Close on success and refresh: the card's size chips and
+                  // pair count are now one pair stale.
+                  onSuccess={() => {
+                    setIsOrderOpen(false);
+                    router.refresh();
+                  }}
                 />
               </div>
             </DialogContent>
